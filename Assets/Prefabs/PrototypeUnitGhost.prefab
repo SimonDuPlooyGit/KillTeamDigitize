@@ -236,7 +236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5684875758840081513}
   - component: {fileID: 8735310591135058305}
-  - component: {fileID: 1746460031477156975}
+  - component: {fileID: -6931259625633602529}
   m_Layer: 0
   m_Name: PrototypeUnitGhost
   m_TagString: Untagged
@@ -283,7 +283,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1746460031477156975
+--- !u!114 &-6931259625633602529
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -292,8 +292,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7467935918681723117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d83e019ff4c885459f65e2c10b103b8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a504302911564548954714a0800bea9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::PrototypeGhost
   movementStat: 3
-  unitGhost: {fileID: 0}
