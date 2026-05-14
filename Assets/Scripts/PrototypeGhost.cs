@@ -10,7 +10,7 @@ public class PrototypeGhost : MonoBehaviour
 {
     private InputActions input;
     private NavMeshAgent agentUnit;
-    public float movementStat;
+    private float movementStat;
     private float pathDistance;
     public NavMeshPath path;
     private Vector3[] points;
@@ -21,6 +21,7 @@ public class PrototypeGhost : MonoBehaviour
         input = new InputActions();
         AssignInputs();
         path = new NavMeshPath();
+        movementStat = GetComponentInParent<PrototypeUnit>().movementStat;
     }
 
     void AssignInputs()
@@ -41,13 +42,11 @@ public class PrototypeGhost : MonoBehaviour
                 {
                     float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
                     pathDistance += segment;
-                    Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
+                    //Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
                 }
             }
 
             points = path.corners;
-            //DrawPath(points);
-
         }
     }
     

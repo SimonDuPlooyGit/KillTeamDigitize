@@ -16,11 +16,13 @@ public class PrototypeUnit : MonoBehaviour
     private float meterMovement;
     private float pathDistance;
     public NavMeshPath path;
+    private NavMeshPath limitedUnitPath;
     public GameObject unitGhost;
     public LineRenderer lineRenderer;
     private Vector3[] points;
     private bool pathDrawn = false;
     List<Vector3> limitedPoints = new List<Vector3>();
+    public bool selected = false;
 
     private void Awake()
     {
@@ -37,7 +39,8 @@ public class PrototypeUnit : MonoBehaviour
          if (!pathDrawn &&
              !agentGhost.pathPending &&
              agentGhost.velocity.sqrMagnitude < 0.01f &&
-             agentGhost.remainingDistance <= agentGhost.stoppingDistance)
+             agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
+             selected == true)
          {
              DrawPath(limitedPoints.ToArray());
          }
@@ -48,7 +51,7 @@ public class PrototypeUnit : MonoBehaviour
         input.Controls.Move.performed += ctx => ClickToPathfind();
     }
 
-    void ClickToPathfind()
+    private void ClickToPathfind()
     {
         limitedPoints.Clear();
         pathDistance = 0f;
@@ -56,7 +59,7 @@ public class PrototypeUnit : MonoBehaviour
         pathDrawn = false;
         
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true)
         {
             if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
             {
@@ -64,7 +67,7 @@ public class PrototypeUnit : MonoBehaviour
                 {
                     float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
                     pathDistance += segment;
-                    Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
+                    //Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
                 }
             }
 
@@ -80,8 +83,6 @@ public class PrototypeUnit : MonoBehaviour
             }
 
             points = path.corners;
-            //DrawPath(points);
-
         }
     }
 
@@ -126,6 +127,21 @@ public class PrototypeUnit : MonoBehaviour
 
         return path.corners[path.corners.Length - 1];
     }
+
+    public void moveUnitToGhost()
+    {
+        if (selected == true)
+        {
+            Vector3[] unitPoints = limitedPoints.ToArray();
+            limitedUnitPath = new NavMeshPath();
+            for (int i = 0; i < unitPoints.Length; i++)
+            {
+                limitedUnitPath.corners[i] = unitPoints[i];
+            }
+            agentUnit.SetPath(limitedUnitPath);
+        }
+    }
+    
 
     private void OnEnable()
     {
