@@ -133,7 +133,7 @@ public class PrototypeUnit : MonoBehaviour
 
     public void moveUnitToGhost()
     {
-        
+        agentUnit.destination = unitGhost.transform.position;
     }
     
 
