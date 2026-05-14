@@ -13,10 +13,10 @@ public class PrototypeUnit : MonoBehaviour
     private NavMeshAgent agentUnit;
     private NavMeshAgent agentGhost;
     public float movementStat;
+    private float meterDashLimit = 0.762f;
     private float meterMovement;
     private float pathDistance;
     public NavMeshPath path;
-    private NavMeshPath limitedUnitPath;
     public GameObject unitGhost;
     public LineRenderer lineRenderer;
     private Vector3[] points;
@@ -134,6 +134,11 @@ public class PrototypeUnit : MonoBehaviour
     public void moveUnitToGhost()
     {
         agentUnit.destination = unitGhost.transform.position;
+
+        if (transform.position == unitGhost.transform.position)
+        {
+            Reset();
+        }
     }
     
 

@@ -11,16 +11,6 @@ public class GameManager : MonoBehaviour
         input = new InputActions();
         AssignInputs();
     }
-    
-    void Start()
-    {
-        
-    }
-    
-    void Update()
-    {
-        
-    }
 
     public void moveSelectedUnit()
     {
@@ -41,6 +31,12 @@ public class GameManager : MonoBehaviour
                 currentlySelectedUnit.GetComponent<PrototypeUnit>().selected = true;
             }
         }
+    }
+
+    private void deselectUnit()
+    {
+        currentlySelectedUnit.GetComponent<PrototypeUnit>().selected = false;
+        currentlySelectedUnit = null;
     }
     
     void AssignInputs()
