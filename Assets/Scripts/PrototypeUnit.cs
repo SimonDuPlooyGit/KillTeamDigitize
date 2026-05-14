@@ -32,11 +32,13 @@ public class PrototypeUnit : MonoBehaviour
         input = new InputActions();
         AssignInputs();
         path = new NavMeshPath();
+        unitGhost.SetActive(false);
     }
 
     private void Update()
     {
-         if (!pathDrawn &&
+         if (unitGhost.activeSelf != false &&
+             !pathDrawn &&
              !agentGhost.pathPending &&
              agentGhost.velocity.sqrMagnitude < 0.01f &&
              agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
@@ -57,6 +59,7 @@ public class PrototypeUnit : MonoBehaviour
         pathDistance = 0f;
         lineRenderer.enabled = false;
         pathDrawn = false;
+        unitGhost.SetActive(true);
         
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true)
@@ -130,16 +133,7 @@ public class PrototypeUnit : MonoBehaviour
 
     public void moveUnitToGhost()
     {
-        if (selected == true)
-        {
-            Vector3[] unitPoints = limitedPoints.ToArray();
-            limitedUnitPath = new NavMeshPath();
-            for (int i = 0; i < unitPoints.Length; i++)
-            {
-                limitedUnitPath.corners[i] = unitPoints[i];
-            }
-            agentUnit.SetPath(limitedUnitPath);
-        }
+        
     }
     
 
@@ -151,5 +145,10 @@ public class PrototypeUnit : MonoBehaviour
     private void OnDisable()
     {
         input.Disable();
+    }
+
+    public void Reset()
+    {
+        unitGhost.SetActive(false);
     }
 }

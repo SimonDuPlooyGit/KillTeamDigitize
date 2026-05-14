@@ -22,13 +22,19 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void moveSelectedUnit()
+    {
+        Debug.Log("moveSelectedUnit");
+        currentlySelectedUnit.GetComponent<PrototypeUnit>().moveUnitToGhost();
+    }
+
     private void unitSelectCheck()
     {
-        Debug.Log("Checking for selected unit");
+        //Debug.Log("Checking for selected unit");
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
         {
-            Debug.Log(hit.collider.gameObject.name);
+            //Debug.Log(hit.collider.gameObject.name);
             if (hit.collider.gameObject.tag == "AllyUnit")
             {
                 currentlySelectedUnit = hit.collider.gameObject;
