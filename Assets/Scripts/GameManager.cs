@@ -5,6 +5,9 @@ public class GameManager : MonoBehaviour
 {
     private InputActions input;
     public GameObject currentlySelectedUnit;
+    [SerializeField]
+    private MenuPanel menu;
+    
 
     private void Awake()
     {
@@ -29,7 +32,13 @@ public class GameManager : MonoBehaviour
             {
                 currentlySelectedUnit = hit.collider.gameObject;
                 currentlySelectedUnit.GetComponent<PrototypeUnit>().selected = true;
+                menu.OpenAction();
             }
+            else if(hit.collider.gameObject.tag != "AllyUnit" || hit.collider.gameObject == null)//probably need to alter this to prevent the menu from closing when clikcing on it
+            {
+                menu.CloseAction();
+            }
+            
         }
     }
 
