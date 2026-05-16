@@ -154,6 +154,8 @@ public class PrototypeUnit : MonoBehaviour
 
     public void Reset()
     {
+        unitGhost.transform.position = transform.position;
+        lineRenderer.enabled = false;
         unitGhost.SetActive(false);
     }
 }

@@ -34,23 +34,22 @@ public class GameManager : MonoBehaviour
                 currentlySelectedUnit.GetComponent<PrototypeUnit>().selected = true;
                 menu.OpenAction();
             }
-            else if(hit.collider.gameObject.tag != "AllyUnit" || hit.collider.gameObject == null)//probably need to alter this to prevent the menu from closing when clikcing on it
-            {
-                menu.CloseAction();
-            }
             
         }
     }
 
     private void deselectUnit()
     {
+        currentlySelectedUnit.GetComponent <PrototypeUnit>().Reset();
         currentlySelectedUnit.GetComponent<PrototypeUnit>().selected = false;
         currentlySelectedUnit = null;
+        menu.CloseAction();
     }
     
     void AssignInputs()
     {
         input.Controls.Select.performed += ctx => unitSelectCheck();
+        input.Controls.Deselect.performed += ctx => deselectUnit();
     }
     
     private void OnEnable()
