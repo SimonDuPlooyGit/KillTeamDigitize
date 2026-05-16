@@ -63,6 +63,8 @@ public class WeaponRules
     //Hot: (A roll effect on unit)
     //Limited x: (Logic on weapon capability)
 
+    //Rule logics
+    
     [System.Serializable]
     public class Balanced : IWeaponRule
     {
