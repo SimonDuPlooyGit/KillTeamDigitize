@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
+  m_Name: BoltSniperRifle(hyperfrag)
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
+  ATK: 4
+  HIT: 2
+  DMGnorm: 2
+  DMGcrit: 4
+  rules:
+  - rid: 7430619796180566095
+  - rid: 7430619796180566096
+  - rid: 7430619796180566097
+  references:
+    version: 2
+    RefIds:
+    - rid: 7430619796180566095
+      type: {class: WeaponRules/Heavy, ns: , asm: Assembly-CSharp}
+      data:
+        condition: Dash Only
+    - rid: 7430619796180566096
+      type: {class: WeaponRules/Silent, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7430619796180566097
+      type: {class: WeaponRules/Blast, ns: , asm: Assembly-CSharp}
+      data:
+        blastX: 1
