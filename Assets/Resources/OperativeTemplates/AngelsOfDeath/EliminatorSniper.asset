@@ -16,3 +16,10 @@ MonoBehaviour:
   MOVE: 7
   SAVE: 3
   WOUNDS: 12
+  keywords: 12307
+  weapons:
+  - {fileID: 11400000, guid: e7255d14bc33ac640b5229f43e959259, type: 2}
+  - {fileID: 11400000, guid: b944a79690feafa46ac394eac6b1cbd1, type: 2}
+  - {fileID: 11400000, guid: dc2bc7bd90cf8334d9125fc5cc5f32c2, type: 2}
+  - {fileID: 11400000, guid: 86707f38d55b8354bbcc18866acda4b8, type: 2}
+  - {fileID: 11400000, guid: b248a4367012d5f41b5cd6ab9da36140, type: 2}

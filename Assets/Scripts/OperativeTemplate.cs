@@ -1,4 +1,4 @@
-using UnityEngine;
+using System.Collections.Generic;using UnityEngine;
 
 [CreateAssetMenu(fileName = "OperativeTemplate", menuName = "Scriptable Objects/OperativeTemplate")]
 public class OperativeTemplate : ScriptableObject
@@ -7,14 +7,19 @@ public class OperativeTemplate : ScriptableObject
     public int APL, MOVE, SAVE, WOUNDS;
     
     //Keywords such as Imperium, Astartes, Warrior etc
+    public Keywords keywords;
     
     //Possibly has active abilities you need to pay APL for
     
     //Possibly has passive effects that have different conditions to trigger such as ignoring saturate
     
     //Loadout of weapons
+    public List<WeaponTemplate> weapons = new List<WeaponTemplate>();
 }
 
+
+
+//Keywords such as Imperium, Astartes, Warrior etc
 [System.Flags]
 public enum Keywords
 {
@@ -30,7 +35,7 @@ public enum Keywords
     Grenadier = 1 << 8,
     Warrior = 1 << 9,
     HeavyIntercessor = 1 << 10,
-    Gunnner = 1 << 11,
+    Gunner = 1 << 11,
     Eliminator = 1 << 12,
     Sniper = 1 << 13,
 }

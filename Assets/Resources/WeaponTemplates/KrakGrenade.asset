@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
+  m_Name: KrakGrenade
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
+  ATK: 4
+  HIT: 4
+  DMGnorm: 4
+  DMGcrit: 5
+  rules:
+  - rid: 7072804673756069951
+  - rid: 7072804673756069952
+  - rid: 7072804673756069953
+  references:
+    version: 2
+    RefIds:
+    - rid: 7072804673756069951
+      type: {class: WeaponRules/Range, ns: , asm: Assembly-CSharp}
+      data:
+        range: 6
+    - rid: 7072804673756069952
+      type: {class: WeaponRules/Piercing, ns: , asm: Assembly-CSharp}
+      data:
+        piercingX: 1
+    - rid: 7072804673756069953
+      type: {class: WeaponRules/Saturate, ns: , asm: Assembly-CSharp}
+      data: 
