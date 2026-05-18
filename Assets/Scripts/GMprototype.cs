@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class GameManager : MonoBehaviour
+public class GMprototype : MonoBehaviour
 {
     private InputActions input;
     public GameObject currentlySelectedUnit;
