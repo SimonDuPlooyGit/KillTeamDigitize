@@ -16,7 +16,7 @@ public class AttackPackage
     // public bool ignoreCover;
 }
 
-public enum AttackStep
+public enum GameLoopTiming
 {
     PreRoll,
     AfterRoll,

@@ -16,3 +16,27 @@ MonoBehaviour:
   MOVE: 6
   SAVE: 3
   WOUNDS: 15
+  keywords: 215
+  Aabilities: []
+  Pabilities:
+  - rid: 7072804673756069958
+  - rid: 7072804673756069959
+  weapons:
+  - {fileID: 11400000, guid: dba5a30eae2801a498d9694281ea3e6e, type: 2}
+  - {fileID: 11400000, guid: 6529df21a5fbaff43903d4315b164e17, type: 2}
+  - {fileID: 11400000, guid: 77b1bb96243fd294a9b0b39ed8814633, type: 2}
+  - {fileID: 11400000, guid: c0741cb082839df4f9289bf59e998b46, type: 2}
+  - {fileID: 11400000, guid: b481a979e6e197e4891aba00e96f2122, type: 2}
+  - {fileID: 11400000, guid: b248a4367012d5f41b5cd6ab9da36140, type: 2}
+  - {fileID: 11400000, guid: 9c98a947b2bfaad40967b5201d966d0c, type: 2}
+  - {fileID: 11400000, guid: b2fa8092ec8f94d4ea2e930461abaa91, type: 2}
+  - {fileID: 11400000, guid: e810533caf57a4d4d897a66a8fb1bd30, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7072804673756069958
+      type: {class: DoctrineWarfare, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7072804673756069959
+      type: {class: ChapterVeteran, ns: , asm: Assembly-CSharp}
+      data: 

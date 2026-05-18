@@ -16,3 +16,12 @@ MonoBehaviour:
   MOVE: 0
   SAVE: 3
   WOUNDS: 12
+  keywords: 0
+  Aabilities: []
+  Pabilities: []
+  weapons:
+  - {fileID: 11400000, guid: 507b6b0658b4d1e4fa76385c7b33d25b, type: 2}
+  - {fileID: 11400000, guid: bfd3f0a4922fbf44ea1e4955b001851c, type: 2}
+  references:
+    version: 2
+    RefIds: []

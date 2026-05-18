@@ -68,7 +68,7 @@ public class WeaponRules
     [System.Serializable]
     public class Balanced : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterRoll;
+        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
 
         public void Execute(AttackPackage context)
         {
@@ -79,7 +79,7 @@ public class WeaponRules
     [System.Serializable]
     public class Range : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
 
         public int range;
 
@@ -92,7 +92,7 @@ public class WeaponRules
     [System.Serializable]
     public class Piercing : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
 
         public int piercingX;
 
@@ -105,7 +105,7 @@ public class WeaponRules
     [System.Serializable]
     public class Hot : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterAttackEvaluation;
+        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
 
         public void Execute(AttackPackage context)
         {
@@ -116,7 +116,7 @@ public class WeaponRules
     [System.Serializable]
     public class Lethal : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterRoll;
+        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
 
         public int lethalX;
 
@@ -129,7 +129,7 @@ public class WeaponRules
     [System.Serializable]
     public class Brutal : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AttackEvaluation;
+        public GameLoopTiming Step => GameLoopTiming.AttackEvaluation;
 
         public void Execute(AttackPackage context)
         {
@@ -140,7 +140,7 @@ public class WeaponRules
     [System.Serializable]
     public class Saturate : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
 
         public void Execute(AttackPackage context)
         {
@@ -151,7 +151,7 @@ public class WeaponRules
     [System.Serializable]
     public class Torrent : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterAttackEvaluation;
+        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
 
         public int torrentX;
 
@@ -164,7 +164,7 @@ public class WeaponRules
     [System.Serializable]
     public class PiercingCrit : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterRoll;
+        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
 
         public int pCritX;
 
@@ -178,7 +178,7 @@ public class WeaponRules
     [System.Serializable]
     public class Melee : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
 
         public void Execute(AttackPackage context)
         {
@@ -189,7 +189,7 @@ public class WeaponRules
     [System.Serializable]
     public class Shock : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AttackEvaluation;
+        public GameLoopTiming Step => GameLoopTiming.AttackEvaluation;
 
         public void Execute(AttackPackage context)
         {
@@ -200,7 +200,7 @@ public class WeaponRules
     [System.Serializable]
     public class Stun : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterRoll;
+        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
 
         public void Execute(AttackPackage context)
         {
@@ -211,7 +211,7 @@ public class WeaponRules
     [System.Serializable]
     public class Heavy : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
 
         public string condition;
         
@@ -224,7 +224,7 @@ public class WeaponRules
     [System.Serializable]
     public class Silent : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
         
         public void Execute(AttackPackage context)
         {
@@ -235,7 +235,7 @@ public class WeaponRules
     [System.Serializable]
     public class Seek : IWeaponRule
     {
-        public AttackStep Step => AttackStep.PreRoll;
+        public GameLoopTiming Step => GameLoopTiming.PreRoll;
 
         public string coverType;
         
@@ -248,7 +248,7 @@ public class WeaponRules
     [System.Serializable]
     public class Blast : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterAttackEvaluation;
+        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
 
         public int blastX;
         
@@ -261,7 +261,7 @@ public class WeaponRules
     [System.Serializable]
     public class Devastating : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterAttackEvaluation;
+        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
 
         public int devastatingX;
         
@@ -274,7 +274,7 @@ public class WeaponRules
     [System.Serializable]
     public class Ceaseless : IWeaponRule
     {
-        public AttackStep Step => AttackStep.AfterRoll;
+        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
         
         public void Execute(AttackPackage context)
         {

@@ -12,7 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: WarriorMarksman
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 0
-  MOVE: 0
-  SAVE: 0
-  WOUNDS: 0
+  APL: 2
+  MOVE: 6
+  SAVE: 4
+  WOUNDS: 8
+  keywords: 0
+  Aabilities: []
+  Pabilities: []
+  weapons:
+  - {fileID: 11400000, guid: b524f3b6be1f17c4c9286118608b5c0f, type: 2}
+  - {fileID: 11400000, guid: 1375ed1c4fdbd3e4199709f2d2c01f6b, type: 2}
+  references:
+    version: 2
+    RefIds: []

@@ -9,9 +9,13 @@ public class OperativeTemplate : ScriptableObject
     //Keywords such as Imperium, Astartes, Warrior etc
     public Keywords keywords;
     
-    //Possibly has active abilities you need to pay APL for
+    //Active abilities
+    [SerializeReference, SubclassSelector]
+    public List<IActive> Aabilities = new List<IActive>();
     
-    //Possibly has passive effects that have different conditions to trigger such as ignoring saturate
+    //Passive abilities
+    [SerializeReference, SubclassSelector]
+    public List<IPassive> Pabilities = new List<IPassive>();
     
     //Loadout of weapons
     public List<WeaponTemplate> weapons = new List<WeaponTemplate>();

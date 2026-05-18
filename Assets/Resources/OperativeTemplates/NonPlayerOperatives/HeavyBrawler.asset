@@ -12,7 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: HeavyBrawler
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 0
-  MOVE: 0
-  SAVE: 0
-  WOUNDS: 0
+  APL: 3
+  MOVE: 6
+  SAVE: 3
+  WOUNDS: 14
+  keywords: 0
+  Aabilities: []
+  Pabilities: []
+  weapons:
+  - {fileID: 11400000, guid: c0600ef1e347cf74189fa0e7ee5e72d4, type: 2}
+  references:
+    version: 2
+    RefIds: []

@@ -17,9 +17,26 @@ MonoBehaviour:
   SAVE: 3
   WOUNDS: 12
   keywords: 12307
+  Aabilities:
+  - rid: 7072804673756069963
+  Pabilities:
+  - rid: 7072804673756069961
+  - rid: 7072804673756069962
   weapons:
   - {fileID: 11400000, guid: e7255d14bc33ac640b5229f43e959259, type: 2}
   - {fileID: 11400000, guid: b944a79690feafa46ac394eac6b1cbd1, type: 2}
   - {fileID: 11400000, guid: dc2bc7bd90cf8334d9125fc5cc5f32c2, type: 2}
   - {fileID: 11400000, guid: 86707f38d55b8354bbcc18866acda4b8, type: 2}
   - {fileID: 11400000, guid: b248a4367012d5f41b5cd6ab9da36140, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7072804673756069961
+      type: {class: CamoCloak, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7072804673756069962
+      type: {class: CTStealthy, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7072804673756069963
+      type: {class: Optics, ns: , asm: Assembly-CSharp}
+      data: 

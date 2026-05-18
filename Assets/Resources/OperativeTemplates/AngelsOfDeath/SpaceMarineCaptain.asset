@@ -16,3 +16,21 @@ MonoBehaviour:
   MOVE: 6
   SAVE: 3
   WOUNDS: 15
+  keywords: 31
+  Aabilities: []
+  Pabilities:
+  - rid: 7072804673756069954
+  - rid: 7072804673756069955
+  weapons:
+  - {fileID: 11400000, guid: 5d1d04419e50514478705f0b68b6e766, type: 2}
+  - {fileID: 11400000, guid: 20f7f004c2a5de54ba486e44449e8c69, type: 2}
+  - {fileID: 11400000, guid: 9c98a947b2bfaad40967b5201d966d0c, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7072804673756069954
+      type: {class: HeroicLeader, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7072804673756069955
+      type: {class: IronHalo, ns: , asm: Assembly-CSharp}
+      data: 

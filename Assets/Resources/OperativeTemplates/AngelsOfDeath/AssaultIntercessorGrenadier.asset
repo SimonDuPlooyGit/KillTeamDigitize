@@ -17,8 +17,17 @@ MonoBehaviour:
   SAVE: 3
   WOUNDS: 14
   keywords: 307
+  Aabilities: []
+  Pabilities:
+  - rid: 7072804673756069960
   weapons:
   - {fileID: 11400000, guid: 23f919534043b5042960c7c70259fcab, type: 2}
   - {fileID: 11400000, guid: b481a979e6e197e4891aba00e96f2122, type: 2}
   - {fileID: 11400000, guid: 6331b1bd19936b541914039037fc8717, type: 2}
   - {fileID: 11400000, guid: 6b089f9e10064a849820c9f032c0413b, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7072804673756069960
+      type: {class: Grenadier, ns: , asm: Assembly-CSharp}
+      data: 
