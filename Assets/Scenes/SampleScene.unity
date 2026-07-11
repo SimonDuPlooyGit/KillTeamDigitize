@@ -321,8 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToolTipPanel
   tooltips:
-  - {fileID: 7595709770829529204, guid: 7fe36810cefd88440913ee6e6923bcee, type: 3}
-  - {fileID: 3458250259632976742, guid: 6818f4905fda3184a81a488b4b30f7ce, type: 3}
+  - {fileID: 213453336916835953, guid: f8e49012b5a553448a46867549413937, type: 3}
   panelContainer: {fileID: 652041722}
 --- !u!1 &306579369
 GameObject:
@@ -3102,7 +3101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToolTipPanel
   tooltips:
-  - {fileID: 7595709770829529204, guid: 7fe36810cefd88440913ee6e6923bcee, type: 3}
+  - {fileID: 4911690611167337905, guid: 83f6577831757554db5f0a312cc97510, type: 3}
   panelContainer: {fileID: 652041722}
 --- !u!1 &1652257065
 GameObject:
