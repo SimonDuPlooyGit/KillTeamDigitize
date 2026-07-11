@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 298622935}
   - component: {fileID: 298622934}
   - component: {fileID: 298622933}
+  - component: {fileID: 298622936}
   m_Layer: 5
   m_Name: DashButton
   m_TagString: Untagged
@@ -307,6 +308,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 298622931}
   m_CullTransparentMesh: 1
+--- !u!114 &298622936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298622931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e23c13fb3da8784186b633a9a5af8fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolTipPanel
+  tooltips:
+  - {fileID: 7595709770829529204, guid: 7fe36810cefd88440913ee6e6923bcee, type: 3}
+  - {fileID: 3458250259632976742, guid: 6818f4905fda3184a81a488b4b30f7ce, type: 3}
+  panelContainer: {fileID: 652041722}
 --- !u!1 &306579369
 GameObject:
   m_ObjectHideFlags: 0
@@ -1394,6 +1411,68 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &652041722
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 652041723}
+  - component: {fileID: 652041724}
+  m_Layer: 5
+  m_Name: TooltipHolderActions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &652041723
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652041722}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747061788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -542, y: 224}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &652041724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652041722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 10
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &746369881
 GameObject:
   m_ObjectHideFlags: 0
@@ -1554,6 +1633,7 @@ RectTransform:
   m_Children:
   - {fileID: 1652257066}
   - {fileID: 1857899019}
+  - {fileID: 652041723}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2887,6 +2967,7 @@ GameObject:
   - component: {fileID: 1594617505}
   - component: {fileID: 1594617504}
   - component: {fileID: 1594617506}
+  - component: {fileID: 1594617507}
   m_Layer: 5
   m_Name: MoveButton
   m_TagString: Untagged
@@ -3008,6 +3089,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1594617507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1594617502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e23c13fb3da8784186b633a9a5af8fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolTipPanel
+  tooltips:
+  - {fileID: 7595709770829529204, guid: 7fe36810cefd88440913ee6e6923bcee, type: 3}
+  panelContainer: {fileID: 652041722}
 --- !u!1 &1652257065
 GameObject:
   m_ObjectHideFlags: 0
@@ -3843,5 +3939,5 @@ SceneRoots:
   - {fileID: 1921963952}
   - {fileID: 747061788}
   - {fileID: 1254131056}
-  - {fileID: 150535809}
   - {fileID: 1700968725}
+  - {fileID: 150535809}
