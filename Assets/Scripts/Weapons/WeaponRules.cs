@@ -68,9 +68,9 @@ public class WeaponRules
     [System.Serializable]
     public class Balanced : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterRoll;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Reroll one attack dice
         }
@@ -79,11 +79,11 @@ public class WeaponRules
     [System.Serializable]
     public class Range : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
         public int range;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Only enemy units within x range are valid targets
         }
@@ -92,11 +92,11 @@ public class WeaponRules
     [System.Serializable]
     public class Piercing : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
         public int piercingX;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Defender collects x less defense dice
         }
@@ -105,9 +105,9 @@ public class WeaponRules
     [System.Serializable]
     public class Hot : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
+        public AttackTimings Step => AttackTimings.AfterAttackEvaluation;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Roll D6 after attack
         }
@@ -116,11 +116,11 @@ public class WeaponRules
     [System.Serializable]
     public class Lethal : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterRoll;
 
         public int lethalX;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Successful dice rolls > x are crits
         }
@@ -129,9 +129,9 @@ public class WeaponRules
     [System.Serializable]
     public class Brutal : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AttackEvaluation;
+        public AttackTimings Step => AttackTimings.AttackEvaluation;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Enemy unit can only block with critical successes
         }
@@ -140,9 +140,9 @@ public class WeaponRules
     [System.Serializable]
     public class Saturate : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Defender cannot retain cover saves
         }
@@ -151,11 +151,11 @@ public class WeaponRules
     [System.Serializable]
     public class Torrent : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
+        public AttackTimings Step => AttackTimings.AfterAttackEvaluation;
 
         public int torrentX;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Attack multiple targets within x of initial if they are valid targets
         }
@@ -164,11 +164,11 @@ public class WeaponRules
     [System.Serializable]
     public class PiercingCrit : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterRoll;
 
         public int pCritX;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Same as piercing but only on retained crits
         }
@@ -178,9 +178,9 @@ public class WeaponRules
     [System.Serializable]
     public class Melee : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Check that fight conditions are met to use this weapon
         }
@@ -189,9 +189,9 @@ public class WeaponRules
     [System.Serializable]
     public class Shock : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AttackEvaluation;
+        public AttackTimings Step => AttackTimings.AttackEvaluation;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //First time you strike with a crit in each sequence discard an opponent's unresolved normal success or crits if none
         }
@@ -200,9 +200,9 @@ public class WeaponRules
     [System.Serializable]
     public class Stun : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterRoll;
 
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //If you retain any critical successes, subtract 1APL from enemy unit until its next activation
         }
@@ -211,11 +211,11 @@ public class WeaponRules
     [System.Serializable]
     public class Heavy : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
         public string condition;
         
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Cannot use attack if the unit has moved at all, other than condition movement such as dash
         }
@@ -224,9 +224,9 @@ public class WeaponRules
     [System.Serializable]
     public class Silent : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
         
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Unit can perform shoot while it is concealed
         }
@@ -235,11 +235,11 @@ public class WeaponRules
     [System.Serializable]
     public class Seek : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.PreRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
         public string coverType;
         
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //When selecting valid targets, enemies cannot use (cover type) for cover
         }
@@ -248,11 +248,11 @@ public class WeaponRules
     [System.Serializable]
     public class Blast : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
+        public AttackTimings Step => AttackTimings.AfterAttackEvaluation;
 
         public int blastX;
         
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Attack another visible unit with another roll within x inches of initial target
         }
@@ -261,11 +261,11 @@ public class WeaponRules
     [System.Serializable]
     public class Devastating : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterAttackEvaluation;
+        public AttackTimings Step => AttackTimings.AfterAttackEvaluation;
 
         public int devastatingX;
         
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Retained critical hits deal x damage to units immediately, they are not discarded
         }
@@ -274,9 +274,9 @@ public class WeaponRules
     [System.Serializable]
     public class Ceaseless : IWeaponRule
     {
-        public GameLoopTiming Step => GameLoopTiming.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterRoll;
         
-        public void Execute(AttackPackage context)
+        public void Execute(InformationPackage context)
         {
             //Reroll duplicate values
         }

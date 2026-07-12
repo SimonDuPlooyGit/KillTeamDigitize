@@ -8,6 +8,7 @@ public class GMprototype : MonoBehaviour
     [SerializeField]
     private MenuPanel menu;
     
+    
 
     private void Awake()
     {
