@@ -1,19 +1,13 @@
-using System;
 using System.Collections.Generic;
-using System.Numerics;
-using UnityEditor.Build.Content;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
-using Vector3 = UnityEngine.Vector3;
 
 public class PrototypeUnit : MonoBehaviour
 {
-    private InputActions input;
     private NavMeshAgent agentUnit;
     private NavMeshAgent agentGhost;
     public float movementStat;
-    private float meterDashLimit = 0.762f;
     private float meterMovement;
     private float pathDistance;
     public NavMeshPath path;
@@ -29,10 +23,21 @@ public class PrototypeUnit : MonoBehaviour
         meterMovement = (movementStat/39.37f) * 10; //Changing the inches to meters and then applying 10x Scale.
         agentUnit = GetComponent<NavMeshAgent>();
         agentGhost = unitGhost.GetComponent<NavMeshAgent>();
-        input = new InputActions();
-        AssignInputs();
         path = new NavMeshPath();
         unitGhost.SetActive(false);
+    }
+
+    public void UpdatePathDrawing()
+    {
+        if (unitGhost.activeSelf &&
+            !pathDrawn &&
+            !agentGhost.pathPending &&
+            agentGhost.velocity.sqrMagnitude < 0.01f &&
+            agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
+            selected)
+        {
+            DrawPath(limitedPoints.ToArray());
+        }
     }
 
     private void Update()
@@ -48,12 +53,7 @@ public class PrototypeUnit : MonoBehaviour
          }
     }
 
-    void AssignInputs()
-    {
-        input.Controls.Move.performed += ctx => ClickToPathfind();
-    }
-
-    private void ClickToPathfind()
+    public void ClickToPathfind()
     {
         limitedPoints.Clear();
         pathDistance = 0f;
@@ -91,7 +91,7 @@ public class PrototypeUnit : MonoBehaviour
 
     private void DrawPath(Vector3[] points)
     {
-        if (pathDrawn == false)
+        if (!pathDrawn)
         {
             lineRenderer.positionCount = points.Length;
             lineRenderer.SetPositions(points);
@@ -139,17 +139,6 @@ public class PrototypeUnit : MonoBehaviour
         {
             Reset();
         }
-    }
-    
-
-    private void OnEnable()
-    {
-        input.Enable();
-    }
-
-    private void OnDisable()
-    {
-        input.Disable();
     }
 
     public void Reset()
