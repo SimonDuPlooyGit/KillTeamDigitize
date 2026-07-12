@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         //Initialize states
         var unitActivationState = new UnitActivationState(sharedContext, input, menu);
         var actionSelectionState = new ActionSelectionState(sharedContext);
-        var movementState = new MovementState(sharedContext, input);
+        movementState = new MovementState(sharedContext, input);
         
         //Define transitions
         AddT(unitActivationState, actionSelectionState,
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         stateMachine.SetState(unitActivationState);
     }
     
-    void AddT(IState from, IState to, IPredicate condition) => stateMachine.AddTransition(to, from, condition);
+    void AddT(IState from, IState to, IPredicate condition) => stateMachine.AddTransition(from, to, condition);
 
     void AnyT(IState to, IPredicate condition) => stateMachine.AddAnyTransition(to, condition);
 
@@ -42,6 +42,11 @@ public class GameManager : MonoBehaviour
     }
 
     public void OnMoveActionButtonPressed()
+    {
+        sharedContext.isActionSelectionRequested = false;
+    }
+    
+    public void OnConfirmMovementButtonPressed()
     {
         if (movementState != null)
         {

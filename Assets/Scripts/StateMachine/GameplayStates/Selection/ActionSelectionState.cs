@@ -12,7 +12,7 @@ public class ActionSelectionState : BaseState
 
     public override void Update()
     {
-        throw new System.NotImplementedException();
+        //no operation
     }
 
     public override void OnExit()
