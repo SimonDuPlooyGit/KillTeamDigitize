@@ -24,4 +24,9 @@ public class WeaponSelectState : BaseState
     {
         Debug.Log("WeaponSelectState exited");
     }
+
+    public void PopulateWeaponPanel()
+    {
+        //_menu.shootMenu.addWeaponPanel();
+    }
 }

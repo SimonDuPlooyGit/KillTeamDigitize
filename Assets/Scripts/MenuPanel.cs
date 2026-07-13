@@ -3,21 +3,14 @@ using UnityEngine;
 public class MenuPanel : MonoBehaviour
 {
     [SerializeField]
-    private GameObject actionMenu;
+    public GameObject actionMenu;
     [SerializeField]
-    private GameObject shootMenu;
+    public GameObject shootMenu;
     void Start()
     {
         actionMenu.transform.localScale = Vector3.zero;
         shootMenu.transform.localScale = Vector3.zero;
     }
-
-    void Update()
-    {
-        
-    }
-
-
 
     //Sets the scale of the menu to one if its currently zero
     public void OpenAction()

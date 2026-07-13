@@ -297,6 +297,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1921963951}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: onShootingButtonPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &218068938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3428,6 +3440,7 @@ GameObject:
   - component: {fileID: 1525158458}
   - component: {fileID: 1525158460}
   - component: {fileID: 1525158459}
+  - component: {fileID: 1525158461}
   m_Layer: 5
   m_Name: ShootMenu
   m_TagString: Untagged
@@ -3492,6 +3505,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1525158457}
   m_CullTransparentMesh: 1
+--- !u!114 &1525158461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1525158457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df917bddc6366ef4d8d8cc881632fdcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  weapHolder: {fileID: 1573381766}
+  weapPanel: {fileID: 3231729068677275463, guid: c9a439af7fb588c49882332ab9987f09, type: 3}
 --- !u!1 &1573381766
 GameObject:
   m_ObjectHideFlags: 0
@@ -4470,6 +4497,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1746460031477156975, guid: 65c0c0dd6a9327445abaed6fc69b34aa, type: 3}
+      propertyPath: operativeData
+      value: 
+      objectReference: {fileID: 11400000, guid: 4686860a63079e74e999a1e87c705c6b, type: 2}
     - target: {fileID: 5684875758840081513, guid: 65c0c0dd6a9327445abaed6fc69b34aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.805
