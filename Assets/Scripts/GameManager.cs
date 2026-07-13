@@ -57,6 +57,11 @@ public class GameManager : MonoBehaviour
             movementState.ConfirmAndExecuteMovement();
         }
     }
+
+    public void onShootingButtonPressed()
+    {
+        sharedContext.isShootingRequested = true;
+    }
     
     private void OnEnable() => input.Enable();
     private void OnDisable() => input.Disable();
