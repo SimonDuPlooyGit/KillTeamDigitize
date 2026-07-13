@@ -11,7 +11,7 @@ public abstract class BaseState : IState
 
     protected BaseState()
     {
-        throw new System.NotImplementedException();
+        //no operation
     }
 
     public abstract void OnEnter();
