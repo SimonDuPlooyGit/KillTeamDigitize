@@ -40,6 +40,7 @@ public class UnitActivationState : BaseState
             {
                 Context.currentlySelectedOperative = hit.collider.gameObject;
                 Context.activePrototypeUnit = Context.currentlySelectedOperative.GetComponent<PrototypeUnit>();
+                Context.activatedUnit = Context.activePrototypeUnit.operativeData;
                 Context.activePrototypeUnit.selected = true;
                 
                 _menu.OpenAction();

@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 7689044453298176545}
   - component: {fileID: 8776417610294766931}
   - component: {fileID: 7145564236464043294}
+  - component: {fileID: 3090575439073201304}
   m_Layer: 5
   m_Name: WeaponPanelTest3
   m_TagString: Untagged
@@ -217,6 +218,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3090575439073201304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916494783393936001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef74989e73b397c408b8f07a5bc64bd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  name: {fileID: 331712774204633841}
+  atk: {fileID: 4671356056962135163}
+  hit: {fileID: 3719472486661757946}
+  dmg: {fileID: 5034015582234667485}
+  wr: {fileID: 3482826039971458201}
 --- !u!1 &5701950917300597220
 GameObject:
   m_ObjectHideFlags: 0

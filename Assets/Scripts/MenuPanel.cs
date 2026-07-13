@@ -4,23 +4,19 @@ public class MenuPanel : MonoBehaviour
 {
     [SerializeField]
     private GameObject actionMenu;
-    [SerializeField]
-    private GameObject shootMenu;
+    [SerializeField] public GameObject shootMenuHolder;
     [SerializeField]
     private GameObject tooltipHolder;
+
+    public ShootMenu shootMenuActualScript;
+    
     void Start()
     {
+        shootMenuActualScript = shootMenuHolder.GetComponentInChildren<ShootMenu>();
         actionMenu.transform.localScale = Vector3.zero;
-        shootMenu.transform.localScale = Vector3.zero;
+        shootMenuHolder.transform.localScale = Vector3.zero;
     }
-
-    void Update()
-    {
-        
-    }
-
-
-
+    
     //Sets the scale of the menu to one if its currently zero
     public void OpenAction()
     {
@@ -47,7 +43,7 @@ public class MenuPanel : MonoBehaviour
             menu.transform.localScale = Vector3.one;
         }
 
-        if(menu == shootMenu)
+        if(menu == shootMenuHolder)
         {
             Vector3 newPosition = new Vector3(-75f,470f,0f);
             tooltipHolder.transform.localPosition = newPosition;
@@ -62,7 +58,7 @@ public class MenuPanel : MonoBehaviour
             menu.transform.localScale = Vector3.zero;
         }
 
-        if (menu == shootMenu)
+        if (menu == shootMenuHolder)
         {
             Vector3 newPosition = new Vector3(-542f, 224f, 0f);
             tooltipHolder.transform.localPosition = newPosition;

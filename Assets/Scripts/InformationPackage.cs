@@ -43,7 +43,6 @@ public class InformationPackage
         ignoreCover = false;
         isMovementRequested = false;
         isMovementConfirmed = false;
-
     }
 }
 
