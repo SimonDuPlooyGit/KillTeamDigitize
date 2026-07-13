@@ -4,9 +4,12 @@ public class MenuPanel : MonoBehaviour
 {
     [SerializeField]
     private GameObject actionMenu;
+    [SerializeField]
+    private GameObject shootMenu;
     void Start()
     {
         actionMenu.transform.localScale = Vector3.zero;
+        shootMenu.transform.localScale = Vector3.zero;
     }
 
     void Update()
@@ -32,6 +35,23 @@ public class MenuPanel : MonoBehaviour
         if (actionMenu.transform.localScale == Vector3.one)
         {
             actionMenu.transform.localScale = Vector3.zero;
+        }
+    }
+
+    public void OpenMenu(GameObject menu)
+    {
+        if (menu.transform.localScale == Vector3.zero)
+        {
+            menu.transform.localScale = Vector3.one;
+        }
+
+    }
+
+    public void CloseMenu(GameObject menu)
+    {
+        if (menu.transform.localScale == Vector3.one)
+        {
+            menu.transform.localScale = Vector3.zero;
         }
     }
 }
