@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class PrototypeUnit : MonoBehaviour
 {
+    public OperativeTemplate operativeData;
     private NavMeshAgent agentUnit;
     private NavMeshAgent agentGhost;
     public float movementStat;
@@ -20,6 +21,7 @@ public class PrototypeUnit : MonoBehaviour
 
     private void Awake()
     {
+        movementStat = operativeData.MOVE;
         meterMovement = (movementStat/39.37f) * 10; //Changing the inches to meters and then applying 10x Scale.
         agentUnit = GetComponent<NavMeshAgent>();
         agentGhost = unitGhost.GetComponent<NavMeshAgent>();
