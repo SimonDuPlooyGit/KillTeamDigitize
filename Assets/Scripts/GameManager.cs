@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     private StateMachine stateMachine;
     [SerializeField] private MenuPanel menu;
     
-    //Direct access reference for UI buttons to evoke eveents
+    //Direct access reference for UI buttons to evoke events
     private MovementState movementState;
     
     private void Awake()
@@ -29,8 +29,8 @@ public class GameManager : MonoBehaviour
         AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isMovementRequested && sharedContext.activePrototypeUnit != null));
         AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.activePrototypeUnit != null));
         AddT(movementState, unitActivationState, new FuncPredicate(() => sharedContext.isMovementConfirmed || sharedContext.currentlySelectedOperative == null));
-        AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isWeaponSelected));
-        AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isShootingRequested));
+        AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
+        AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
         
         stateMachine.SetState(unitActivationState);
