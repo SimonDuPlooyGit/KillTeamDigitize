@@ -21,13 +21,17 @@ public class GameManager : MonoBehaviour
         var unitActivationState = new UnitActivationState(sharedContext, input, menu);
         var actionSelectionState = new ActionSelectionState(sharedContext);
         movementState = new MovementState(sharedContext, input);
-        
+        var targetingState = new TargetingState(sharedContext, input);
+        var combatState = new CombatState(sharedContext, input);
+        var weaponSelectState = new WeaponSelectState(sharedContext, input, menu);
+
         //Define transitions
-        AddT(unitActivationState, actionSelectionState,
-            new FuncPredicate(() => sharedContext.isActionSelectionRequested && sharedContext.activePrototypeUnit != null));
-        AddT(actionSelectionState, movementState,
-            new FuncPredicate(() => !sharedContext.isActionSelectionRequested && sharedContext.activePrototypeUnit != null));
+        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isMovementRequested && sharedContext.activePrototypeUnit != null));
+        AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.activePrototypeUnit != null));
         AddT(movementState, unitActivationState, new FuncPredicate(() => sharedContext.isMovementConfirmed || sharedContext.currentlySelectedOperative == null));
+        AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isWeaponSelected));
+        AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isShootingRequested));
+        AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
         
         stateMachine.SetState(unitActivationState);
     }
@@ -43,7 +47,7 @@ public class GameManager : MonoBehaviour
 
     public void OnMoveActionButtonPressed()
     {
-        sharedContext.isActionSelectionRequested = false;
+        sharedContext.isMovementRequested = false;
     }
     
     public void OnConfirmMovementButtonPressed()

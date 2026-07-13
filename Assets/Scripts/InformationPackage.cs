@@ -9,7 +9,7 @@ public class InformationPackage
     
     //Data for rules
     public OperativeTemplate activatedUnit;
-    public OperativeTemplate targetUnit;
+    public GameObject targetUnit;
     public WeaponTemplate weapon;
     
     public List<int> attackRolls = new();
@@ -22,9 +22,12 @@ public class InformationPackage
     public bool ignoreCover;
     
     //Flags for state completion
-    public bool isActionSelectionRequested;
+    public bool isMovementRequested;
     public bool isMovementConfirmed;
-    
+    public bool isShootingRequested;
+    public bool isShootingConfirmed;
+    public bool isWeaponSelected;
+
     public void Reset()
     {
         currentlySelectedOperative = null;
@@ -38,7 +41,7 @@ public class InformationPackage
         retainedCrits = 0;
         canReroll = false;
         ignoreCover = false;
-        isActionSelectionRequested = false;
+        isMovementRequested = false;
         isMovementConfirmed = false;
 
     }

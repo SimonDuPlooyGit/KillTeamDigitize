@@ -2,8 +2,14 @@ using UnityEngine;
 
 public class WeaponSelectState : BaseState
 {
-    public WeaponSelectState(InformationPackage context) : base(context) { }
-    
+    private readonly InputActions _input;
+    private readonly MenuPanel _menu;
+
+    public WeaponSelectState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
+    {
+        _input = input;
+        _menu = menu;
+    }
     public override void OnEnter()
     {
         Debug.Log("WeaponSelectState entered");
@@ -11,7 +17,7 @@ public class WeaponSelectState : BaseState
 
     public override void Update()
     {
-        throw new System.NotImplementedException();
+        //No operation
     }
 
     public override void OnExit()

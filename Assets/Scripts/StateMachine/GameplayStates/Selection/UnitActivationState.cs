@@ -43,7 +43,7 @@ public class UnitActivationState : BaseState
                 Context.activePrototypeUnit.selected = true;
                 
                 _menu.OpenAction();
-                Context.isActionSelectionRequested = true; 
+                Context.isMovementRequested = true; 
             }
         }
     }
