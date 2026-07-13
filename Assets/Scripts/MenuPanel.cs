@@ -3,14 +3,23 @@ using UnityEngine;
 public class MenuPanel : MonoBehaviour
 {
     [SerializeField]
-    public GameObject actionMenu;
+    private GameObject actionMenu;
     [SerializeField]
-    public GameObject shootMenu;
+    private GameObject shootMenu;
+    [SerializeField]
+    private GameObject tooltipHolder;
     void Start()
     {
         actionMenu.transform.localScale = Vector3.zero;
         shootMenu.transform.localScale = Vector3.zero;
     }
+
+    void Update()
+    {
+        
+    }
+
+
 
     //Sets the scale of the menu to one if its currently zero
     public void OpenAction()
@@ -38,6 +47,12 @@ public class MenuPanel : MonoBehaviour
             menu.transform.localScale = Vector3.one;
         }
 
+        if(menu == shootMenu)
+        {
+            Vector3 newPosition = new Vector3(-75f,470f,0f);
+            tooltipHolder.transform.localPosition = newPosition;
+        }
+
     }
 
     public void CloseMenu(GameObject menu)
@@ -46,5 +61,12 @@ public class MenuPanel : MonoBehaviour
         {
             menu.transform.localScale = Vector3.zero;
         }
+
+        if (menu == shootMenu)
+        {
+            Vector3 newPosition = new Vector3(-542f, 224f, 0f);
+            tooltipHolder.transform.localPosition = newPosition;
+        }
     }
+
 }
