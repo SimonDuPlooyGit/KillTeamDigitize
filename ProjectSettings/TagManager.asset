@@ -6,6 +6,7 @@ TagManager:
   tags:
   - AllyUnit
   - UIElement
+  - RuleContainer
   layers:
   - Default
   - TransparentFX

@@ -9,9 +9,13 @@ public class ShootMenu : MonoBehaviour
 
     public void ClearWeapons()
     {
+        Transform shootHeader = weapHolder.transform.Find("ShootMenu");
         foreach (Transform child in weapHolder.transform)
         {
-            Destroy(child.gameObject);
+            if (child != shootHeader)
+            {
+                Destroy(child.gameObject);
+            }
         }
     }
 

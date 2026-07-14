@@ -45,7 +45,7 @@ public class MenuPanel : MonoBehaviour
 
         if(menu == shootMenuHolder)
         {
-            Vector3 newPosition = new Vector3(-75f,470f,0f);
+            Vector3 newPosition = new Vector3(-75f,450f,0f);
             tooltipHolder.transform.localPosition = newPosition;
         }
 
@@ -60,7 +60,7 @@ public class MenuPanel : MonoBehaviour
 
         if (menu == shootMenuHolder)
         {
-            Vector3 newPosition = new Vector3(-542f, 224f, 0f);
+            Vector3 newPosition = new Vector3(-542f, 200f, 0f);
             tooltipHolder.transform.localPosition = newPosition;
         }
     }
