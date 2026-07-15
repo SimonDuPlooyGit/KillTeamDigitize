@@ -1,20 +1,24 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class TargetingState : BaseState
 {
     private readonly InputActions _input;
-    private readonly MenuPanel _menu;
+    private MenuPanel _menu;
+    private GameObject _shootMenu;
     
-    public TargetingState(InformationPackage context, InputActions input) : base(context)
+    public TargetingState(InformationPackage context, InputActions input, MenuPanel menu, GameObject shootMenu) : base(context)
     {
         _input = input;
+        _menu = menu;
+        _shootMenu = shootMenu;
     }
     
     public override void OnEnter()
     {
         Debug.Log("Targeting State Entered");
-        //_menu.CloseMenu(); What is the parameter supposed to be here?
+        _menu.CloseMenu(_shootMenu);
         //Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;
         //_input.Controls.Deselect.performed += OnDeselectPerformed;
