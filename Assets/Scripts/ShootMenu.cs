@@ -1,6 +1,8 @@
+using System;
 using Unity.VisualScripting;
 using UnityEditor.Timeline;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ShootMenu : MonoBehaviour
 {
@@ -19,21 +21,11 @@ public class ShootMenu : MonoBehaviour
         }
     }
 
-    public void AddWeaponPanel(WeaponTemplate weapon)
+    public void AddWeaponPanel(WeaponTemplate weapon, Action<WeaponTemplate> onWeaponSelected)
     {
-        GameObject newObj = Instantiate(weapPanel, weapHolder.transform);
-        WeaponPanel panel = newObj.GetComponent<WeaponPanel>();
-
-        panel.name.text = weapon.name;
-        panel.atk.text = weapon.ATK.ToString();
-        panel.hit.text = weapon.HIT.ToString() + "+";
-        panel.dmg.text = $"{weapon.DMGnorm}/{weapon.DMGcrit}";
+        GameObject panelObj = Instantiate(weapPanel, weapHolder.transform);
+        WeaponPanel panel = panelObj.GetComponent<WeaponPanel>();
         
-        string rulesText = "";
-        foreach(var rule in weapon.rules)
-        {
-            rulesText += rule.GetType().Name + " ";
-        }
-        panel.wr.text = rulesText;
+        panel.Setup(weapon, onWeaponSelected);
     }
 }

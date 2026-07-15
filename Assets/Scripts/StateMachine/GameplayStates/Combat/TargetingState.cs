@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class TargetingState : BaseState
 {
     private readonly InputActions _input;
+    private readonly MenuPanel _menu;
     
     public TargetingState(InformationPackage context, InputActions input) : base(context)
     {
@@ -13,6 +14,10 @@ public class TargetingState : BaseState
     public override void OnEnter()
     {
         Debug.Log("Targeting State Entered");
+        //_menu.CloseMenu(); What is the parameter supposed to be here?
+        //Context.Reset();
+        _input.Controls.Select.performed += OnSelectPerformed;
+        //_input.Controls.Deselect.performed += OnDeselectPerformed;
     }
 
     public override void Update()
@@ -23,6 +28,8 @@ public class TargetingState : BaseState
     public override void OnExit()
     {
         Debug.Log("Targeting State Exited");
+        _input.Controls.Select.performed -= OnSelectPerformed;
+        //_input.Controls.Deselect.performed -= OnDeselectPerformed;
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx)
@@ -32,7 +39,9 @@ public class TargetingState : BaseState
         {
             if (hit.collider.gameObject.CompareTag("EnemyUnit"))
             {
-                Context.targetUnit = hit.collider.gameObject;
+                Context.currentlySelectedTarget = hit.collider.gameObject;
+                Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<PrototypeUnit>();
+                Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
                 Debug.Log("Enemy targeted");
             }
         }

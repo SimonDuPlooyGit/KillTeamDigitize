@@ -38,10 +38,10 @@ public class UnitActivationState : BaseState
         {
             if (hit.collider.gameObject.CompareTag("AllyUnit"))
             {
-                Context.currentlySelectedOperative = hit.collider.gameObject;
-                Context.activePrototypeUnit = Context.currentlySelectedOperative.GetComponent<PrototypeUnit>();
-                Context.activatedUnit = Context.activePrototypeUnit.operativeData;
-                Context.activePrototypeUnit.selected = true;
+                Context.currentlySelectedUnit = hit.collider.gameObject;
+                Context.currentlySelectedUnitScript = Context.currentlySelectedUnit.GetComponent<PrototypeUnit>();
+                Context.activatedUnitSO = Context.currentlySelectedUnitScript.operativeData;
+                Context.currentlySelectedUnitScript.selected = true;
                 
                 _menu.OpenAction();
                 Context.isMovementRequested = true; 
@@ -51,10 +51,10 @@ public class UnitActivationState : BaseState
     
     private void OnDeselectPerformed(InputAction.CallbackContext ctx)
     {
-        if (Context.activePrototypeUnit != null)
+        if (Context.currentlySelectedUnitScript != null)
         {
-            Context.activePrototypeUnit.Reset();
-            Context.activePrototypeUnit.selected = false;
+            Context.currentlySelectedUnitScript.Reset();
+            Context.currentlySelectedUnitScript.selected = false;
         }
         Context.Reset();
         _menu.CloseAction();

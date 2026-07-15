@@ -8,7 +8,9 @@ public class CombatManager : MonoBehaviour
     GameObject dicePrefab;
     [SerializeField]
     GameObject diceHolder;
-    private List<CombatRoll> activeDice = new List<CombatRoll>(); //List of rolled dice to track roll results
+    public List<CombatRoll> activeDice = new List<CombatRoll>(); //List of rolled dice to track roll results
+
+    public int targetDefense;
     public List<CombatRoll> GetActiveDice() //use combatManager.GetActiveDice() to HOPEFULLY access the list in other scripts. Contact me(Joss) in case of emergency
     {
         return activeDice;
@@ -36,17 +38,15 @@ public class CombatManager : MonoBehaviour
                 activeDice.Add(rollScript);
             }
         }
-
-        HitTester();
-       
+        HitTester(targetDefense);
     }
 
-    public void HitTester() //test that says hit when a die is above or equal to 3
+    public void HitTester(int defense) //test that says hit when a die is above or equal to 3
     {
         foreach(CombatRoll die in activeDice)
         {
             int roll = die.rollResult;
-            if(roll >= 3 )
+            if(roll >= defense )
             {
                 Debug.Log("Hit");
             }

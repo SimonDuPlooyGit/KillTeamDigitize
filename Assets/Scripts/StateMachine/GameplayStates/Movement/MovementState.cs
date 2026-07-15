@@ -18,9 +18,9 @@ public class MovementState : BaseState
 
     public override void Update()
     {
-        if (Context.activePrototypeUnit != null)
+        if (Context.currentlySelectedUnitScript != null)
         {
-            Context.activePrototypeUnit.UpdatePathDrawing();
+            Context.currentlySelectedUnitScript.UpdatePathDrawing();
         }
     }
 
@@ -32,17 +32,17 @@ public class MovementState : BaseState
 
     public void OnMoveInputPerformed(InputAction.CallbackContext context)
     {
-        if (Context.activePrototypeUnit != null)
+        if (Context.currentlySelectedUnitScript != null)
         {
-            Context.activePrototypeUnit.ClickToPathfind();
+            Context.currentlySelectedUnitScript.ClickToPathfind();
         }
     }
 
     public void ConfirmAndExecuteMovement()
     {
-        if (Context.activePrototypeUnit != null)
+        if (Context.currentlySelectedUnitScript != null)
         {
-            Context.activePrototypeUnit.moveUnitToGhost();
+            Context.currentlySelectedUnitScript.moveUnitToGhost();
             Context.isMovementConfirmed = true;
         }
     }

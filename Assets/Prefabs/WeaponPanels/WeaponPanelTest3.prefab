@@ -231,6 +231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef74989e73b397c408b8f07a5bc64bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  selectButton: {fileID: 2797065998382095231}
   name: {fileID: 331712774204633841}
   atk: {fileID: 4671356056962135163}
   hit: {fileID: 3719472486661757946}

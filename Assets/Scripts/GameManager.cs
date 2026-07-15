@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     private InformationPackage sharedContext;
     private StateMachine stateMachine;
     [SerializeField] private MenuPanel menu;
+    [SerializeField] private CombatManager combatManager;
     
     //Direct access reference for UI buttons to evoke events
     private MovementState movementState;
@@ -22,16 +23,16 @@ public class GameManager : MonoBehaviour
         var actionSelectionState = new ActionSelectionState(sharedContext);
         movementState = new MovementState(sharedContext, input);
         var targetingState = new TargetingState(sharedContext, input);
-        var combatState = new CombatState(sharedContext, input);
+        var combatState = new CombatState(sharedContext, input, combatManager);
         var weaponSelectState = new WeaponSelectState(sharedContext, input, menu);
 
         //Define transitions
-        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isMovementRequested && sharedContext.activePrototypeUnit != null));
-        AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.activePrototypeUnit != null));
-        AddT(movementState, unitActivationState, new FuncPredicate(() => sharedContext.isMovementConfirmed || sharedContext.currentlySelectedOperative == null));
+        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript != null));
+        AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript!= null));
+        AddT(movementState, unitActivationState, new FuncPredicate(() => sharedContext.isMovementConfirmed || sharedContext.currentlySelectedUnitScript == null));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
-        AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
+        AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.currentlySelectedTarget != null));
         
         stateMachine.SetState(unitActivationState);
     }

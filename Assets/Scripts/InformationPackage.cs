@@ -4,12 +4,14 @@ using UnityEngine;
 public class InformationPackage
 {
     //Game Object references
-    public GameObject currentlySelectedOperative;
-    public PrototypeUnit activePrototypeUnit;
+    public GameObject currentlySelectedUnit;
+    public PrototypeUnit currentlySelectedUnitScript;
+    public GameObject currentlySelectedTarget;
+    public PrototypeUnit currentlySelectedTargetScript;
     
     //Data for rules
-    public OperativeTemplate activatedUnit;
-    public GameObject targetUnit;
+    public OperativeTemplate activatedUnitSO;
+    public OperativeTemplate targetUnitSO;
     public WeaponTemplate weapon;
     
     public List<int> attackRolls = new();
@@ -30,10 +32,10 @@ public class InformationPackage
 
     public void Reset()
     {
-        currentlySelectedOperative = null;
-        activePrototypeUnit = null;
-        activatedUnit = null;
-        targetUnit = null;
+        currentlySelectedUnit = null;
+        currentlySelectedUnitScript = null;
+        activatedUnitSO = null;
+        targetUnitSO = null;
         weapon = null;
         attackRolls.Clear();
         defenseRolls.Clear();
