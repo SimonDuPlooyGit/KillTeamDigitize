@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 public class WeaponRules
 {
     //ALPHABETICAL LIST OF WEAPON RULES!

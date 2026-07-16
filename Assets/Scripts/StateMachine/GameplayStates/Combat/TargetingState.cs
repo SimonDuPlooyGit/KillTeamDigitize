@@ -1,12 +1,14 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class TargetingState : BaseState
 {
-    private readonly InputActions _input;
-    private MenuPanel _menu;
-    private GameObject _shootMenu;
+    //Inherits from BaseState
+    //State that handles targeting an enemy unit after a weapon has been selected
+    
+    private readonly InputActions _input; //Needs to use the input system from GameManager
+    private MenuPanel _menu; //Needs access to the menu from GameManager
+    private GameObject _shootMenu; //Needs access to the shootMenu from the GameManager
     
     public TargetingState(InformationPackage context, InputActions input, MenuPanel menu, GameObject shootMenu) : base(context)
     {
@@ -19,7 +21,6 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Entered");
         _menu.CloseMenu(_shootMenu);
-        //Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;
         //_input.Controls.Deselect.performed += OnDeselectPerformed;
     }
@@ -36,7 +37,7 @@ public class TargetingState : BaseState
         //_input.Controls.Deselect.performed -= OnDeselectPerformed;
     }
     
-    private void OnSelectPerformed(InputAction.CallbackContext ctx)
+    private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     {
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
@@ -46,7 +47,7 @@ public class TargetingState : BaseState
                 Context.currentlySelectedTarget = hit.collider.gameObject;
                 Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<PrototypeUnit>();
                 Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
-                Debug.Log("Enemy targeted");
+                Debug.Log("Enemy targeted: " + Context.targetUnitSO.name);
             }
         }
     }

@@ -2,18 +2,19 @@ using UnityEngine;
 
 public class WeaponSelectState : BaseState
 {
-    private readonly InputActions _input;
-    private readonly MenuPanel _menu;
+    //Inherits from BaseState
+    //Weapon selection state that handles player's picking a weapon to shoot or fight with in the weapon menu
+    
+    private readonly MenuPanel _menu; //Needs access to the menu from GameManager
 
     public WeaponSelectState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
     {
-        _input = input;
         _menu = menu;
     }
     public override void OnEnter()
     {
         Debug.Log("WeaponSelectState entered");
-        PopulateWeaponPanel();
+        PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
     }
 
     public override void Update()
@@ -27,21 +28,21 @@ public class WeaponSelectState : BaseState
 
         if (_menu.shootMenuActualScript != null)
         {
-            _menu.shootMenuActualScript.ClearWeapons();
+            _menu.shootMenuActualScript.ClearWeapons(); //We need the weapon menu to be cleared of weapons when this state is exited
         }
     }
 
-    public void PopulateWeaponPanel()
+    public void PopulateWeaponPanel() //Instantiate weapon panel prefabs into the shooting menu with the weapons that this unit has
     {
-        _menu.shootMenuActualScript.ClearWeapons();
+        _menu.shootMenuActualScript.ClearWeapons(); //Clear previous weapons for fresh slate
         
-        if (Context.activatedUnitSO != null && Context.activatedUnitSO.weapons != null)
+        if (Context.activatedUnitSO != null && Context.activatedUnitSO.weapons != null) //Safety null check
         {
-            Debug.Log(Context.activatedUnitSO.weapons.Count.ToString());
-            // Loop through the unit's weapons and tell the UI to create a panel for each
-            foreach (WeaponTemplate weapon in Context.activatedUnitSO.weapons)
+            foreach (WeaponTemplate weapon in Context.activatedUnitSO.weapons) //Loop through the unit's weapons and tell the UI to create a panel for each
             {
                 _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
+                //^ Call AddWeaponPanel on the shootMenu script with the currently iterated weapon as a parameter
+                //Send OnWeaponClicked as a delegate to AddWeaponPanel (Top of a 3 part callback down to WeaponPanel)
             }
         }
         else
@@ -53,11 +54,7 @@ public class WeaponSelectState : BaseState
     private void OnWeaponClicked(WeaponTemplate chosenWeapon)
     {
         Debug.Log($"Selected Weapon: {chosenWeapon.name}");
-        
-        // 1. Record the choice in our shared data packet
-        Context.weapon = chosenWeapon;
-        
-        // 2. Set our state transition flag to true!
-        Context.isWeaponSelected = true;
+        Context.weapon = chosenWeapon; //Set the information package weapon to the current weapon selected
+        Context.isWeaponSelected = true; //State transition flag to true
     }
 }

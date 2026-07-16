@@ -3,9 +3,12 @@ using UnityEngine.InputSystem;
 
 public class MovementState : BaseState
 {
-    private readonly InputActions _input;
+    //Inherits from BaseState
+    //Movement state that handles movement of your units (calls the unit's movement functions)
+    
+    private readonly InputActions _input; //Needs to use the input system from GameManager
 
-    public MovementState(InformationPackage context, InputActions input) : base(context)
+    public MovementState(InformationPackage context, InputActions input) : base(context) //Needs base(context) for sending context to the BaseState constructor first
     {
         _input = input;
     }
@@ -20,7 +23,7 @@ public class MovementState : BaseState
     {
         if (Context.currentlySelectedUnitScript != null)
         {
-            Context.currentlySelectedUnitScript.UpdatePathDrawing();
+            Context.currentlySelectedUnitScript.UpdatePathDrawing(); //If there is a unit script update its pathdrawing
         }
     }
 
@@ -30,7 +33,7 @@ public class MovementState : BaseState
         Debug.Log("MovementState exited");
     }
 
-    public void OnMoveInputPerformed(InputAction.CallbackContext context)
+    public void OnMoveInputPerformed(InputAction.CallbackContext context) //Move the ghost to where you have clicked to move
     {
         if (Context.currentlySelectedUnitScript != null)
         {
@@ -38,7 +41,7 @@ public class MovementState : BaseState
         }
     }
 
-    public void ConfirmAndExecuteMovement()
+    public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to ghost preview
     {
         if (Context.currentlySelectedUnitScript != null)
         {

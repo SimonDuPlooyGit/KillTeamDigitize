@@ -3,17 +3,8 @@ using UnityEngine;
 
 public interface IPredicate
 {
+    //The interface for a predicate function
     bool Evaluate();
-}
-
-public class FuncPredicate : IPredicate
-{
-    readonly Func<bool> func;
-
-    public FuncPredicate(Func<bool> func)
-    {
-        this.func = func;
-    }
-
-    public bool Evaluate() => func.Invoke();
+    //^ Every class implementing IPredicate is guaranteed to have an Evaluate function via "contract"
+    //The classes can decide what logic their Evaluate() will have
 }

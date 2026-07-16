@@ -39,6 +39,6 @@ public class WeaponPanel : MonoBehaviour
 
     private void OnPanelClicked()
     {
-        _onSelectedCallback?.Invoke(_weapon);
+        _onSelectedCallback?.Invoke(_weapon); //Invoke event ? is a null check for if something is subscribed
     }
 }

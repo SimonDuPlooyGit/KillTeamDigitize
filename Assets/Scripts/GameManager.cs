@@ -21,10 +21,10 @@ public class GameManager : MonoBehaviour
         
         //Initialize states
         var unitActivationState = new UnitActivationState(sharedContext, input, menu);
-        var actionSelectionState = new ActionSelectionState(sharedContext);
+        var actionSelectionState = new ActionSelectionState(sharedContext, menu);
         movementState = new MovementState(sharedContext, input);
         var targetingState = new TargetingState(sharedContext, input, menu, shootMenuHolder);
-        var combatState = new CombatState(sharedContext, input, combatManager);
+        var combatState = new CombatState(sharedContext, combatManager);
         var weaponSelectState = new WeaponSelectState(sharedContext, input, menu);
 
         //Define transitions

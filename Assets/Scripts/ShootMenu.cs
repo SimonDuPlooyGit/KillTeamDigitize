@@ -1,8 +1,5 @@
 using System;
-using Unity.VisualScripting;
-using UnityEditor.Timeline;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ShootMenu : MonoBehaviour
 {

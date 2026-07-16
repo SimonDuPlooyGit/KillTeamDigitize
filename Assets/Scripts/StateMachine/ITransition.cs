@@ -2,18 +2,9 @@ using UnityEngine;
 
 public interface ITransition
 {
-    IState To { get; }
-    IPredicate Condition { get; }
-}
-
-public class Transition : ITransition
-{
-    public IState To { get; }
-    public IPredicate Condition { get; }
-
-    public Transition(IState to, IPredicate condition)
-    {
-        To = to;
-        Condition = condition;
-    }
+    //Interface for transitions
+    //Guarantees a class implementing ITransitions has these variables and methods
+    
+    IState To { get; } //Get-only auto property. Classes implementing ITransition have to provide a public way to read this IState variable
+    IPredicate Condition { get; } //Get-only auto property. Classes implementing ITransition have to provide a public way to read this IPredicate variable
 }

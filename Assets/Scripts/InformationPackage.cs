@@ -17,8 +17,10 @@ public class InformationPackage
     public List<int> attackRolls = new();
     public List<int> defenseRolls = new();
     
-    public int retainedSuccesses;
+    public int retainedNormals;
     public int retainedCrits;
+    public int retainedCritDefense;
+    public int retainedNormalDefense;
     
     public bool canReroll;
     public bool ignoreCover;
@@ -39,7 +41,7 @@ public class InformationPackage
         weapon = null;
         attackRolls.Clear();
         defenseRolls.Clear();
-        retainedSuccesses = 0;
+        retainedNormals = 0;
         retainedCrits = 0;
         canReroll = false;
         ignoreCover = false;

@@ -18,6 +18,8 @@ public class PrototypeUnit : MonoBehaviour
     private bool pathDrawn = false;
     List<Vector3> limitedPoints = new List<Vector3>();
     public bool selected = false;
+    public int currentWounds;
+    public bool dead = false;
 
     private void Awake()
     {
@@ -27,6 +29,7 @@ public class PrototypeUnit : MonoBehaviour
         agentGhost = unitGhost.GetComponent<NavMeshAgent>();
         path = new NavMeshPath();
         unitGhost.SetActive(false);
+        currentWounds = operativeData.WOUNDS;
     }
 
     public void UpdatePathDrawing()
@@ -148,5 +151,23 @@ public class PrototypeUnit : MonoBehaviour
         unitGhost.transform.position = transform.position;
         lineRenderer.enabled = false;
         unitGhost.SetActive(false);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentWounds -= damage;
+        Debug.Log($"{gameObject.name} took {damage} damage! Current Health: {currentWounds}");
+
+        if (currentWounds <= 0)
+        {
+            currentWounds = 0;
+            dead = true;
+            HandleDeath();
+        }
+    }
+
+    private void HandleDeath()
+    {
+        Debug.Log($"{gameObject.name} has died!");
     }
 }
