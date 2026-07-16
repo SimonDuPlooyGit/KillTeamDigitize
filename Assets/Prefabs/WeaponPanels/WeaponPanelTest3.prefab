@@ -356,7 +356,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8037001328968389102}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5701950917300597220
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,14 +524,52 @@ MonoBehaviour:
   panelContainer: {fileID: 0}
   weaponRuleText: {fileID: 3482826039971458201}
   ruleDatabase:
-  - keyword: Piercing
-    weaponRule: {fileID: 1428643586941121329, guid: 751839f025f571b4ab3a5e83dec80573, type: 3}
+  - keyword: Accurate
+    weaponRule: {fileID: 6901934271360445897, guid: c0856bd34202f3a4296fbc6390ac823c, type: 3}
+  - keyword: Balanced
+    weaponRule: {fileID: 8377066590639306684, guid: e5a5d00914061734d879bd074cef6b36, type: 3}
+  - keyword: Blast
+    weaponRule: {fileID: 2144322918897252115, guid: d2fcdd16fa4465743bf9f229f6d00862, type: 3}
   - keyword: Brutal
     weaponRule: {fileID: 7717937755335796809, guid: 7c37c73468edc2846b3b373c77c53ff6, type: 3}
-  - keyword: Range
-    weaponRule: {fileID: 4483992166159556313, guid: 52040670883ee6c4188578e9451e41c3, type: 3}
+  - keyword: Ceaseless
+    weaponRule: {fileID: 3711943384092669821, guid: a9d1539b3afa7f1429684699bb53cfbe, type: 3}
+  - keyword: Devastating
+    weaponRule: {fileID: 3337666825231890913, guid: b1f6174dad7133b4cb5bf8b3f804b5ba, type: 3}
+  - keyword: Heavy
+    weaponRule: {fileID: 1036986360371053759, guid: a3b289413e4049f459ef2fb6d75ec35d, type: 3}
+  - keyword: Hot
+    weaponRule: {fileID: 1653655199202624951, guid: 82eb96887f5f20546b399a867fccf413, type: 3}
   - keyword: Lethal
     weaponRule: {fileID: 3952277505123009751, guid: 25c269601b167074cac724f93abc47d0, type: 3}
+  - keyword: Limited
+    weaponRule: {fileID: 8314274299689707224, guid: 5b30377cab43bc046a6336bcada5ffe4, type: 3}
+  - keyword: Piercing
+    weaponRule: {fileID: 1428643586941121329, guid: 751839f025f571b4ab3a5e83dec80573, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Punishing
+    weaponRule: {fileID: 7064165978213625140, guid: 1456ba417cae75d478a9c4f002693cf5, type: 3}
+  - keyword: Range
+    weaponRule: {fileID: 4483992166159556313, guid: 52040670883ee6c4188578e9451e41c3, type: 3}
+  - keyword: Relentless
+    weaponRule: {fileID: 7345162518228802327, guid: 6182e104c4cd2e24cb4f0820d4d4c95a, type: 3}
+  - keyword: Rending
+    weaponRule: {fileID: 214091925676753744, guid: ba1968da8e8b61b49a2babf0975e13d2, type: 3}
+  - keyword: Saturate
+    weaponRule: {fileID: 5230546757151683354, guid: df13efb997543d44a8b2051e54082e41, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Piercing crits
+    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
   isRuleText: 1
 --- !u!1 &6578261781524685780
 GameObject:

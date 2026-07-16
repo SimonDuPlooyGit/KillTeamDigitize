@@ -2747,21 +2747,9 @@ PrefabInstance:
       value: WeaponPanelTest3
       objectReference: {fileID: 0}
     - target: {fileID: 2797065998382095231, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2797065998382095231, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2797065998382095231, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1525158457}
-    - target: {fileID: 2797065998382095231, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 7689044453298176545, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
