@@ -7,46 +7,56 @@ public class CombatManager : MonoBehaviour
     //On the combat manager GameObject
     
     [SerializeField]
-    GameObject dicePrefab; //Holds a dice prefab
+    GameObject allyDicePrefab; //Holds an ally dice prefab
     [SerializeField]
-    GameObject diceHolder; //The horizontal layout group for the prefabs
-    public List<CombatRoll> activeDice = new List<CombatRoll>(); //List of rolled dice to track roll results
+    GameObject enemyDicePrefab; //Holds an enemy dice prefab
+    [SerializeField]
+    GameObject attackDiceHolder; //The horizontal layout group for the attack dice prefabs
+    [SerializeField]
+    GameObject defenseDiceHolder; //The horizontal layout group for the defense dice prefabs
+    public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled dice to track roll results
+    public List<CombatRoll> activeDefenseDice = new List<CombatRoll>();
 
-    public int targetDefense; //The targeted unit's defense value
-    public List<CombatRoll> GetActiveDice() //use combatManager.GetActiveDice() to HOPEFULLY access the list in other scripts. Contact me(Joss) in case of emergency (NOT USING THIS)
+    public void SpawnDice(List<int> preRolledValues, bool isAttack)
     {
-        return activeDice;
-    }
+        GameObject holder = isAttack ? attackDiceHolder : defenseDiceHolder; //Null check for if we have attackDiceHolder or defenceDiceHolder
+        List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice; //Null check for the lists
 
-    public void SpawnDice(int numRolled) //Instantiate the dice prefabs into the holder and roll them and test each dice against the defense value
-    {
-        activeDice.Clear();
-        foreach(Transform child in diceHolder.transform) //iterates through children to clear them
+        // Clear previous visual dice inside this holder
+        foreach (Transform child in holder.transform)
         {
-            GameObject childObj = child.gameObject;
-            Destroy(childObj);
+            Destroy(child.gameObject);
         }
-        for(int i=0; i<numRolled; i++) //rolls a certain number of dice
+        activeList.Clear();
+
+        // Instantiate and initiate rolls
+        for (int i = 0; i < preRolledValues.Count; i++) 
         {
-            GameObject rolledDice = Instantiate(dicePrefab, diceHolder.transform);
-            CombatRoll rollScript = rolledDice.GetComponent<CombatRoll>(); //updates the list with combat roll scripts (the scripts on the dice)
-            if(rollScript != null )
+            GameObject rolledDice = Instantiate(allyDicePrefab, holder.transform);
+            CombatRoll rollScript = rolledDice.GetComponent<CombatRoll>();
+            
+            if (rollScript != null)
             {
-                activeDice.Add(rollScript);
+                activeList.Add(rollScript);
+                rollScript.RollTo(preRolledValues[i]); //Force visual outcome to match math
             }
         }
-        HitTester(targetDefense);
     }
 
-    public void HitTester(int defense) //Testing function to see if a roll is above a specified defence value
+    public void RerollDieVisually(int index, int newResult, bool isAttack)
     {
-        foreach(CombatRoll die in activeDice)
+        List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice;
+        if (index >= 0 && index < activeList.Count)
         {
-            int roll = die.rollResult;
-            if(roll >= defense)
-            {
-                Debug.Log("Hit");
-            }
+            activeList[index].RollTo(newResult);
         }
+    }
+
+    public void ClearAllDice()
+    {
+        activeAttackDice.Clear();
+        activeDefenseDice.Clear();
+        foreach (Transform child in attackDiceHolder.transform) Destroy(child.gameObject);
+        foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
     }
 }

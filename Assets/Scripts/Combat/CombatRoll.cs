@@ -16,28 +16,26 @@ public class CombatRoll : MonoBehaviour
     {
         dicePanel = transform.Find("Dice").gameObject;
         diceAnimator = dicePanel.GetComponent<Animator>();
-        RollDice();
     }
 
-    //Rolls a random number, saves the result to rollResult, and starts the rolling animation
-    public void RollDice()
+    public void RollTo(int finalValue)
     {
-        int randomRoll = Random.Range(1, diceSprites.Length+1);
-        rollResult = randomRoll;
-        StartCoroutine(CycleDice(randomRoll));
-      
+        rollResult = finalValue;
+        StartCoroutine(CycleDice(finalValue));
     }
     
     //rolling animation
-    private IEnumerator CycleDice(int rand)
+    private IEnumerator CycleDice(int result)
     {
         diceAnimator.enabled = true;
         diceAnimator.SetTrigger("Roll");
         yield return new WaitForSeconds(cycleDelay);
         diceAnimator.Play("Idle");
         diceAnimator.enabled = false;
-        dicePanel.GetComponent<Image>().sprite = diceSprites[rand-1];
 
+        if (result >= 1 && result <= diceSprites.Length)
+        {
+            dicePanel.GetComponent<Image>().sprite = diceSprites[result-1];
+        }
     }
-    
 }

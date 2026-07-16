@@ -47,6 +47,9 @@ public class InformationPackage
         ignoreCover = false;
         isMovementRequested = false;
         isMovementConfirmed = false;
+        isShootingRequested = false;
+        isShootingConfirmed = false;
+        isWeaponSelected = false;
     }
 }
 

@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.currentlySelectedTarget != null));
-        
+        AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
         stateMachine.SetState(unitActivationState);
     }
     

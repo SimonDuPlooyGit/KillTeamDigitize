@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,20 +19,58 @@ public class CombatState : BaseState
     public override void OnEnter()
     {
         Debug.Log("CombatState entered");
-        ResolveCombat();
+        _combatManager.StartCoroutine(ResolveCombat());
     }
 
-    private void ResolveCombat()
+    private IEnumerator ResolveCombat()
     {
+        Debug.Log("ResolveCombat");
+        
         //Pre-Roll
         ExecuteRulesInThisStep(AttackTimings.PreRoll);
         
-        //Rolling
+        //Roll Attack Dice
         RollAttackDice();
+        _combatManager.SpawnDice(Context.attackRolls, isAttack: true);
+        yield return new WaitForSeconds(2.5f);
+        
+        //Roll Defense Dice
         RollDefenseDice();
+        _combatManager.SpawnDice(Context.defenseRolls, isAttack: false);
+        yield return new WaitForSeconds(2.5f);
         
         //After-Roll
+        //Keep track of values before rerolls
+        List<int> oldAttackRolls = new List<int>(Context.attackRolls);
+        List<int> oldDefenseRolls = new List<int>(Context.defenseRolls);
         ExecuteRulesInThisStep(AttackTimings.AfterRoll);
+        
+        //Check for rerolls and rigger reroll animations if values have changed
+        bool attackRerolled = false;
+        for (int i = 0; i < Context.attackRolls.Count; i++)
+        {
+            if (Context.attackRolls[i] != oldAttackRolls[i])
+            {
+                _combatManager.RerollDieVisually(i, Context.attackRolls[i], isAttack: true);
+                attackRerolled = true;
+            }
+        }
+
+        bool defenseRerolled = false;
+        for (int i = 0; i < Context.defenseRolls.Count; i++)
+        {
+            if (Context.defenseRolls[i] != oldDefenseRolls[i])
+            {
+                _combatManager.RerollDieVisually(i, Context.defenseRolls[i], isAttack: false);
+                defenseRerolled = true;
+            }
+        }
+
+        // If rules changed rolls, pause the state execution for the reroll animations
+        if (attackRerolled || defenseRerolled)
+        {
+            yield return new WaitForSeconds(2.5f);
+        }
         
         //Attack Evaluation
         ExecuteRulesInThisStep(AttackTimings.AttackEvaluation);
@@ -40,6 +79,10 @@ public class CombatState : BaseState
         //After Attack Evaluation
         ExecuteRulesInThisStep(AttackTimings.AfterAttackEvaluation);
         ApplyFinalDamage();
+        
+        yield return new WaitForSeconds(1.5f);
+        _combatManager.ClearAllDice();
+        Context.isShootingConfirmed = true;
     }
 
     private void RollAttackDice()
@@ -160,12 +203,7 @@ public class CombatState : BaseState
     {
         Debug.Log("CombatState Exited");
     }
-
-    public void EvaluateShootRolls()
-    {
-        _combatManager.targetDefense = Context.targetUnitSO.SAVE;
-        _combatManager.SpawnDice(Context.weapon.ATK);
-    }
+    
 
     private void ExecuteRulesInThisStep(AttackTimings currentStep)
     {
