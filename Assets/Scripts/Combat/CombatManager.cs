@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using UnityEngine;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro; //need this to access the Image component
 
 public class CombatManager : MonoBehaviour
 {
@@ -16,6 +18,10 @@ public class CombatManager : MonoBehaviour
     GameObject defenseDiceHolder; //The horizontal layout group for the defense dice prefabs
     public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled dice to track roll results
     public List<CombatRoll> activeDefenseDice = new List<CombatRoll>();
+    [SerializeField]
+    private Image healthFill;
+    [SerializeField]
+    private float currentHealthTest;
 
     public void SpawnDice(List<int> preRolledValues, bool isAttack)
     {
@@ -58,5 +64,25 @@ public class CombatManager : MonoBehaviour
         activeDefenseDice.Clear();
         foreach (Transform child in attackDiceHolder.transform) Destroy(child.gameObject);
         foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
+    }
+
+    private void Start() //Just testing healthbar stuff in here, remember to delete after the logic is moved
+    {
+        healthFill.fillAmount = currentHealthTest / 14; 
+        healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = currentHealthTest.ToString();
+        if(healthFill.fillAmount <= 0.25f )
+        {
+           
+            healthFill.color = new Color32(245, 32, 0, 255); //red for < 25%
+        }
+        else if(healthFill.fillAmount <= 0.5f)
+        {
+            healthFill.color = new Color32(245, 180, 0, 255); //Orange for < 50%
+        }
+        else
+        {
+            healthFill.color = new Color32(0, 245, 47, 255); //Green otherwise
+        }
+
     }
 }
