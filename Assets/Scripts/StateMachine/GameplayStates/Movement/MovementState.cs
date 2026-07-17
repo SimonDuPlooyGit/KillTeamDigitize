@@ -8,7 +8,7 @@ public class MovementState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
 
-    public MovementState(InformationPackage context, InputActions input) : base(context) //Needs base(context) for sending context to the BaseState constructor first
+    public MovementState(InformationPackage context, InputActions input, MenuPanel menu) : base(context) //Needs base(context) for sending context to the BaseState constructor first
     {
         _input = input;
     }
@@ -17,6 +17,7 @@ public class MovementState : BaseState
     {
         Debug.Log("MovementState entered");
         _input.Controls.Move.performed += OnMoveInputPerformed;
+        //You can activate move button here
     }
 
     public override void Update()
