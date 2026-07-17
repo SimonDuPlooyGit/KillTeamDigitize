@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class MenuPanel : MonoBehaviour
@@ -7,8 +8,8 @@ public class MenuPanel : MonoBehaviour
     [SerializeField] public GameObject shootMenuHolder;
     [SerializeField]
     private GameObject tooltipHolder;
-
     public ShootMenu shootMenuActualScript;
+    public static event Action OnCloseMenu;
     
     void Start()
     {
@@ -45,7 +46,7 @@ public class MenuPanel : MonoBehaviour
 
         if(menu == shootMenuHolder)
         {
-            Vector3 newPosition = new Vector3(-75f,450f,0f);
+            Vector3 newPosition = new Vector3(-75f, 450f, 0f);
             tooltipHolder.transform.localPosition = newPosition;
         }
 
@@ -63,6 +64,8 @@ public class MenuPanel : MonoBehaviour
             Vector3 newPosition = new Vector3(-542f, 200f, 0f);
             tooltipHolder.transform.localPosition = newPosition;
         }
+
+        OnCloseMenu?.Invoke();
     }
 
 }

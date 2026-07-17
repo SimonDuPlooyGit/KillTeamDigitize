@@ -30,6 +30,16 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             panelContainer = GameObject.FindWithTag("RuleContainer");
         }
     }
+
+    private void OnEnable()
+    {
+        MenuPanel.OnCloseMenu += ClearTooltips;
+    }
+
+    private void OnDisable()
+    {
+        MenuPanel.OnCloseMenu -= ClearTooltips;
+    }
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!isRuleText)
