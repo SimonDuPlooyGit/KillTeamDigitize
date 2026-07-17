@@ -118,6 +118,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""1e4ab5c7-5c51-4e5a-8d0b-06dd7c659b06"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -153,6 +162,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Deselect"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e588399b-24ae-4cce-bad0-1e987bfa771c"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -164,6 +184,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Controls_Move = m_Controls.FindAction("Move", throwIfNotFound: true);
         m_Controls_Select = m_Controls.FindAction("Select", throwIfNotFound: true);
         m_Controls_Deselect = m_Controls.FindAction("Deselect", throwIfNotFound: true);
+        m_Controls_Pause = m_Controls.FindAction("Pause", throwIfNotFound: true);
     }
 
     ~@InputActions()
@@ -247,6 +268,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_Move;
     private readonly InputAction m_Controls_Select;
     private readonly InputAction m_Controls_Deselect;
+    private readonly InputAction m_Controls_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "Controls".
     /// </summary>
@@ -270,6 +292,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Controls/Deselect".
         /// </summary>
         public InputAction @Deselect => m_Wrapper.m_Controls_Deselect;
+        /// <summary>
+        /// Provides access to the underlying input action "Controls/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_Controls_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -305,6 +331,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Deselect.started += instance.OnDeselect;
             @Deselect.performed += instance.OnDeselect;
             @Deselect.canceled += instance.OnDeselect;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -325,6 +354,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Deselect.started -= instance.OnDeselect;
             @Deselect.performed -= instance.OnDeselect;
             @Deselect.canceled -= instance.OnDeselect;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -386,5 +418,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDeselect(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
 }

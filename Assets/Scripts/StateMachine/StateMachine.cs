@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class StateMachine
 {
     //The StateMachine class manages different states and transitions
     
     private StateNode current; //The current state, kept as a StateNode class
+    private StateNode previous; //The node that was previous to current
     private Dictionary<Type, StateNode> nodes = new(); //A dictionary of states, key is the State name, value is the StateNode class
     HashSet<ITransition> anyTransitions = new(); //A hashset (to only have unique values and faster lookup) to track global state transitions that can happen whenever
 
+    public IState CurrentState => current?.State; //Make a separate public reference for the current state
+    public int LastTransitionFrame { get; private set; } = -1; //This was necessary because otherwise Same-frame input reflection transitioned us back to pause immediately
+    
     public void Update() //Checks if transitions need to occur every frame
     {
         var transition = GetTransition(); //If there is a transition change the state
@@ -35,7 +40,11 @@ public class StateMachine
         
         previousState?.OnExit();
         nextState?.OnEnter();
+
+        previous = current;
         current = nodes[state.GetType()];
+
+        LastTransitionFrame = Time.frameCount;
     }
 
     ITransition GetTransition() //Returns a transition
@@ -80,6 +89,16 @@ public class StateMachine
         }
         
         return node;
+    }
+
+    //Use this instead of the GameManager's go back a state if you need to go back from an anytransition like pausing
+    public void GoToPreviousState() 
+    {
+        if (previous != null)
+        {
+            ChangeState(previous.State);
+        }
+        
     }
     
     class StateNode //Class for a state node

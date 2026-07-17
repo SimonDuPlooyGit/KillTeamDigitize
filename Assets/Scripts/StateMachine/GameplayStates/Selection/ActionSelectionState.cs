@@ -16,6 +16,7 @@ public class ActionSelectionState : BaseState
     public override void OnEnter()
     {
         Debug.Log("ActionSelectionState entered");
+        _menu.actionMenu.SetActive(true);
     }
 
     public override void Update()

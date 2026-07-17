@@ -14,6 +14,7 @@ public class WeaponSelectState : BaseState
     public override void OnEnter()
     {
         Debug.Log("WeaponSelectState entered");
+        _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
     }
 

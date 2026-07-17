@@ -6330,6 +6330,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1746460031477156975, guid: 65c0c0dd6a9327445abaed6fc69b34aa, type: 3}
+      propertyPath: currentWounds
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1746460031477156975, guid: 65c0c0dd6a9327445abaed6fc69b34aa, type: 3}
       propertyPath: operativeData
       value: 
       objectReference: {fileID: 11400000, guid: 4686860a63079e74e999a1e87c705c6b, type: 2}
