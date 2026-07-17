@@ -21,6 +21,15 @@ public class CombatState : BaseState
     public override void OnEnter()
     {
         Debug.Log("CombatState entered");
+        
+        //Reset
+        Context.attackRolls.Clear();
+        Context.defenseRolls.Clear();
+        Context.retainedCrits = 0;
+        Context.retainedNormals = 0;
+        Context.retainedCritDefense = 0;
+        Context.retainedNormalDefense = 0;
+        
         _combatManager.StartCoroutine(ResolveCombat());
     }
 
@@ -204,6 +213,7 @@ public class CombatState : BaseState
     public override void OnExit()
     {
         Debug.Log("CombatState Exited");
+        _combatManager.ClearAllDice();
     }
     
 

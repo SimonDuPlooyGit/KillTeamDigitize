@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     private StateMachine stateMachine;
     [SerializeField] private MenuPanel menu;
     [SerializeField] private CombatManager combatManager;
-    [SerializeField] private GameObject shootMenuHolder;
     
     //Direct access reference for UI buttons to evoke events
     public MovementState movementState;
@@ -25,7 +24,7 @@ public class GameManager : MonoBehaviour
         var unitActivationState = new UnitActivationState(sharedContext, input, menu);
         var actionSelectionState = new ActionSelectionState(sharedContext, menu);
         movementState = new MovementState(sharedContext, input);
-        var targetingState = new TargetingState(sharedContext, input, menu, shootMenuHolder);
+        var targetingState = new TargetingState(sharedContext, input, menu);
         var combatState = new CombatState(sharedContext, menu, combatManager);
         var weaponSelectState = new WeaponSelectState(sharedContext, input, menu);
         var pauseState = new PauseState(sharedContext, input, stateMachine);
@@ -38,22 +37,22 @@ public class GameManager : MonoBehaviour
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.currentlySelectedTarget != null));
+        AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
         stateMachine.SetState(unitActivationState);
 
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState, () =>
         {
-            menu.actionMenu.SetActive(false);
-            sharedContext.isMovementRequested = true;
-            sharedContext.currentlySelectedUnitScript = null;
+            sharedContext.currentlySelectedUnitScript.selected = false;
+            sharedContext.currentlySelectedUnitScript.Reset();
+            sharedContext.Reset();
         });
         GoBackAState(movementState, actionSelectionState, () =>
         {
-            sharedContext.isMovementRequested = false;
+            sharedContext.isMovementRequested = true;
         });
         GoBackAState(weaponSelectState, actionSelectionState, () =>
         {
-            menu.CloseMenu(menu.shootMenuHolder);
             sharedContext.isShootingRequested = false;
         });
         GoBackAState(targetingState, weaponSelectState, () =>

@@ -61,7 +61,6 @@ public class UnitActivationState : BaseState
             Context.currentlySelectedUnitScript.selected = false;
         }
         Context.Reset();
-        _menu.CloseAction();
     }
     
 }
