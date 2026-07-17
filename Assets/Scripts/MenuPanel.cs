@@ -4,7 +4,7 @@ using UnityEngine;
 public class MenuPanel : MonoBehaviour
 {
     [SerializeField]
-    private GameObject actionMenu;
+    public GameObject actionMenu;
     [SerializeField] public GameObject shootMenuHolder;
     [SerializeField]
     private GameObject tooltipHolder;

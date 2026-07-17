@@ -10,15 +10,26 @@ public class CombatState : BaseState
     //The combat state that handles rolling and rules
     
     public CombatManager _combatManager; //Needs reference to the CombatManager script on the CombatManager GameObject
+    public MenuPanel _menu; //Needs reference to the MenuPanel script on UI manager
 
-    public CombatState(InformationPackage context, CombatManager combatManager) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
+    public CombatState(InformationPackage context, MenuPanel menu, CombatManager combatManager) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
     {
         _combatManager = combatManager;
+        _menu = menu;
     }
     
     public override void OnEnter()
     {
         Debug.Log("CombatState entered");
+        
+        //Reset
+        Context.attackRolls.Clear();
+        Context.defenseRolls.Clear();
+        Context.retainedCrits = 0;
+        Context.retainedNormals = 0;
+        Context.retainedCritDefense = 0;
+        Context.retainedNormalDefense = 0;
+        
         _combatManager.StartCoroutine(ResolveCombat());
     }
 
@@ -202,6 +213,7 @@ public class CombatState : BaseState
     public override void OnExit()
     {
         Debug.Log("CombatState Exited");
+        _combatManager.ClearAllDice();
     }
     
 

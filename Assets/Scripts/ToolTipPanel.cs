@@ -78,20 +78,17 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (weaponRuleText == null) return;
 
         string sourceText = weaponRuleText.text;
-
         
         foreach (RuleToPrefab pair in ruleDatabase)
         {
             if (string.IsNullOrEmpty(pair.keyword) || pair.weaponRule == null)
                 continue;
-
-           
+            
             if (sourceText.IndexOf(pair.keyword, System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 GameObject toolTipPanel = Instantiate(pair.weaponRule, panelContainer.transform, false);
                 activePanels.Add(toolTipPanel);
             }
-            
         }
     }
 
@@ -103,6 +100,4 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
         activePanels.Clear();
     }
-
-   
 }

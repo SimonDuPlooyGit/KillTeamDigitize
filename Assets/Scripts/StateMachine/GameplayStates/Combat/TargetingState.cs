@@ -8,21 +8,17 @@ public class TargetingState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private MenuPanel _menu; //Needs access to the menu from GameManager
-    private GameObject _shootMenu; //Needs access to the shootMenu from the GameManager
     
-    public TargetingState(InformationPackage context, InputActions input, MenuPanel menu, GameObject shootMenu) : base(context)
+    public TargetingState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
     {
         _input = input;
         _menu = menu;
-        _shootMenu = shootMenu;
     }
     
     public override void OnEnter()
     {
         Debug.Log("Targeting State Entered");
-        _menu.CloseMenu(_shootMenu);
         _input.Controls.Select.performed += OnSelectPerformed;
-        //_input.Controls.Deselect.performed += OnDeselectPerformed;
     }
 
     public override void Update()
@@ -34,7 +30,6 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
-        //_input.Controls.Deselect.performed -= OnDeselectPerformed;
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package

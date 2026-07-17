@@ -14,6 +14,7 @@ public class WeaponSelectState : BaseState
     public override void OnEnter()
     {
         Debug.Log("WeaponSelectState entered");
+        _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
     }
 
@@ -30,6 +31,8 @@ public class WeaponSelectState : BaseState
         {
             _menu.shootMenuActualScript.ClearWeapons(); //We need the weapon menu to be cleared of weapons when this state is exited
         }
+        
+        _menu.CloseMenu(_menu.shootMenuHolder);
     }
 
     public void PopulateWeaponPanel() //Instantiate weapon panel prefabs into the shooting menu with the weapons that this unit has
