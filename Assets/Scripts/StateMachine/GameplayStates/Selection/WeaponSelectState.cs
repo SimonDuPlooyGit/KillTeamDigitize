@@ -16,6 +16,7 @@ public class WeaponSelectState : BaseState
         Debug.Log("WeaponSelectState entered");
         _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
+        _menu.OpenMenu(_menu.tutShoot);
     }
 
     public override void Update()
@@ -33,6 +34,7 @@ public class WeaponSelectState : BaseState
         }
         
         _menu.CloseMenu(_menu.shootMenuHolder);
+        _menu.CloseMenu(_menu.tutShoot);
     }
 
     public void PopulateWeaponPanel() //Instantiate weapon panel prefabs into the shooting menu with the weapons that this unit has

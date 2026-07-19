@@ -20,6 +20,7 @@ public class UnitActivationState : BaseState
         Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;
         _input.Controls.Deselect.performed += OnDeselectPerformed;
+        _menu.OpenMenu(_menu.tutSelect);
     }
 
     public override void Update()
@@ -32,6 +33,7 @@ public class UnitActivationState : BaseState
         Debug.Log("UnitActivationState exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
         _input.Controls.Deselect.performed -= OnDeselectPerformed;
+        _menu.CloseMenu(_menu.tutSelect);
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
