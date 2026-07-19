@@ -10,12 +10,7 @@ public class MenuPanel : MonoBehaviour
     private GameObject tooltipHolder;
     public ShootMenu shootMenuActualScript;
     public static event Action OnCloseMenu;
-    [SerializeField]
-    public GameObject tutSelect, tutActions, tutReposition, tutShoot, tutTarget;
-    [SerializeField]
-    public GameObject moveButton2;
-
-
+    
     void Start()
     {
         shootMenuActualScript = shootMenuHolder.GetComponentInChildren<ShootMenu>();
