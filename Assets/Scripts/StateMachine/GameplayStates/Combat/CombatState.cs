@@ -202,6 +202,8 @@ public class CombatState : BaseState
         }
         
         Context.currentlySelectedTargetScript.TakeDamage(totalDamage);
+
+        Context.currentlySelectedTargetScript.UpdateHealth(Context.currentlySelectedTargetScript.currentWounds, Context.currentlySelectedTargetScript.operativeData.WOUNDS);
         
     }
 

@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
+using Unity.VisualScripting;
+using TMPro;
+using UnityEngine.UI;
 
 public class PrototypeUnit : MonoBehaviour
 {
@@ -20,6 +23,9 @@ public class PrototypeUnit : MonoBehaviour
     public bool selected = false;
     public int currentWounds;
     public bool dead = false;
+    //Unit UI healthbar variables
+    public GameObject healthFill;
+    public GameObject aplCount;
 
     private void Awake()
     {
@@ -30,6 +36,10 @@ public class PrototypeUnit : MonoBehaviour
         path = new NavMeshPath();
         unitGhost.SetActive(false);
         currentWounds = operativeData.WOUNDS;
+        healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
+        aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
+        SetHealth();
+
     }
 
     public void UpdatePathDrawing()
@@ -169,5 +179,42 @@ public class PrototypeUnit : MonoBehaviour
     private void HandleDeath()
     {
         Debug.Log($"{gameObject.name} has died!");
+    }
+
+    public void SetHealth()
+    {
+        healthFill.gameObject.GetComponent<Image>().fillAmount = 1;
+        healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = operativeData.WOUNDS.ToString();
+    }
+
+    public void SetAPL(int apl)
+    {
+        aplCount.gameObject.GetComponent<TextMeshProUGUI>().text = apl.ToString();
+    }
+
+    public void UpdateHealth(float currentHealth, float maxHealth)
+    {
+        healthFill.gameObject.GetComponent<Image>().fillAmount = currentHealth / maxHealth;
+        Image healthFillImage = healthFill.gameObject.GetComponent<Image>();
+        healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = currentHealth.ToString();
+        if(healthFillImage.fillAmount <= 0.25f)
+        {
+
+            healthFillImage.color = new Color32(245, 32, 0, 255); //red for < 25%
+        }
+        else if (healthFillImage.fillAmount <= 0.5f)
+        {
+            healthFillImage.color = new Color32(245, 180, 0, 255); //Orange for < 50%
+        }
+        else
+        {
+            healthFillImage.color = new Color32(0, 245, 47, 255); //Green otherwise
+        }
+
+    }
+
+    public void UpdateAPL(int currentAPL)
+    {
+        aplCount.gameObject.GetComponent<TextMeshProUGUI>().text = currentAPL.ToString();
     }
 }

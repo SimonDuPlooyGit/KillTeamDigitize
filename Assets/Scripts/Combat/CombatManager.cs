@@ -68,7 +68,7 @@ public class CombatManager : MonoBehaviour
 
     private void Start() //Just testing healthbar stuff in here, remember to delete after the logic is moved
     {
-        healthFill.fillAmount = currentHealthTest / 14; 
+       /* healthFill.fillAmount = currentHealthTest / 14; 
         healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = currentHealthTest.ToString();
         if(healthFill.fillAmount <= 0.25f )
         {
@@ -82,7 +82,7 @@ public class CombatManager : MonoBehaviour
         else
         {
             healthFill.color = new Color32(0, 245, 47, 255); //Green otherwise
-        }
+        }*/
 
     }
 }
