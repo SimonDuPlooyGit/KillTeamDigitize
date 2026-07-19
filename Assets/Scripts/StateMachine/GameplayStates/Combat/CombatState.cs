@@ -216,6 +216,7 @@ public class CombatState : BaseState
     {
         Debug.Log("CombatState Exited");
         _combatManager.ClearAllDice();
+        Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
         Context.Reset();
     }
     

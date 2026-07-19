@@ -22,6 +22,7 @@ public class PrototypeUnit : MonoBehaviour
     List<Vector3> limitedPoints = new List<Vector3>();
     public bool selected = false;
     public int currentWounds;
+    public int currentAPL;
     public bool dead = false;
     //Unit UI healthbar variables
     public GameObject healthFill;
@@ -36,6 +37,7 @@ public class PrototypeUnit : MonoBehaviour
         path = new NavMeshPath();
         unitGhost.SetActive(false);
         currentWounds = operativeData.WOUNDS;
+        currentAPL = operativeData.APL;
         healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
