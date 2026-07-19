@@ -19,6 +19,7 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Entered");
         _input.Controls.Select.performed += OnSelectPerformed;
+        _menu.OpenMenu(_menu.tutTarget);
     }
 
     public override void Update()
@@ -30,6 +31,7 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
+        _menu.CloseMenu(_menu.tutTarget);
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package

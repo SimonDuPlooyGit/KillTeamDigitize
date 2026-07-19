@@ -10,6 +10,8 @@ public class MenuPanel : MonoBehaviour
     private GameObject tooltipHolder;
     public ShootMenu shootMenuActualScript;
     public static event Action OnCloseMenu;
+    public GameObject tutSelect, tutAction, tutReposition, tutShoot, tutTarget;
+    public GameObject moveButton2;
     
     void Start()
     {
