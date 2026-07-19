@@ -36,6 +36,8 @@ public class InformationPackage
     {
         currentlySelectedUnit = null;
         currentlySelectedUnitScript = null;
+        currentlySelectedTarget = null;
+        currentlySelectedTargetScript = null;
         activatedUnitSO = null;
         targetUnitSO = null;
         weapon = null;

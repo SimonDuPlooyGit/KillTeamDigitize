@@ -216,6 +216,7 @@ public class CombatState : BaseState
     {
         Debug.Log("CombatState Exited");
         _combatManager.ClearAllDice();
+        Context.Reset();
     }
     
 
