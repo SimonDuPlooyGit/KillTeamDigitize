@@ -71,6 +71,8 @@ public class WeaponRules
         {
             //Reroll one attack dice
         }
+        
+        public override string ToString() => "Balanced";
     }
 
     [System.Serializable]
@@ -84,6 +86,8 @@ public class WeaponRules
         {
             //Only enemy units within x range are valid targets
         }
+        
+        public override string ToString() => $"Range: {range}";
     }
 
     [System.Serializable]
@@ -97,6 +101,8 @@ public class WeaponRules
         {
             //Defender collects x less defense dice
         }
+        
+        public override string ToString() => $"Piercing: {piercingX}";
     }
 
     [System.Serializable]
@@ -108,6 +114,8 @@ public class WeaponRules
         {
             //Roll D6 after attack
         }
+        
+        public override string ToString() => "Hot";
     }
 
     [System.Serializable]
@@ -121,6 +129,8 @@ public class WeaponRules
         {
             //Successful dice rolls > x are crits
         }
+        
+        public override string ToString() => $"Lethal: {lethalX}";
     }
 
     [System.Serializable]
@@ -132,6 +142,8 @@ public class WeaponRules
         {
             //Enemy unit can only block with critical successes
         }
+        
+        public override string ToString() => "Brutal";
     }
 
     [System.Serializable]
@@ -143,6 +155,8 @@ public class WeaponRules
         {
             //Defender cannot retain cover saves
         }
+        
+        public override string ToString() => "Saturate";
     }
 
     [System.Serializable]
@@ -156,6 +170,8 @@ public class WeaponRules
         {
             //Attack multiple targets within x of initial if they are valid targets
         }
+        
+        public override string ToString() => $"Torrent: {torrentX}";
     }
 
     [System.Serializable]
@@ -169,6 +185,8 @@ public class WeaponRules
         {
             //Same as piercing but only on retained crits
         }
+        
+        public override string ToString() => $"PiercingCrit {pCritX}";
     }
     
     //Custom one to know if this is a melee weapon
@@ -181,6 +199,8 @@ public class WeaponRules
         {
             //Check that fight conditions are met to use this weapon
         }
+        
+        public override string ToString() => "Melee";
     }
     
     [System.Serializable]
@@ -192,6 +212,8 @@ public class WeaponRules
         {
             //First time you strike with a crit in each sequence discard an opponent's unresolved normal success or crits if none
         }
+        
+        public override string ToString() => "Shock";
     }
     
     [System.Serializable]
@@ -203,6 +225,8 @@ public class WeaponRules
         {
             //If you retain any critical successes, subtract 1APL from enemy unit until its next activation
         }
+        
+        public override string ToString() => "Stun";
     }
     
     [System.Serializable]
@@ -216,6 +240,8 @@ public class WeaponRules
         {
             //Cannot use attack if the unit has moved at all, other than condition movement such as dash
         }
+        
+        public override string ToString() => $"Heavy: {condition}";
     }
     
     [System.Serializable]
@@ -227,6 +253,8 @@ public class WeaponRules
         {
             //Unit can perform shoot while it is concealed
         }
+        
+        public override string ToString() => "Silent";
     }
     
     [System.Serializable]
@@ -240,6 +268,8 @@ public class WeaponRules
         {
             //When selecting valid targets, enemies cannot use (cover type) for cover
         }
+        
+        public override string ToString() => $"Seek: {coverType}";
     }
     
     [System.Serializable]
@@ -253,6 +283,8 @@ public class WeaponRules
         {
             //Attack another visible unit with another roll within x inches of initial target
         }
+        
+        public override string ToString() => $"Blast: {blastX}";
     }
     
     [System.Serializable]
@@ -266,6 +298,8 @@ public class WeaponRules
         {
             //Retained critical hits deal x damage to units immediately, they are not discarded
         }
+        
+        public override string ToString() => $"Devastating: {devastatingX}";
     }
     
     [System.Serializable]
@@ -277,6 +311,8 @@ public class WeaponRules
         {
             //Reroll duplicate values
         }
+        
+        public override string ToString() => "Ceaseless";
     }
     
 }

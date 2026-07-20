@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 
 public class WeaponPanel : MonoBehaviour
 {
@@ -26,12 +27,14 @@ public class WeaponPanel : MonoBehaviour
         hit.text = weapon.HIT.ToString();
         dmg.text = $"{weapon.DMGnorm}/{weapon.DMGcrit}";
 
-        string rulesText = "";
-        foreach (var rule in weapon.rules)
+        if (weapon.rules != null && weapon.rules.Count > 0)
         {
-            rulesText += rule.GetType().Name + "";
+            wr.text = string.Join(", ", weapon.rules.Select(rule => rule.ToString()));
         }
-        wr.text = rulesText;
+        else
+        {
+            wr.text = "-";
+        }
 
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(OnPanelClicked);
