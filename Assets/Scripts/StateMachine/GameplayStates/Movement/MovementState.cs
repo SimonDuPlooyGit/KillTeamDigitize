@@ -41,7 +41,7 @@ public class MovementState : BaseState
         Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
     }
 
-    public void OnMoveInputPerformed(InputAction.CallbackContext context) //Move the ghost to where you have clicked to move
+    public void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the ghost to where you have clicked to move
     {
         if (Context.currentlySelectedUnitScript != null)
         {

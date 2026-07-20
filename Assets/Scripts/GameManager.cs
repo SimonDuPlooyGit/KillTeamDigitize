@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
         movementState = new MovementState(sharedContext, input, menu);
         var targetingState = new TargetingState(sharedContext, input, menu);
         var combatState = new CombatState(sharedContext, menu, combatManager);
-        var weaponSelectState = new WeaponSelectState(sharedContext, input, menu);
+        var weaponSelectState = new WeaponSelectState(sharedContext, menu);
         var pauseState = new PauseState(sharedContext, input, stateMachine);
 
         //Define transitions

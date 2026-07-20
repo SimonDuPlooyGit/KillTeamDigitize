@@ -7,7 +7,7 @@ public class WeaponSelectState : BaseState
     
     private readonly MenuPanel _menu; //Needs access to the menu from GameManager
 
-    public WeaponSelectState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
+    public WeaponSelectState(InformationPackage context, MenuPanel menu) : base(context)
     {
         _menu = menu;
     }
