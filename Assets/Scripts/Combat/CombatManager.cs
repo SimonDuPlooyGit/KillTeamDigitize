@@ -23,10 +23,11 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     private float currentHealthTest;
 
-    public void SpawnDice(List<int> preRolledValues, bool isAttack)
+    public void SpawnDice(List<int> preRolledValues, bool isAttack, bool isAlly)
     {
         GameObject holder = isAttack ? attackDiceHolder : defenseDiceHolder; //Null check for if we have attackDiceHolder or defenceDiceHolder
         List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice; //Null check for the lists
+        GameObject dicePrefab = isAlly ? allyDicePrefab : enemyDicePrefab; //Sets prefab to either ally or opp depending on the isAlly bool
 
         // Clear previous visual dice inside this holder
         foreach (Transform child in holder.transform)
@@ -38,7 +39,7 @@ public class CombatManager : MonoBehaviour
         // Instantiate and initiate rolls
         for (int i = 0; i < preRolledValues.Count; i++) 
         {
-            GameObject rolledDice = Instantiate(allyDicePrefab, holder.transform);
+            GameObject rolledDice = Instantiate(dicePrefab, holder.transform);
             CombatRoll rollScript = rolledDice.GetComponent<CombatRoll>();
             
             if (rollScript != null)

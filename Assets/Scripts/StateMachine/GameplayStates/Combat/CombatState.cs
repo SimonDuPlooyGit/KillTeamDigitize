@@ -20,6 +20,7 @@ public class CombatState : BaseState
     
     public override void OnEnter()
     {
+        _menu.OpenMenu(_menu.diceRollMenu);
         Debug.Log("CombatState entered");
         
         //Reset
@@ -42,12 +43,12 @@ public class CombatState : BaseState
         
         //Roll Attack Dice
         RollAttackDice();
-        _combatManager.SpawnDice(Context.attackRolls, isAttack: true);
+        _combatManager.SpawnDice(Context.attackRolls, isAttack: true, true); //Last bool is a temp bool for attacka dna defense dice
         yield return new WaitForSeconds(2.5f);
         
         //Roll Defense Dice
         RollDefenseDice();
-        _combatManager.SpawnDice(Context.defenseRolls, isAttack: false);
+        _combatManager.SpawnDice(Context.defenseRolls, isAttack: false, false); //Last bool is a temp bool for attacka dna defense dice
         yield return new WaitForSeconds(2.5f);
         
         //After-Roll
@@ -215,6 +216,7 @@ public class CombatState : BaseState
     public override void OnExit()
     {
         Debug.Log("CombatState Exited");
+        _menu.CloseMenu(_menu.diceRollMenu);
         _combatManager.ClearAllDice();
         Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
         Context.Reset();

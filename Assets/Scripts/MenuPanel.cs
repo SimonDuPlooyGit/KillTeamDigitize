@@ -12,12 +12,14 @@ public class MenuPanel : MonoBehaviour
     public static event Action OnCloseMenu;
     public GameObject tutSelect, tutAction, tutReposition, tutShoot, tutTarget;
     public GameObject moveButton2;
+    public GameObject diceRollMenu;
     
     void Start()
     {
         shootMenuActualScript = shootMenuHolder.GetComponentInChildren<ShootMenu>();
         actionMenu.transform.localScale = Vector3.zero;
         shootMenuHolder.transform.localScale = Vector3.zero;
+        diceRollMenu.transform.localScale = Vector3.zero;
     }
     
     //Sets the scale of the menu to one if its currently zero
