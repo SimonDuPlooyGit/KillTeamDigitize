@@ -20,8 +20,10 @@ public class CombatRoll : MonoBehaviour
 
     public void RollTo(int finalValue)
     {
-        rollResult = finalValue;
-        StartCoroutine(CycleDice(finalValue));
+        //rollResult = finalValue;
+        //StartCoroutine(CycleDice(finalValue));
+        diceAnimator.enabled = false;
+        dicePanel.GetComponent<Image>().sprite = diceSprites[finalValue - 1];
     }
     
     //rolling animation

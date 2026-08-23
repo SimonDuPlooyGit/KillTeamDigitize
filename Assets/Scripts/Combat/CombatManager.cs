@@ -30,7 +30,13 @@ public class CombatManager : MonoBehaviour
     private Image healthFill;
     [SerializeField]
     private float currentHealthTest;
+    [SerializeField]
     private MenuPanel menu;
+
+    private void Start()
+    {
+        
+    }
 
     public void SpawnDice(List<int> preRolledValues, bool isAttack, bool isAlly)
     {
@@ -76,7 +82,7 @@ public class CombatManager : MonoBehaviour
         foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
     }
 
-    //throws the physical dice, saves a list o the roll results
+    //======================[Throws Dice Physically]==========================================
     private IEnumerator ThrowDice(int numDice, bool isAlly) 
     {
         List<DiceRoll> thrownDice= new List<DiceRoll>();
@@ -111,24 +117,25 @@ public class CombatManager : MonoBehaviour
             yield return null;
         }
 
-        yield return new WaitForSeconds(2f);
-
         foreach (DiceRoll die in thrownDice)
         {
             int face = die.GetUpwardFace();
             rollResults.Add(face);
         }
 
+        yield return new WaitForSeconds(2f);
+        menu.OpenMenu(menu.diceRollMenu);
+        SpawnDice(rollResults, true, isAlly);
+        yield return new WaitForSeconds(3);
+        menu.CloseMenu(menu.diceRollMenu);
+
         foreach (DiceRoll die in thrownDice)
         {
             Destroy(die.gameObject);
         }
     }
+    //==================[End coroutine]=======================
 
-    private void Start() 
-    {
-      menu = GetComponent<MenuPanel>();
-    }
 
     public void TestThrowDice(bool ally)
     {
