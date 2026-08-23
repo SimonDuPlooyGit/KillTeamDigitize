@@ -2,7 +2,8 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using TMPro; //need this to access the Image component
+using TMPro;
+using System.Collections; //need this to access the Image component
 
 public class CombatManager : MonoBehaviour
 {
@@ -21,12 +22,15 @@ public class CombatManager : MonoBehaviour
     GameObject attackDiceHolder; //The horizontal layout group for the attack dice prefabs
     [SerializeField]
     GameObject defenseDiceHolder; //The horizontal layout group for the defense dice prefabs
+    [SerializeField]
+    Transform diceThrowPoint;
     public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled dice to track roll results
     public List<CombatRoll> activeDefenseDice = new List<CombatRoll>();
     [SerializeField]
     private Image healthFill;
     [SerializeField]
     private float currentHealthTest;
+    private MenuPanel menu;
 
     public void SpawnDice(List<int> preRolledValues, bool isAttack, bool isAlly)
     {
@@ -72,8 +76,62 @@ public class CombatManager : MonoBehaviour
         foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
     }
 
+    //throws the physical dice, saves a list o the roll results
+    private IEnumerator ThrowDice(int numDice, bool isAlly) 
+    {
+        List<DiceRoll> thrownDice= new List<DiceRoll>();
+        List<int> rollResults = new List<int>();
+
+        GameObject diceObj = isAlly? allyDicePhysical:enemyDicePhysical;
+
+        //Instantiate/throw the physical dice
+        for(int i = 0; i < numDice; i++)
+        {
+            GameObject physDie = Instantiate(diceObj, diceThrowPoint.position, Random.rotation);
+            DiceRoll dieScript = physDie.GetComponent<DiceRoll>();
+            thrownDice.Add(dieScript);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        bool allStopped = false;
+        while(!allStopped)
+        {
+            allStopped = true;
+
+            foreach(DiceRoll die in thrownDice)
+            {
+                if(!die.IsStopped())
+                {
+                    allStopped=false;
+                    break;
+                }
+            }
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        foreach (DiceRoll die in thrownDice)
+        {
+            int face = die.GetUpwardFace();
+            rollResults.Add(face);
+        }
+
+        foreach (DiceRoll die in thrownDice)
+        {
+            Destroy(die.gameObject);
+        }
+    }
+
     private void Start() 
     {
-      
+      menu = GetComponent<MenuPanel>();
+    }
+
+    public void TestThrowDice(bool ally)
+    {
+        StartCoroutine(ThrowDice(5, ally));
     }
 }

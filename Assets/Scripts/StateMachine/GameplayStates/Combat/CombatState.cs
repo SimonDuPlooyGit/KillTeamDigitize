@@ -20,7 +20,7 @@ public class CombatState : BaseState
     
     public override void OnEnter()
     {
-        _menu.OpenMenu(_menu.diceRollMenu);
+        //_menu.OpenMenu(_menu.diceRollMenu);
         Debug.Log("CombatState entered");
         
         //Reset
@@ -216,7 +216,7 @@ public class CombatState : BaseState
     public override void OnExit()
     {
         Debug.Log("CombatState Exited");
-        _menu.CloseMenu(_menu.diceRollMenu);
+        //_menu.CloseMenu(_menu.diceRollMenu);
         _combatManager.ClearAllDice();
         Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
         Context.Reset();
