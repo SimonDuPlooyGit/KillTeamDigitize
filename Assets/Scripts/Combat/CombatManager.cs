@@ -7,11 +7,16 @@ using TMPro; //need this to access the Image component
 public class CombatManager : MonoBehaviour
 {
     //On the combat manager GameObject
-    
+    [Header("Dice Prefabs")]
     [SerializeField]
     GameObject allyDicePrefab; //Holds an ally dice prefab
     [SerializeField]
     GameObject enemyDicePrefab; //Holds an enemy dice prefab
+    [SerializeField]
+    GameObject allyDicePhysical;
+    [SerializeField]
+    GameObject enemyDicePhysical;
+    [Header("Holders/Transforms")]
     [SerializeField]
     GameObject attackDiceHolder; //The horizontal layout group for the attack dice prefabs
     [SerializeField]
@@ -67,23 +72,8 @@ public class CombatManager : MonoBehaviour
         foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
     }
 
-    private void Start() //Just testing healthbar stuff in here, remember to delete after the logic is moved
+    private void Start() 
     {
-       /* healthFill.fillAmount = currentHealthTest / 14; 
-        healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = currentHealthTest.ToString();
-        if(healthFill.fillAmount <= 0.25f )
-        {
-           
-            healthFill.color = new Color32(245, 32, 0, 255); //red for < 25%
-        }
-        else if(healthFill.fillAmount <= 0.5f)
-        {
-            healthFill.color = new Color32(245, 180, 0, 255); //Orange for < 50%
-        }
-        else
-        {
-            healthFill.color = new Color32(0, 245, 47, 255); //Green otherwise
-        }*/
-
+      
     }
 }
