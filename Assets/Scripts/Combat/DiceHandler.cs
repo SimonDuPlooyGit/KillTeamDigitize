@@ -3,9 +3,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections; //need this to access the Image component
+using System.Collections;
+using UnityEditor.Rendering.LookDev; //need this to access the Image component
 
-public class CombatManager : MonoBehaviour
+public class DiceHandler : MonoBehaviour
 {
     //On the combat manager GameObject
     [Header("Dice Prefabs")]
@@ -23,20 +24,18 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     GameObject defenseDiceHolder; //The horizontal layout group for the defense dice prefabs
     [SerializeField]
-    Transform diceThrowPoint;
-    public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled dice to track roll results
-    public List<CombatRoll> activeDefenseDice = new List<CombatRoll>();
+    Transform diceThrowPoint; //Where dice spawn from
+    public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled attack dice to track roll results
+    public List<CombatRoll> activeDefenseDice = new List<CombatRoll>(); //List of rolled defence dice
     [SerializeField]
-    private Image healthFill;
+    private Image healthFill; 
     [SerializeField]
     private float currentHealthTest;
     [SerializeField]
     private MenuPanel menu;
 
-    private void Start()
-    {
-        
-    }
+    //Access to information package
+    private InformationPackage context;
 
     public void SpawnDice(List<int> preRolledValues, bool isAttack, bool isAlly)
     {
@@ -83,12 +82,15 @@ public class CombatManager : MonoBehaviour
     }
 
     //======================[Throws Dice Physically]==========================================
-    private IEnumerator ThrowDice(int numDice, bool isAlly) 
+    public IEnumerator ThrowDice(int numDice, bool isAlly, InformationPackage context) 
     {
+        Debug.Log("ThrowDice in DiceHandler is called rn");
+
+        this.context = context;
         List<DiceRoll> thrownDice= new List<DiceRoll>();
         List<int> rollResults = new List<int>();
 
-        GameObject diceObj = isAlly? allyDicePhysical:enemyDicePhysical;
+        GameObject diceObj = isAlly? allyDicePhysical : enemyDicePhysical;
 
         //Instantiate/throw the physical dice
         for(int i = 0; i < numDice; i++)
@@ -121,6 +123,7 @@ public class CombatManager : MonoBehaviour
         {
             int face = die.GetUpwardFace();
             rollResults.Add(face);
+            context.attackRolls.Add(face);
         }
 
         yield return new WaitForSeconds(2f);
@@ -139,6 +142,6 @@ public class CombatManager : MonoBehaviour
 
     public void TestThrowDice(bool ally)
     {
-        StartCoroutine(ThrowDice(5, ally));
+        StartCoroutine(ThrowDice(5, ally, context));
     }
 }

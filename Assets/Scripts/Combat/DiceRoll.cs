@@ -18,7 +18,7 @@ using UnityEngine;
             Vector3 throwDirection = new Vector3(Random.Range(-1f, 1f), 3f, 0);
             rb.AddForce(throwDirection, ForceMode.Impulse);
     }
-
+        
         public bool IsStopped()
         {
             return rb.linearVelocity.sqrMagnitude < 0.001f && rb.angularVelocity.sqrMagnitude < 0.001f;
@@ -34,8 +34,6 @@ using UnityEngine;
                 -transform.up, //Face 3
                 transform.right, //Face 2
                 -transform.right //Face 5
-            
-        
             };
 
             int[] faceValues = new int[] { 1, 6, 4, 3, 2, 5 };
@@ -55,11 +53,5 @@ using UnityEngine;
             }
             Debug.Log("Rolled a " + topFace);
             return topFace;
-
-            
         }
-
-
-
-
     }

@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     private InformationPackage sharedContext;
     private StateMachine stateMachine;
     [SerializeField] private MenuPanel menu;
-    [SerializeField] private CombatManager combatManager;
+    [SerializeField] private DiceHandler diceHandler;
     
     //Direct access reference for UI buttons to evoke events
     public MovementState movementState;
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         var actionSelectionState = new ActionSelectionState(sharedContext, menu);
         movementState = new MovementState(sharedContext, input, menu);
         var targetingState = new TargetingState(sharedContext, input, menu);
-        var combatState = new CombatState(sharedContext, menu, combatManager);
+        var combatState = new CombatState(sharedContext, menu, diceHandler);
         var weaponSelectState = new WeaponSelectState(sharedContext, menu);
         var pauseState = new PauseState(sharedContext, input, stateMachine);
 

@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 95257450}
   - component: {fileID: 95257449}
   m_Layer: 0
-  m_Name: Combat Manager
+  m_Name: DiceHandler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10436,7 +10436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   menu: {fileID: 1700968724}
-  combatManager: {fileID: 95257449}
+  diceHandler: {fileID: 95257449}
 --- !u!4 &1921963952
 Transform:
   m_ObjectHideFlags: 0

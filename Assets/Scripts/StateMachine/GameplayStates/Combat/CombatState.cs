@@ -9,12 +9,12 @@ public class CombatState : BaseState
     //Inherits from BaseState.
     //The combat state that handles rolling and rules
     
-    public CombatManager _combatManager; //Needs reference to the CombatManager script on the CombatManager GameObject
+    public DiceHandler _diceHandler; //Needs reference to the CombatManager script on the CombatManager GameObject
     public MenuPanel _menu; //Needs reference to the MenuPanel script on UI manager
 
-    public CombatState(InformationPackage context, MenuPanel menu, CombatManager combatManager) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
+    public CombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
     {
-        _combatManager = combatManager;
+        _diceHandler = diceHandler;
         _menu = menu;
     }
     
@@ -31,7 +31,7 @@ public class CombatState : BaseState
         Context.retainedCritDefense = 0;
         Context.retainedNormalDefense = 0;
         
-        _combatManager.StartCoroutine(ResolveCombat());
+        _diceHandler.StartCoroutine(ResolveCombat());
     }
 
     private IEnumerator ResolveCombat()
@@ -42,14 +42,18 @@ public class CombatState : BaseState
         ExecuteRulesInThisStep(AttackTimings.PreRoll);
         
         //Roll Attack Dice
-        RollAttackDice();
-        _combatManager.SpawnDice(Context.attackRolls, isAttack: true, true); //Last bool is a temp bool for attacka dna defense dice
-        yield return new WaitForSeconds(2.5f);
+        
+        //RollAttackDice();
+        //_diceHandler.SpawnDice(Context.attackRolls, isAttack: true, true); //Last bool is a temp bool for attacka dna defense dice
+
+        _diceHandler.StartCoroutine(_diceHandler.ThrowDice(Context.weapon.ATK, true, Context));
+        //yield return new WaitForSeconds(2.5f);
         
         //Roll Defense Dice
-        RollDefenseDice();
-        _combatManager.SpawnDice(Context.defenseRolls, isAttack: false, false); //Last bool is a temp bool for attacka dna defense dice
-        yield return new WaitForSeconds(2.5f);
+        
+        //RollDefenseDice();
+        //_diceHandler.SpawnDice(Context.defenseRolls, isAttack: false, false); //Last bool is a temp bool for attacka dna defense dice
+        //yield return new WaitForSeconds(2.5f);
         
         //After-Roll
         //Keep track of values before rerolls
@@ -63,7 +67,7 @@ public class CombatState : BaseState
         {
             if (Context.attackRolls[i] != oldAttackRolls[i])
             {
-                _combatManager.RerollDieVisually(i, Context.attackRolls[i], isAttack: true);
+                _diceHandler.RerollDieVisually(i, Context.attackRolls[i], isAttack: true);
                 attackRerolled = true;
             }
         }
@@ -73,7 +77,7 @@ public class CombatState : BaseState
         {
             if (Context.defenseRolls[i] != oldDefenseRolls[i])
             {
-                _combatManager.RerollDieVisually(i, Context.defenseRolls[i], isAttack: false);
+                _diceHandler.RerollDieVisually(i, Context.defenseRolls[i], isAttack: false);
                 defenseRerolled = true;
             }
         }
@@ -93,11 +97,11 @@ public class CombatState : BaseState
         ApplyFinalDamage();
         
         yield return new WaitForSeconds(1.5f);
-        _combatManager.ClearAllDice();
+        _diceHandler.ClearAllDice();
         Context.isShootingConfirmed = true;
     }
 
-    private void RollAttackDice()
+    /*private void RollAttackDice()
     {
         Debug.Log("Rolling attack dice");
         int totalDice = Context.weapon.ATK;
@@ -111,9 +115,9 @@ public class CombatState : BaseState
         {
             Debug.Log(Context.attackRolls[i].ToString());
         }
-    }
+    }*/
 
-    private void RollDefenseDice()
+    /*private void RollDefenseDice()
     {
         Debug.Log("Rolling defense dice");
         int totalDice = 3; //Base 3 defence dice
@@ -127,8 +131,8 @@ public class CombatState : BaseState
         {
             Debug.Log(Context.defenseRolls[i].ToString());
         }
-    }
-
+    }*/
+    
     private void EvaluateHitsAndSaves()
     {
         Debug.Log("Evaluating hits and saves");
@@ -217,7 +221,7 @@ public class CombatState : BaseState
     {
         Debug.Log("CombatState Exited");
         //_menu.CloseMenu(_menu.diceRollMenu);
-        _combatManager.ClearAllDice();
+        _diceHandler.ClearAllDice();
         Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
         Context.Reset();
     }
