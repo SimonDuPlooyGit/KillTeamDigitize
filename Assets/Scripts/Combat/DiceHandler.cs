@@ -33,6 +33,7 @@ public class DiceHandler : MonoBehaviour
     private float currentHealthTest;
     [SerializeField]
     private MenuPanel menu;
+    //Lists of Attack and Defense dice results. They are populated in the ThrowDice coroutine
     public List<int> AtkRollResults = new List<int>();
     public List<int> DefRollResults = new List<int>();
 
