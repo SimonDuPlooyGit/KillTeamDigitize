@@ -46,7 +46,7 @@ public class CombatState : BaseState
         //RollAttackDice();
         //_diceHandler.SpawnDice(Context.attackRolls, isAttack: true, true); //Last bool is a temp bool for attacka dna defense dice
 
-        _diceHandler.StartCoroutine(_diceHandler.ThrowDice(Context.weapon.ATK, true, Context));
+        _diceHandler.StartCoroutine(_diceHandler.ThrowDice(Context.weapon.ATK, 5, true, Context));
         //yield return new WaitForSeconds(2.5f);
         
         //Roll Defense Dice

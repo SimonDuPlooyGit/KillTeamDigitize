@@ -33,6 +33,8 @@ public class DiceHandler : MonoBehaviour
     private float currentHealthTest;
     [SerializeField]
     private MenuPanel menu;
+    public List<int> AtkRollResults = new List<int>();
+    public List<int> DefRollResults = new List<int>();
 
     //Access to information package
     private InformationPackage context;
@@ -82,27 +84,42 @@ public class DiceHandler : MonoBehaviour
     }
 
     //======================[Throws Dice Physically]==========================================
-    public IEnumerator ThrowDice(int numDice, bool isAlly, InformationPackage context) 
+    public IEnumerator ThrowDice(int numDice, int numDef, bool isAlly, InformationPackage context) 
     {
+        ClearDiceRolls();
         Debug.Log("ThrowDice in DiceHandler is called rn");
 
         this.context = context;
         List<DiceRoll> thrownDice= new List<DiceRoll>();
-        List<int> rollResults = new List<int>();
+        List<DiceRoll> thrownDefDice = new List<DiceRoll>();
 
-        GameObject diceObj = isAlly? allyDicePhysical : enemyDicePhysical;
+        //Assign prefab based on whether the attacker is an enemy or ally 
+        GameObject AtkDiceObj = isAlly? allyDicePhysical : enemyDicePhysical;
+        GameObject DefDiceObj = !isAlly ? allyDicePhysical : enemyDicePhysical;
 
-        //Instantiate/throw the physical dice
-        for(int i = 0; i < numDice; i++)
+        //Instantiate/throw the attack dice
+        for (int i = 0; i < numDice; i++)
         {
-            GameObject physDie = Instantiate(diceObj, diceThrowPoint.position, Random.rotation);
-            DiceRoll dieScript = physDie.GetComponent<DiceRoll>();
+            GameObject physAtkDie = Instantiate(AtkDiceObj, diceThrowPoint.position, Random.rotation);
+            DiceRoll dieScript = physAtkDie.GetComponent<DiceRoll>();
             thrownDice.Add(dieScript);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        //Instantiate/throw the defense dice
+        for (int i = 0; i < numDef; i++)
+        {
+            GameObject physDefDie = Instantiate(DefDiceObj, diceThrowPoint.position, Random.rotation);
+            DiceRoll dieScript = physDefDie.GetComponent<DiceRoll>();
+            thrownDefDice.Add(dieScript);
             yield return new WaitForSeconds(0.1f);
         }
 
         yield return new WaitForSeconds(0.5f);
 
+        //Wait until all dice stop moving before processing their results
         bool allStopped = false;
         while(!allStopped)
         {
@@ -119,29 +136,47 @@ public class DiceHandler : MonoBehaviour
             yield return null;
         }
 
+        //Process Attack dice values
         foreach (DiceRoll die in thrownDice)
         {
             int face = die.GetUpwardFace();
-            rollResults.Add(face);
+            AtkRollResults.Add(face);
             context.attackRolls.Add(face);
         }
 
+        //Process Defense dice values
+        foreach (DiceRoll die in thrownDefDice)
+        {
+            int face = die.GetUpwardFace();
+            DefRollResults.Add(face);
+            context.defenseRolls.Add(face);
+        }
+
+        //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
         menu.OpenMenu(menu.diceRollMenu);
-        SpawnDice(rollResults, true, isAlly);
+        SpawnDice(AtkRollResults, true, isAlly);
+        SpawnDice(DefRollResults, false, !isAlly);
         yield return new WaitForSeconds(3);
         menu.CloseMenu(menu.diceRollMenu);
 
+        //Clean up dice objects
         foreach (DiceRoll die in thrownDice)
+        {
+            Destroy(die.gameObject);
+        }
+        foreach (DiceRoll die in thrownDefDice)
         {
             Destroy(die.gameObject);
         }
     }
     //==================[End coroutine]=======================
 
-
-    public void TestThrowDice(bool ally)
+    //Clears both dice roll result lists. 
+    public void ClearDiceRolls()
     {
-        StartCoroutine(ThrowDice(5, ally, context));
+        AtkRollResults.Clear();
+        DefRollResults.Clear();
     }
+    
 }
