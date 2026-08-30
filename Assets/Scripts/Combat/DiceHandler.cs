@@ -87,10 +87,9 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws Dice Physically]==========================================
     public IEnumerator ThrowDice(int numDice, int numDef, bool isAlly, InformationPackage context) 
     {
-        ClearDiceRolls();
-        Debug.Log("ThrowDice in DiceHandler is called rn");
-
         this.context = context;
+        ClearDiceRolls();
+        
         List<DiceRoll> thrownDice= new List<DiceRoll>();
         List<DiceRoll> thrownDefDice = new List<DiceRoll>();
 
@@ -178,6 +177,8 @@ public class DiceHandler : MonoBehaviour
     {
         AtkRollResults.Clear();
         DefRollResults.Clear();
+        context.attackRolls.Clear();
+        context.defenseRolls.Clear();
     }
     
 }

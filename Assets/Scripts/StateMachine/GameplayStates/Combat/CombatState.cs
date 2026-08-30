@@ -41,19 +41,8 @@ public class CombatState : BaseState
         //Pre-Roll
         ExecuteRulesInThisStep(AttackTimings.PreRoll);
         
-        //Roll Attack Dice
-        
-        //RollAttackDice();
-        //_diceHandler.SpawnDice(Context.attackRolls, isAttack: true, true); //Last bool is a temp bool for attacka dna defense dice
-
-        _diceHandler.StartCoroutine(_diceHandler.ThrowDice(Context.weapon.ATK, 3, true, Context));
-        //yield return new WaitForSeconds(2.5f);
-        
-        //Roll Defense Dice
-        
-        //RollDefenseDice();
-        //_diceHandler.SpawnDice(Context.defenseRolls, isAttack: false, false); //Last bool is a temp bool for attacka dna defense dice
-        //yield return new WaitForSeconds(2.5f);
+        //Roll Attack Dice and defense dice
+        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDice(Context.weapon.ATK, 3, true, Context));
         
         //After-Roll
         //Keep track of values before rerolls
@@ -100,38 +89,6 @@ public class CombatState : BaseState
         _diceHandler.ClearAllDice();
         Context.isShootingConfirmed = true;
     }
-
-    /*private void RollAttackDice()
-    {
-        Debug.Log("Rolling attack dice");
-        int totalDice = Context.weapon.ATK;
-        for (int i = 0; i < totalDice; i++)
-        {
-            Context.attackRolls.Add(Random.Range(1,7));
-        }
-        
-        //Debugging test
-        for (int i = 0; i < Context.attackRolls.Count; i++)
-        {
-            Debug.Log(Context.attackRolls[i].ToString());
-        }
-    }*/
-
-    /*private void RollDefenseDice()
-    {
-        Debug.Log("Rolling defense dice");
-        int totalDice = 3; //Base 3 defence dice
-        for (int i = 0; i < totalDice; i++)
-        {
-            Context.defenseRolls.Add(Random.Range(1,7));
-        }
-        
-        //Debugging test
-        for (int i = 0; i < Context.defenseRolls.Count; i++)
-        {
-            Debug.Log(Context.defenseRolls[i].ToString());
-        }
-    }*/
     
     private void EvaluateHitsAndSaves()
     {
