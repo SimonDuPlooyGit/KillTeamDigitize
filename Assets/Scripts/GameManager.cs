@@ -5,8 +5,8 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
     private InputActions input;
-    private InformationPackage sharedContext;
-    private StateMachine stateMachine;
+    private InformationPackage sharedContext; //The script holding information to exchange between all scripts and states
+    private StateMachine stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
     [SerializeField] private DiceHandler diceHandler;
     
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript != null));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
-        AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.currentlySelectedTarget != null));
+        AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.validTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
         stateMachine.SetState(unitActivationState);
 
@@ -83,13 +83,14 @@ public class GameManager : MonoBehaviour
         }));
     }
     
+    //Helper function to add a transition
     void AddT(IState from, IState to, IPredicate condition) => stateMachine.AddTransition(from, to, condition);
-
+    //Helper function to add a transition from any state
     void AnyT(IState to, IPredicate condition) => stateMachine.AddAnyTransition(to, condition);
 
     public void Update()
     {
-        stateMachine.Update();
+        stateMachine.Update(); //Keep the state machine updating
     }
 
     public void OnMoveActionButtonPressed()

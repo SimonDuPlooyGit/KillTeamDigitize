@@ -4,26 +4,34 @@ using UnityEngine.InputSystem;
 using UnityEngine.AI;
 using Unity.VisualScripting;
 using TMPro;
+using UnityEditor.Timeline;
 using UnityEngine.UI;
 
 public class PrototypeUnit : MonoBehaviour
 {
+    //Initializing
     public OperativeTemplate operativeData;
-    private NavMeshAgent agentUnit;
-    private NavMeshAgent agentGhost;
+    public GameObject unitGhost;
     public float movementStat;
     private float meterMovement;
     private float pathDistance;
-    public NavMeshPath path;
-    public GameObject unitGhost;
-    public LineRenderer lineRenderer;
-    private Vector3[] points;
-    private bool pathDrawn = false;
-    List<Vector3> limitedPoints = new List<Vector3>();
     public bool selected = false;
     public int currentWounds;
     public int currentAPL;
     public bool dead = false;
+    
+    //Line of sight variables
+    public Transform losStart; //assigned in inspector
+    
+    //Movement and navmesh
+    private NavMeshAgent agentGhost;
+    private NavMeshAgent agentUnit;
+    public NavMeshPath path;
+    public LineRenderer lineRenderer;
+    private Vector3[] points;
+    private bool pathDrawn = false;
+    List<Vector3> limitedPoints = new List<Vector3>();
+    
     //Unit UI healthbar variables
     public GameObject healthFill;
     public GameObject aplCount;
@@ -41,7 +49,7 @@ public class PrototypeUnit : MonoBehaviour
         healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
-
+        
     }
 
     public void UpdatePathDrawing()
@@ -218,5 +226,29 @@ public class PrototypeUnit : MonoBehaviour
     public void UpdateAPL(int currentAPL)
     {
         aplCount.gameObject.GetComponent<TextMeshProUGUI>().text = currentAPL.ToString();
+    }
+
+    public float DetermineLOSandDistance(Transform losEnd)
+    {
+        float distance = (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
+        print(distance + "\"");
+        Vector3 direction = (losEnd.position - losStart.position).normalized;
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, losStart.position);
+
+        if (Physics.Raycast(losStart.position, direction, out RaycastHit hit, distance))
+        {
+            lineRenderer.SetPosition(1, hit.point);
+            Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
+        }
+        else
+        {
+            lineRenderer.SetPosition(1, losEnd.position);
+            Debug.Log($"LOS Clear. Total range to target: {distance}");
+        }
+        
+        lineRenderer.enabled = true;
+        
+        return distance;
     }
 }

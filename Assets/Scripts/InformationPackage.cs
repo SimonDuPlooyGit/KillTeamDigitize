@@ -31,6 +31,7 @@ public class InformationPackage
     public bool isShootingRequested;
     public bool isShootingConfirmed;
     public bool isWeaponSelected;
+    public bool validTarget;
 
     public void Reset()
     {
@@ -52,6 +53,7 @@ public class InformationPackage
         isShootingRequested = false;
         isShootingConfirmed = false;
         isWeaponSelected = false;
+        validTarget = false;
     }
 }
 
