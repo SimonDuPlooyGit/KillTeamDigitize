@@ -240,6 +240,7 @@ public class PrototypeUnit : MonoBehaviour
         {
             lineRenderer.SetPosition(1, hit.point);
             Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
+            distance = 0;
         }
         else
         {

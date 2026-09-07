@@ -60,15 +60,18 @@ public class TargetingState : BaseState
                     // We multiply by your scale/conversion factor if needed, just like meterMovement
                     maxWeaponRange = rangeRule.range; 
                 }
-                
-                if (distanceToEnemy < maxWeaponRange)
+
+                if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
                 {
                     Context.validTarget = true;
                     Debug.Log($"Target in range of: {maxWeaponRange}");
-                } else
+                } else if (distanceToEnemy > maxWeaponRange)
                 {
                     Context.validTarget = false;
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
+                } else if (distanceToEnemy == 0f)
+                {
+                    Debug.Log("Shot will be blocked");
                 }
             }
         }
