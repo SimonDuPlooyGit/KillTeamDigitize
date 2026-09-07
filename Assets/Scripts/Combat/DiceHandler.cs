@@ -34,8 +34,6 @@ public class DiceHandler : MonoBehaviour
     [SerializeField]
     private MenuPanel menu;
     //Lists of Attack and Defense dice results. They are populated in the ThrowDice coroutine
-    public List<int> AtkRollResults = new List<int>();
-    public List<int> DefRollResults = new List<int>();
 
     //Access to information package
     private InformationPackage context;
@@ -67,15 +65,6 @@ public class DiceHandler : MonoBehaviour
         }
     }
 
-    public void RerollDieVisually(int index, int newResult, bool isAttack)
-    {
-        List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice;
-        if (index >= 0 && index < activeList.Count)
-        {
-            activeList[index].RollTo(newResult);
-        }
-    }
-
     public void ClearAllDice()
     {
         activeAttackDice.Clear();
@@ -84,18 +73,15 @@ public class DiceHandler : MonoBehaviour
         foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
     }
 
-    //======================[Throws Dice Physically]==========================================
-    public IEnumerator ThrowDice(int numDice, int numDef, bool isAlly, InformationPackage context) 
+    //======================[Throws ATK Dice Physically]==========================================
+    public IEnumerator ThrowAttackDice(int numDice, bool isAlly, InformationPackage context)
     {
         this.context = context;
-        ClearDiceRolls();
         
         List<DiceRoll> thrownDice= new List<DiceRoll>();
-        List<DiceRoll> thrownDefDice = new List<DiceRoll>();
 
         //Assign prefab based on whether the attacker is an enemy or ally 
         GameObject AtkDiceObj = isAlly? allyDicePhysical : enemyDicePhysical;
-        GameObject DefDiceObj = !isAlly ? allyDicePhysical : enemyDicePhysical;
 
         //Instantiate/throw the attack dice
         for (int i = 0; i < numDice; i++)
@@ -103,17 +89,6 @@ public class DiceHandler : MonoBehaviour
             GameObject physAtkDie = Instantiate(AtkDiceObj, diceThrowPoint.position, Random.rotation);
             DiceRoll dieScript = physAtkDie.GetComponent<DiceRoll>();
             thrownDice.Add(dieScript);
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        yield return new WaitForSeconds(2f);
-
-        //Instantiate/throw the defense dice
-        for (int i = 0; i < numDef; i++)
-        {
-            GameObject physDefDie = Instantiate(DefDiceObj, diceThrowPoint.position, Random.rotation);
-            DiceRoll dieScript = physDefDie.GetComponent<DiceRoll>();
-            thrownDefDice.Add(dieScript);
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -140,43 +115,99 @@ public class DiceHandler : MonoBehaviour
         foreach (DiceRoll die in thrownDice)
         {
             int face = die.GetUpwardFace();
-            AtkRollResults.Add(face);
             context.attackRolls.Add(face);
+        }
+
+        //Populate UI panel with roll results
+        yield return new WaitForSeconds(2f);
+        menu.OpenMenu(menu.diceRollMenu);
+        SpawnDice(context.attackRolls, true, isAlly);
+        yield return new WaitForSeconds(3);
+        menu.CloseMenu(menu.diceRollMenu);
+
+        //Clean up dice objects
+        /*foreach (DiceRoll die in thrownDice)
+        {
+            Destroy(die.gameObject);
+        }*/
+    }
+    //==================[End coroutine]=======================
+    
+    //======================[Throws DEF Dice Physically]==========================================
+    public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
+    {
+        this.context = context;
+        
+        List<DiceRoll> thrownDefDice = new List<DiceRoll>();
+
+        //Assign prefab based on whether the attacker is an enemy or ally 
+        GameObject DefDiceObj = !isAlly ? allyDicePhysical : enemyDicePhysical;
+
+        //Instantiate/throw the defense dice
+        for (int i = 0; i < numDice; i++)
+        {
+            GameObject physDefDie = Instantiate(DefDiceObj, diceThrowPoint.position, Random.rotation);
+            DiceRoll dieScript = physDefDie.GetComponent<DiceRoll>();
+            thrownDefDice.Add(dieScript);
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        //Wait until all dice stop moving before processing their results
+        bool allStopped = false;
+        while(!allStopped)
+        {
+            allStopped = true;
+
+            foreach(DiceRoll die in thrownDefDice)
+            {
+                if(!die.IsStopped())
+                {
+                    allStopped=false;
+                    break;
+                }
+            }
+            yield return null;
         }
 
         //Process Defense dice values
         foreach (DiceRoll die in thrownDefDice)
         {
             int face = die.GetUpwardFace();
-            DefRollResults.Add(face);
             context.defenseRolls.Add(face);
         }
 
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
         menu.OpenMenu(menu.diceRollMenu);
-        SpawnDice(AtkRollResults, true, isAlly);
-        SpawnDice(DefRollResults, false, !isAlly);
+        SpawnDice(context.attackRolls, true, isAlly);
+        SpawnDice(context.defenseRolls, false, !isAlly);
         yield return new WaitForSeconds(3);
         menu.CloseMenu(menu.diceRollMenu);
-
-        //Clean up dice objects
-        foreach (DiceRoll die in thrownDice)
+        
+        /*foreach (DiceRoll die in thrownDefDice)
         {
             Destroy(die.gameObject);
-        }
-        foreach (DiceRoll die in thrownDefDice)
-        {
-            Destroy(die.gameObject);
-        }
+        }*/
     }
     //==================[End coroutine]=======================
 
+    /*public IEnumerator Reroll(int position, bool isAttack)
+    {
+        if (isAttack)
+        {
+            //context.attackRolls[position].reroll;
+        }
+        else
+        {
+            //context.defenseRolls[position].reroll;
+        }
+    }*/
+    
     //Clears both dice roll result lists. 
     public void ClearDiceRolls()
     {
-        AtkRollResults.Clear();
-        DefRollResults.Clear();
         context.attackRolls.Clear();
         context.defenseRolls.Clear();
     }

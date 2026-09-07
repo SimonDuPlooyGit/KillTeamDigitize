@@ -10,7 +10,7 @@ public interface IActive
 [System.Serializable]
 public class Optics : IActive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change since it can get paid as an action
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change since it can get paid as an action
 
     public void Execute(InformationPackage context)
     {

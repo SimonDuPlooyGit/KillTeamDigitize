@@ -1,3 +1,6 @@
+using System.ComponentModel.Design.Serialization;
+using UnityEditor.Timeline;
+
 public class WeaponRules
 {
     //ALPHABETICAL LIST OF WEAPON RULES!
@@ -38,14 +41,13 @@ public class WeaponRules
     //Seek (Cover type): (Affects valid targeting - Affects enemy unit)
     //Silent: (Condition on unit state)
 
-    //After roll rules
-    //Balanced: (Allows rerolls)
-    //Ceaseless: (Allows rerolls)
-    //Relentless: (Allows rerolls)
+    //After attack roll rules
+    //Balanced: (Allows rerolls after attack rolls)
+    //Ceaseless: (Allows rerolls after attack rolls)
+    //Relentless: (Allows rerolls after attack rolls)
     //Lethal x: (When retained - crit modification)
     //Devastating x: (When retained - affects enemy unit)
     //Piercing crits x: (When retained - affects enemy unit)
-    //Stun: (When retained - affects enemy unit)
     //Punishing: (When retained - allows additional retention)
     //Rending: (When retained - allows additional retention)
     //Severe: (When retained - allows additional retention)
@@ -55,6 +57,7 @@ public class WeaponRules
     //Shock: (Affects enemy unit)
 
     //After attack evaluation
+    //Stun: (When damaged with crit - affects enemy unit)
     //Blast x: (Allows extra targets)
     //Torrent x: (Allows extra targets)
     //Hot: (A roll effect on unit)
@@ -65,11 +68,19 @@ public class WeaponRules
     [System.Serializable]
     public class Balanced : IWeaponRule
     {
-        public AttackTimings Step => AttackTimings.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterAttackRoll;
 
         public void Execute(InformationPackage context)
         {
-            //Reroll one attack dice
+            //Reroll one attack dice (if any dice has failed, reroll a failed dice automatically)
+            //if no dice failed then let them choose one if they want to
+            for (int i = 0; i < context.attackRolls.Count; i++)
+            {
+                if (context.attackRolls[i] < context.weapon.HIT)
+                {
+                    //reroll
+                }
+            }
         }
         
         public override string ToString() => "Balanced";
@@ -100,6 +111,7 @@ public class WeaponRules
         public void Execute(InformationPackage context)
         {
             //Defender collects x less defense dice
+            context.numDefenseDiceRoll -= piercingX;
         }
         
         public override string ToString() => $"Piercing: {piercingX}";
@@ -121,13 +133,21 @@ public class WeaponRules
     [System.Serializable]
     public class Lethal : IWeaponRule
     {
-        public AttackTimings Step => AttackTimings.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterAttackRoll;
 
         public int lethalX;
 
         public void Execute(InformationPackage context)
         {
             //Successful dice rolls > x are crits
+            for (int i = 0; i < context.attackRolls.Count; i++)
+            {
+                if (context.attackRolls[i] >= lethalX && context.attackRolls[i] < 6)
+                {
+                    context.retainedNormals -= 1;
+                    context.retainedCrits += 1;
+                }
+            }
         }
         
         public override string ToString() => $"Lethal: {lethalX}";
@@ -177,13 +197,19 @@ public class WeaponRules
     [System.Serializable]
     public class PiercingCrit : IWeaponRule
     {
-        public AttackTimings Step => AttackTimings.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterAttackRoll;
 
         public int pCritX;
 
         public void Execute(InformationPackage context)
         {
-            //Same as piercing but only on retained crits
+            if (context.retainedCrits >= pCritX)
+            {
+                context.numDefenseDiceRoll -= pCritX;
+            } else if (context.retainedCrits < pCritX && context.retainedCrits > 0)
+            {
+                context.numDefenseDiceRoll -= context.retainedCrits;
+            }
         }
         
         public override string ToString() => $"PiercingCrit {pCritX}";
@@ -219,7 +245,7 @@ public class WeaponRules
     [System.Serializable]
     public class Stun : IWeaponRule
     {
-        public AttackTimings Step => AttackTimings.AfterRoll;
+        public AttackTimings Step => AttackTimings.AttackEvaluation;
 
         public void Execute(InformationPackage context)
         {
@@ -305,7 +331,7 @@ public class WeaponRules
     [System.Serializable]
     public class Ceaseless : IWeaponRule
     {
-        public AttackTimings Step => AttackTimings.AfterRoll;
+        public AttackTimings Step => AttackTimings.AfterAttackRoll;
         
         public void Execute(InformationPackage context)
         {

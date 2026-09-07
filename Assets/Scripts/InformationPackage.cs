@@ -21,6 +21,8 @@ public class InformationPackage
     public int retainedCrits;
     public int retainedCritDefense;
     public int retainedNormalDefense;
+
+    public int numDefenseDiceRoll = 3;
     
     public bool canReroll;
     public bool ignoreCover;
@@ -54,13 +56,15 @@ public class InformationPackage
         isShootingConfirmed = false;
         isWeaponSelected = false;
         validTarget = false;
+        numDefenseDiceRoll = 3;
     }
 }
 
 public enum AttackTimings
 {
     PreRoll,
-    AfterRoll,
+    AfterAttackRoll,
+    AfterDefenseRoll,
     AttackEvaluation,
     AfterAttackEvaluation,
 }

@@ -9,7 +9,7 @@ public interface IPassive
 [System.Serializable]
 public class HeroicLeader : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -22,7 +22,7 @@ public class HeroicLeader : IPassive
 [System.Serializable]
 public class IronHalo : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -33,7 +33,7 @@ public class IronHalo : IPassive
 [System.Serializable]
 public class DoctrineWarfare : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -46,7 +46,7 @@ public class DoctrineWarfare : IPassive
 [System.Serializable]
 public class ChapterVeteran : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -57,7 +57,7 @@ public class ChapterVeteran : IPassive
 [System.Serializable]
 public class Grenadier : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -68,7 +68,7 @@ public class Grenadier : IPassive
 [System.Serializable]
 public class CamoCloak : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -81,7 +81,7 @@ public class CamoCloak : IPassive
 [System.Serializable]
 public class CTAggressive : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -92,7 +92,7 @@ public class CTAggressive : IPassive
 [System.Serializable]
 public class CTDueller : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -103,7 +103,7 @@ public class CTDueller : IPassive
 [System.Serializable]
 public class CTResolute : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -114,7 +114,7 @@ public class CTResolute : IPassive
 [System.Serializable]
 public class CTStealthy : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -126,7 +126,7 @@ public class CTStealthy : IPassive
 [System.Serializable]
 public class CTMobile : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -138,7 +138,7 @@ public class CTMobile : IPassive
 [System.Serializable]
 public class CTHardy : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -150,7 +150,7 @@ public class CTHardy : IPassive
 [System.Serializable]
 public class CTSharpshooter : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {
@@ -161,7 +161,7 @@ public class CTSharpshooter : IPassive
 [System.Serializable]
 public class CTSiegeSpecialist : IPassive
 {
-    public AttackTimings Step => AttackTimings.AfterRoll; //This timing needs to change
+    public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
     public void Execute(InformationPackage context)
     {

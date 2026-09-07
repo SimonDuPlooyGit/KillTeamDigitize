@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class CombatState : BaseState
 {
@@ -10,17 +9,14 @@ public class CombatState : BaseState
     //The combat state that handles rolling and rules
     
     public DiceHandler _diceHandler; //Needs reference to the CombatManager script on the CombatManager GameObject
-    public MenuPanel _menu; //Needs reference to the MenuPanel script on UI manager
 
     public CombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
     {
         _diceHandler = diceHandler;
-        _menu = menu;
     }
     
     public override void OnEnter()
     {
-        //_menu.OpenMenu(_menu.diceRollMenu);
         Debug.Log("CombatState entered");
         
         //Reset
@@ -42,40 +38,20 @@ public class CombatState : BaseState
         ExecuteRulesInThisStep(AttackTimings.PreRoll);
         
         //Roll Attack Dice and defense dice
-        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDice(Context.weapon.ATK, 3, true, Context));
+        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(Context.weapon.ATK, true, Context));
         
-        //After-Roll
+        //After attack roll
         //Keep track of values before rerolls
         List<int> oldAttackRolls = new List<int>(Context.attackRolls);
-        List<int> oldDefenseRolls = new List<int>(Context.defenseRolls);
-        ExecuteRulesInThisStep(AttackTimings.AfterRoll);
+        ExecuteRulesInThisStep(AttackTimings.AfterAttackRoll);
         
-        //Check for rerolls and rigger reroll animations if values have changed
-        bool attackRerolled = false;
-        for (int i = 0; i < Context.attackRolls.Count; i++)
-        {
-            if (Context.attackRolls[i] != oldAttackRolls[i])
-            {
-                _diceHandler.RerollDieVisually(i, Context.attackRolls[i], isAttack: true);
-                attackRerolled = true;
-            }
-        }
+        //Rerolls
+        
+        yield return new WaitForSeconds(2f);
 
-        bool defenseRerolled = false;
-        for (int i = 0; i < Context.defenseRolls.Count; i++)
-        {
-            if (Context.defenseRolls[i] != oldDefenseRolls[i])
-            {
-                _diceHandler.RerollDieVisually(i, Context.defenseRolls[i], isAttack: false);
-                defenseRerolled = true;
-            }
-        }
-
-        // If rules changed rolls, pause the state execution for the reroll animations
-        if (attackRerolled || defenseRerolled)
-        {
-            yield return new WaitForSeconds(2.5f);
-        }
+        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(Context.numDefenseDiceRoll, true, Context));
+        
+        List<int> oldDefenseRolls = new List<int>(Context.defenseRolls);
         
         //Attack Evaluation
         ExecuteRulesInThisStep(AttackTimings.AttackEvaluation);
