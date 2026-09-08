@@ -8,6 +8,13 @@ using UnityEditor.Rendering.LookDev; //need this to access the Image component
 
 public class DiceHandler : MonoBehaviour
 {
+    public enum DiceSelectionMode
+    {
+        Attack,
+        Defense,
+        Both,
+        None
+    }
     //On the combat manager GameObject
     [Header("Dice Prefabs")]
     [SerializeField]
@@ -33,12 +40,16 @@ public class DiceHandler : MonoBehaviour
     private float currentHealthTest;
     [SerializeField]
     private MenuPanel menu;
-    //Lists of Attack and Defense dice results. They are populated in the ThrowDice coroutine
+    //List used to pass attack roll values in throwDefenseDice to populate the menu
+    public List<DiceRoll> tempPhysAttackDice = new List<DiceRoll>();
+    //max amount of dice that can be selected to be rerolled, number will have to be set externally
+    public int maxAllowedSelections = 2;
+    public DiceSelectionMode currentSelectionMode = DiceSelectionMode.Attack; // Default to only select attack dice
 
     //Access to information package
     private InformationPackage context;
 
-    public void SpawnDice(List<int> preRolledValues, bool isAttack, bool isAlly)
+    public void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
     {
         GameObject holder = isAttack ? attackDiceHolder : defenseDiceHolder; //Null check for if we have attackDiceHolder or defenceDiceHolder
         List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice; //Null check for the lists
@@ -52,15 +63,15 @@ public class DiceHandler : MonoBehaviour
         activeList.Clear();
 
         // Instantiate and initiate rolls
-        for (int i = 0; i < preRolledValues.Count; i++) 
+        for (int i = 0; i < physDiceList.Count; i++) 
         {
-            GameObject rolledDice = Instantiate(dicePrefab, holder.transform);
-            CombatRoll rollScript = rolledDice.GetComponent<CombatRoll>();
+            GameObject rolledDiceUI = Instantiate(dicePrefab, holder.transform);
+            CombatRoll rollScript = rolledDiceUI.GetComponent<CombatRoll>();
             
             if (rollScript != null)
             {
                 activeList.Add(rollScript);
-                rollScript.RollTo(preRolledValues[i]); //Force visual outcome to match math
+                rollScript.Initialize(physDiceList[i],this,isAttack);
             }
         }
     }
@@ -76,6 +87,8 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws ATK Dice Physically]==========================================
     public IEnumerator ThrowAttackDice(int numDice, bool isAlly, InformationPackage context)
     {
+        //clear tempPhysAttackDice to keep track of attack dice. this is used to populate the dice roll menu in throwDefenseDice coroutine
+        tempPhysAttackDice.Clear();
         this.context = context;
         
         List<DiceRoll> thrownDice= new List<DiceRoll>();
@@ -89,6 +102,7 @@ public class DiceHandler : MonoBehaviour
             GameObject physAtkDie = Instantiate(AtkDiceObj, diceThrowPoint.position, Random.rotation);
             DiceRoll dieScript = physAtkDie.GetComponent<DiceRoll>();
             thrownDice.Add(dieScript);
+            tempPhysAttackDice.Add(dieScript);
             yield return new WaitForSeconds(0.1f);
         }
 
@@ -121,8 +135,9 @@ public class DiceHandler : MonoBehaviour
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
         menu.OpenMenu(menu.diceRollMenu);
-        SpawnDice(context.attackRolls, true, isAlly);
-        yield return new WaitForSeconds(3);
+        SpawnDice(thrownDice, true, isAlly);
+        //yield return new WaitForSeconds(3);
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
 
         //Clean up dice objects
@@ -181,9 +196,10 @@ public class DiceHandler : MonoBehaviour
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
         menu.OpenMenu(menu.diceRollMenu);
-        SpawnDice(context.attackRolls, true, isAlly);
-        SpawnDice(context.defenseRolls, false, !isAlly);
-        yield return new WaitForSeconds(3);
+        SpawnDice(tempPhysAttackDice, true, isAlly);
+        SpawnDice(thrownDefDice, false, !isAlly);
+        //yield return new WaitForSeconds(3);
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
         
         /*foreach (DiceRoll die in thrownDefDice)
@@ -204,10 +220,35 @@ public class DiceHandler : MonoBehaviour
             //context.defenseRolls[position].reroll;
         }
     }*/
-    
+
     //Clears both dice roll result lists. 
+
+    //determines if a dice panel can be selected
+    public bool CanSelectDie(bool isAttack)
+    {
+        //Uses cuurent selection state to determine which panels you can select
+        if (currentSelectionMode == DiceSelectionMode.None) return false;
+        if (currentSelectionMode == DiceSelectionMode.Attack && !isAttack) return false;
+        if (currentSelectionMode == DiceSelectionMode.Defense && isAttack) return false;
+
+        // Count currently selected dice across active lists
+        int totalSelected = 0;
+
+        for (int i = activeAttackDice.Count - 1; i >= 0; i--)
+        {
+            if (activeAttackDice[i].IsSelected) totalSelected++;
+        }
+
+        for (int i = activeDefenseDice.Count - 1; i >= 0; i--)
+        {
+            if (activeDefenseDice[i].IsSelected) totalSelected++;
+        }
+
+        return totalSelected < maxAllowedSelections;
+    }
     public void ClearDiceRolls()
     {
+        currentSelectionMode = DiceSelectionMode.Attack;
         context.attackRolls.Clear();
         context.defenseRolls.Clear();
     }

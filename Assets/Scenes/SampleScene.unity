@@ -301,6 +301,9 @@ MonoBehaviour:
   healthFill: {fileID: 406890818}
   currentHealthTest: 3
   menu: {fileID: 1700968724}
+  tempPhysAttackDice: []
+  maxAllowedSelections: 2
+  currentSelectionMode: 2
 --- !u!4 &95257450
 Transform:
   m_ObjectHideFlags: 0
