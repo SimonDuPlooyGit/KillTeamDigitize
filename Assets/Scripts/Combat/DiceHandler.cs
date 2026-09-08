@@ -47,9 +47,15 @@ public class DiceHandler : MonoBehaviour
     //max amount of dice that can be selected to be rerolled, number will have to be set externally
     public int maxAllowedSelections = 2;
     public DiceSelectionMode currentSelectionMode = DiceSelectionMode.Attack; // Default to only select attack dice
-
     //Access to information package
     private InformationPackage context;
+    [SerializeField]
+    private GameObject rerollButton;
+
+    private void Start()
+    {
+        rerollButton.SetActive(false);    
+    }
 
     public void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
     {
@@ -282,6 +288,8 @@ public class DiceHandler : MonoBehaviour
             activePhysList[slotIndex] = newDie;
             activeContextList[slotIndex] = newFace;
         }
+
+        yield return new WaitForSeconds(1.5f);
         //Update the menu
         menu.OpenMenu(menu.diceRollMenu);
         bool isUIAlly = isAttackMode ? isAlly : !isAlly;
@@ -331,6 +339,27 @@ public class DiceHandler : MonoBehaviour
         }
     }
 
+    //Makes the reroll button appear when a panel is selected
+    public void UpdateRerollButtonVisibility()
+    {
+        if (rerollButton == null) return;
+
+        bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack);
+        List<CombatRoll> activeList = isAttackMode ? activeAttackDice : activeDefenseDice;
+
+        bool hasSelection = false;
+        foreach (CombatRoll panel in activeList)
+        {
+            if (panel != null && panel.IsSelected)
+            {
+                hasSelection = true;
+                break;
+            }
+        }
+        // Enable button only if at least 1 panel is selected
+        rerollButton.SetActive(hasSelection);
+    }
+    //used to call the reroll coroutine
     public void RerollButton(bool isAlly)
     {
         StartCoroutine(Reroll(isAlly));

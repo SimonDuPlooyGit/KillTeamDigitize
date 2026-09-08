@@ -54,12 +54,22 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
     {
         IsSelected = true;
         diceImage.color = Color.black; //temp feedback for now
+
+        if (handler != null)
+        {
+            handler.UpdateRerollButtonVisibility();
+        }
     }
 
     public void Deselect()
     {
         IsSelected = false;
         diceImage.color = Color.white;
+
+        if (handler != null)
+        {
+            handler.UpdateRerollButtonVisibility();
+        }
     }
 
     //might not be needed anymore, may delete later
