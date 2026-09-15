@@ -159,7 +159,8 @@ public class PrototypeUnit : MonoBehaviour
     public void moveUnitToGhost()
     {
         agentUnit.destination = unitGhost.transform.position;
-
+        Reset();
+        
         if (transform.position == unitGhost.transform.position)
         {
             Reset();
