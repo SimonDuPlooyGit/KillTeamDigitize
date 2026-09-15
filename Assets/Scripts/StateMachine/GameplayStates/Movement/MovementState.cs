@@ -39,6 +39,7 @@ public class MovementState : BaseState
         _menu.CloseMenu(_menu.tutReposition);
         _menu.moveButton2?.SetActive(false);
         Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
+        Context.currentlySelectedUnitScript.Reset();
     }
 
     public void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the ghost to where you have clicked to move

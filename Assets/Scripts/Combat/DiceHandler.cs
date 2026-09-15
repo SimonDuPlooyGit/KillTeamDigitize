@@ -16,6 +16,7 @@ public class DiceHandler : MonoBehaviour
         Both,
         None
     }
+    
     //On the combat manager GameObject
     [Header("Dice Prefabs")]
     [SerializeField]
@@ -26,6 +27,7 @@ public class DiceHandler : MonoBehaviour
     GameObject allyDicePhysical;
     [SerializeField]
     GameObject enemyDicePhysical;
+    
     [Header("Holders/Transforms")]
     [SerializeField]
     GameObject attackDiceHolder; //The horizontal layout group for the attack dice prefabs
@@ -41,14 +43,18 @@ public class DiceHandler : MonoBehaviour
     private float currentHealthTest;
     [SerializeField]
     private MenuPanel menu;
+    
     //Lists used to keep global track of attack and defense dice for rerolling purposes
     public List<DiceRoll> activePhysAttackDice = new List<DiceRoll>();
     public List<DiceRoll> activePhysDefenseDice = new List<DiceRoll>();
+    
     //max amount of dice that can be selected to be rerolled, number will have to be set externally
     public int maxAllowedSelections = 2;
     public DiceSelectionMode currentSelectionMode = DiceSelectionMode.Attack; // Default to only select attack dice
+    
     //Access to information package
     private InformationPackage context;
+    
     [SerializeField]
     private GameObject rerollButton;
 
@@ -153,6 +159,7 @@ public class DiceHandler : MonoBehaviour
             Destroy(die.gameObject);
         }*/
     }
+    
     //==================[End throw attack coroutine]=======================
     
     //======================[Throws DEF Dice Physically]==========================================
@@ -302,7 +309,7 @@ public class DiceHandler : MonoBehaviour
     //determines if a dice panel can be selected
     public bool CanSelectDie(bool isAttack)
     {
-        //Uses cuurent selection state to determine which panels you can select
+        //Uses current selection state to determine which panels you can select
         if (currentSelectionMode == DiceSelectionMode.None) return false;
         if (currentSelectionMode == DiceSelectionMode.Attack && !isAttack) return false;
         if (currentSelectionMode == DiceSelectionMode.Defense && isAttack) return false;
