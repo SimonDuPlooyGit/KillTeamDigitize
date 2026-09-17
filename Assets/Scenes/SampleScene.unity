@@ -1650,8 +1650,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrbitCamera
   lookAtTarget: {fileID: 1898865101}
   sensitivity: 5
+  toggleKey: 9
   maximumDistance: 10
   minimumDistance: 2
+  speed: 10
 --- !u!1 &330607369
 GameObject:
   m_ObjectHideFlags: 0
@@ -11893,6 +11895,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   menu: {fileID: 1700968724}
   diceHandler: {fileID: 95257449}
+  mainCamera: {fileID: 330585548}
 --- !u!4 &1921963952
 Transform:
   m_ObjectHideFlags: 0
