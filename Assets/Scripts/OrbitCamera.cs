@@ -54,7 +54,7 @@ public class OrbitCamera : MonoBehaviour
         {
             mouseX = Input.GetAxis("Mouse X");
             mouseY = Input.GetAxis("Mouse Y");
-            transform.eulerAngles += new Vector3(-mouseY * sensitivity * 10f, mouseX * sensitivity * 10f, 0);
+            transform.eulerAngles += new Vector3(-mouseY * sensitivity, mouseX * sensitivity, 0);
         }
 
         // Zoom with scroll wheel

@@ -8,6 +8,7 @@ public class MovementState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private readonly MenuPanel _menu;
+    public bool movementFinished = false;
 
     public MovementState(InformationPackage context, InputActions input, MenuPanel menu) : base(context) //Needs base(context) for sending context to the BaseState constructor first
     {
@@ -29,6 +30,14 @@ public class MovementState : BaseState
         if (Context.currentlySelectedUnitScript != null)
         {
             Context.currentlySelectedUnitScript.UpdatePathDrawing(); //If there is a unit script update its pathdrawing
+        }
+
+        if (Context.currentlySelectedUnitScript != null &&
+            Context.currentlySelectedUnitScript.remainingMovement < 0.05f)
+        {
+            _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
+            Context.isMovementRequested = true;
+            movementFinished = true;
         }
     }
 

@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
         //Forward transitions
         AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript != null));
         AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript != null));
+        AddT(movementState, actionSelectionState, new FuncPredicate(() => movementState.movementFinished));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.validTarget));
