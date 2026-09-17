@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -53,7 +54,7 @@ public class PrototypeUnit : MonoBehaviour
         movementInfo = gameObject.transform.Find("UnitUI").Find("MovementDisp").Find("MoveNum").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
-        
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
     }
 
     public void UpdatePathDrawing()
@@ -90,7 +91,7 @@ public class PrototypeUnit : MonoBehaviour
         pathDrawn = false;
         unitGhost.SetActive(true);
 
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{remainingMovement * 39.37f / 10}/{movementStat}";
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
 
         if (remainingMovement <= 0.05f)
         {
@@ -101,7 +102,7 @@ public class PrototypeUnit : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.name != "Tabletop")
         {
-            Debug.Log(hit.transform.name);
+            //Debug.Log(hit.transform.name);
             if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
             {
                 for (int i = 0; i < path.corners.Length - 1; i++)
@@ -125,7 +126,7 @@ public class PrototypeUnit : MonoBehaviour
                 currentPathDistance = pathDistance;
             }
         }
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{remainingMovement * 39.37f / 10}/{movementStat}";
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
     }
 
     private void DrawPath(Vector3[] points)
@@ -170,18 +171,6 @@ public class PrototypeUnit : MonoBehaviour
         return path.corners[path.corners.Length - 1];
     }
 
-    public float CalculatePathLength(NavMeshPath pathToCalculate)
-    {
-        float length = 0f;
-
-        for (int i = 0; i < pathToCalculate.corners.Length - 1; i++)
-        {
-            length += Vector3.Distance(pathToCalculate.corners[i], pathToCalculate.corners[i + 1]);
-        }
-        
-        return length;
-    }
-
     public void MoveUnitToGhost()
     {
         agentUnit.destination = unitGhost.transform.position;
@@ -190,6 +179,7 @@ public class PrototypeUnit : MonoBehaviour
         
         if (transform.position == unitGhost.transform.position)
         {
+            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
             Reset();
         }
     }
