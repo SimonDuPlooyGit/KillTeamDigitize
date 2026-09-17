@@ -50,7 +50,7 @@ public class PrototypeUnit : MonoBehaviour
         currentWounds = operativeData.WOUNDS;
         currentAPL = operativeData.APL;
         healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
-        movementInfo = gameObject.transform.Find("UnitUI").Find("MovementInfo").Find("MoveNum").gameObject;
+        movementInfo = gameObject.transform.Find("UnitUI").Find("MovementDisp").Find("MoveNum").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
         
@@ -90,6 +90,8 @@ public class PrototypeUnit : MonoBehaviour
         pathDrawn = false;
         unitGhost.SetActive(true);
 
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{remainingMovement * 39.37f / 10}/{movementStat}";
+
         if (remainingMovement <= 0.05f)
         {
             Debug.Log($"No remaining movement: {remainingMovement}");
@@ -123,7 +125,7 @@ public class PrototypeUnit : MonoBehaviour
                 currentPathDistance = pathDistance;
             }
         }
-        Debug.Log($"Movement left after confirming move: {(remainingMovement - currentPathDistance) * 39.37f / 10}\"");
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{remainingMovement * 39.37f / 10}/{movementStat}";
     }
 
     private void DrawPath(Vector3[] points)
