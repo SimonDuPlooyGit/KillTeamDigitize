@@ -97,8 +97,9 @@ public class PrototypeUnit : MonoBehaviour
         }
         
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true)
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.name != "Tabletop")
         {
+            Debug.Log(hit.transform.name);
             if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
             {
                 for (int i = 0; i < path.corners.Length - 1; i++)
@@ -184,7 +185,6 @@ public class PrototypeUnit : MonoBehaviour
         agentUnit.destination = unitGhost.transform.position;
         remainingMovement -= currentPathDistance;
         currentPathDistance = 0f;
-        Reset();
         
         if (transform.position == unitGhost.transform.position)
         {
