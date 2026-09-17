@@ -1572,6 +1572,8 @@ MonoBehaviour:
   sensitivity: 5
   maximumDistance: 10
   minimumDistance: 2
+  freecam: 1
+  speed: 0
 --- !u!1 &330607369
 GameObject:
   m_ObjectHideFlags: 0
@@ -11226,6 +11228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   menu: {fileID: 1700968724}
   diceHandler: {fileID: 95257449}
+  mainCamera: {fileID: 330585548}
 --- !u!4 &1921963952
 Transform:
   m_ObjectHideFlags: 0

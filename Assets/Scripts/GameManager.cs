@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +10,7 @@ public class GameManager : MonoBehaviour
     private StateMachine stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
     [SerializeField] private DiceHandler diceHandler;
+    [SerializeField] private OrbitCamera mainCamera;
     
     //Direct access reference for UI buttons to evoke events
     public MovementState movementState;
@@ -18,6 +20,7 @@ public class GameManager : MonoBehaviour
         input = new InputActions();
         stateMachine = new StateMachine();
         sharedContext = new InformationPackage();
+        sharedContext.mainCameraScript = mainCamera;
 
         //Initialize states
         var unitActivationState = new UnitActivationState(sharedContext, input, menu);

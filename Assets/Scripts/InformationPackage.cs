@@ -9,6 +9,7 @@ public class InformationPackage
     public GameObject currentlySelectedTarget;
     public PrototypeUnit currentlySelectedTargetScript;
     public DiceHandler diceHandler;
+    public OrbitCamera mainCameraScript;
     
     //Data for rules
     public OperativeTemplate activatedUnitSO;
