@@ -19,6 +19,8 @@ public class CombatState : BaseState
     {
         Debug.Log("CombatState entered");
         
+        Context.diceHandler = _diceHandler;
+        
         //Reset
         Context.attackRolls.Clear();
         Context.defenseRolls.Clear();
@@ -62,7 +64,8 @@ public class CombatState : BaseState
         ApplyFinalDamage();
         
         yield return new WaitForSeconds(1.5f);
-        _diceHandler.ClearAllDice();
+        _diceHandler.ClearDiceRolls();
+        Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
         Context.isShootingConfirmed = true;
     }
     

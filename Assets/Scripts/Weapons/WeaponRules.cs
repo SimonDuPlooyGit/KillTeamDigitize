@@ -68,19 +68,12 @@ public class WeaponRules
     [System.Serializable]
     public class Balanced : IWeaponRule
     {
-        public AttackTimings Step => AttackTimings.AfterAttackRoll;
+        public AttackTimings Step => AttackTimings.PreRoll;
 
         public void Execute(InformationPackage context)
         {
-            //Reroll one attack dice (if any dice has failed, reroll a failed dice automatically)
-            //if no dice failed then let them choose one if they want to
-            for (int i = 0; i < context.attackRolls.Count; i++)
-            {
-                if (context.attackRolls[i] < context.weapon.HIT)
-                {
-                    //reroll
-                }
-            }
+            context.diceHandler.maxAllowedSelections = 1;
+            context.diceHandler.currentSelectionMode = DiceHandler.DiceSelectionMode.Attack;
         }
         
         public override string ToString() => "Balanced";

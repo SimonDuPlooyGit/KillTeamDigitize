@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
   m_Name: TestWeapon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
-  ATK: 0
-  HIT: 0
-  DMGnorm: 0
-  DMGcrit: 0
+  ATK: 3
+  HIT: 3
+  DMGnorm: 3
+  DMGcrit: 4
   rules:
   - rid: 389751748437213245
   references:

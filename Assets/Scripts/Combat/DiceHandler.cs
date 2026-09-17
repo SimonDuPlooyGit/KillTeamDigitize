@@ -60,6 +60,7 @@ public class DiceHandler : MonoBehaviour
 
     private void Start()
     {
+        currentSelectionMode = DiceSelectionMode.None;
         rerollButton.SetActive(false);    
     }
 
@@ -303,6 +304,8 @@ public class DiceHandler : MonoBehaviour
         SpawnDice(activePhysList, isAttackMode, isUIAlly);
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
+
+        currentSelectionMode = DiceSelectionMode.None;
     }
     //==================[End standard reroll coroutine]=======================
 
@@ -332,7 +335,7 @@ public class DiceHandler : MonoBehaviour
 
     public void ClearDiceRolls()
     {
-        currentSelectionMode = DiceSelectionMode.Attack;
+        currentSelectionMode = DiceSelectionMode.None;
         context.attackRolls.Clear();
         context.defenseRolls.Clear();
         foreach(DiceRoll die in activePhysAttackDice)

@@ -8,6 +8,7 @@ public class InformationPackage
     public PrototypeUnit currentlySelectedUnitScript;
     public GameObject currentlySelectedTarget;
     public PrototypeUnit currentlySelectedTargetScript;
+    public DiceHandler diceHandler;
     
     //Data for rules
     public OperativeTemplate activatedUnitSO;
