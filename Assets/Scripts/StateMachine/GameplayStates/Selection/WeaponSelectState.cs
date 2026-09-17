@@ -49,6 +49,7 @@ public class WeaponSelectState : BaseState
                 //^ Call AddWeaponPanel on the shootMenu script with the currently iterated weapon as a parameter
                 //Send OnWeaponClicked as a delegate to AddWeaponPanel (Top of a 3 part callback down to WeaponPanel)
             }
+            _menu.shootMenuActualScript.AddFooter();
         }
         else
         {
