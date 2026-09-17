@@ -19,6 +19,7 @@ public class PrototypeUnit : MonoBehaviour
     public int currentWounds;
     public int currentAPL;
     public bool dead = false;
+    public float remainingMovement;
     
     //Line of sight variables
     public Transform losStart; //assigned in inspector
@@ -28,18 +29,20 @@ public class PrototypeUnit : MonoBehaviour
     private NavMeshAgent agentUnit;
     public NavMeshPath path;
     public LineRenderer lineRenderer;
-    private Vector3[] points;
     private bool pathDrawn = false;
     List<Vector3> limitedPoints = new List<Vector3>();
+    private float currentPathDistance;
     
-    //Unit UI healthbar variables
+    //Unit UI variables
     public GameObject healthFill;
     public GameObject aplCount;
+    public GameObject movementInfo;
 
     private void Awake()
     {
         movementStat = operativeData.MOVE;
         meterMovement = (movementStat/39.37f) * 10; //Changing the inches to meters and then applying 10x Scale.
+        remainingMovement = meterMovement;
         agentUnit = GetComponent<NavMeshAgent>();
         agentGhost = unitGhost.GetComponent<NavMeshAgent>();
         path = new NavMeshPath();
@@ -47,6 +50,7 @@ public class PrototypeUnit : MonoBehaviour
         currentWounds = operativeData.WOUNDS;
         currentAPL = operativeData.APL;
         healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
+        movementInfo = gameObject.transform.Find("UnitUI").Find("MovementInfo").Find("MoveNum").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
         
@@ -85,6 +89,12 @@ public class PrototypeUnit : MonoBehaviour
         lineRenderer.enabled = false;
         pathDrawn = false;
         unitGhost.SetActive(true);
+
+        if (remainingMovement <= 0.05f)
+        {
+            Debug.Log($"No remaining movement: {remainingMovement}");
+            return;
+        }
         
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true)
@@ -99,19 +109,20 @@ public class PrototypeUnit : MonoBehaviour
                 }
             }
 
-            if (pathDistance > meterMovement)
+            if (pathDistance > remainingMovement)
             {
-                agentGhost.destination = LimitPath(path, meterMovement);
+                agentGhost.destination = LimitPath(path, remainingMovement);
+                currentPathDistance = remainingMovement;
             }
             else
             {
                 limitedPoints.Add(transform.position);
                 limitedPoints.Add(hit.point);
                 agentGhost.destination = hit.point;
+                currentPathDistance = pathDistance;
             }
-
-            points = path.corners;
         }
+        Debug.Log($"Movement left after confirming move: {(remainingMovement - currentPathDistance) * 39.37f / 10}\"");
     }
 
     private void DrawPath(Vector3[] points)
@@ -156,9 +167,23 @@ public class PrototypeUnit : MonoBehaviour
         return path.corners[path.corners.Length - 1];
     }
 
-    public void moveUnitToGhost()
+    public float CalculatePathLength(NavMeshPath pathToCalculate)
+    {
+        float length = 0f;
+
+        for (int i = 0; i < pathToCalculate.corners.Length - 1; i++)
+        {
+            length += Vector3.Distance(pathToCalculate.corners[i], pathToCalculate.corners[i + 1]);
+        }
+        
+        return length;
+    }
+
+    public void MoveUnitToGhost()
     {
         agentUnit.destination = unitGhost.transform.position;
+        remainingMovement -= currentPathDistance;
+        currentPathDistance = 0f;
         Reset();
         
         if (transform.position == unitGhost.transform.position)
