@@ -224,6 +224,8 @@ public class DiceHandler : MonoBehaviour
     {
         //determines which prefabs and dice pool are used based on the current selection state
         bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack);
+        //Sets selection mode to none to stop continious rerolls
+        currentSelectionMode = DiceSelectionMode.None;
 
         List<CombatRoll> activeUIList = isAttackMode ? activeAttackDice : activeDefenseDice;
         List<DiceRoll> activePhysList = isAttackMode ? activePhysAttackDice : activePhysDefenseDice;
@@ -304,8 +306,6 @@ public class DiceHandler : MonoBehaviour
         SpawnDice(activePhysList, isAttackMode, isUIAlly);
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
-
-        currentSelectionMode = DiceSelectionMode.None;
     }
     //==================[End standard reroll coroutine]=======================
 
