@@ -54,7 +54,7 @@ public class MovementState : BaseState
     {
         if (Context.currentlySelectedUnitScript != null)
         {
-            Context.currentlySelectedUnitScript.moveUnitToGhost();
+            Context.currentlySelectedUnitScript.MoveUnitToGhost();
             Context.isMovementConfirmed = true;
         }
     }
