@@ -23,6 +23,7 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private List<RuleToPrefab> ruleDatabase;
     [SerializeField]
     private bool isRuleText = false;
+    private GameObject scrollArrows;
 
     private void Awake()
     {
@@ -32,6 +33,7 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
 
         containerStartPosition = panelContainer.GetComponent<RectTransform>().localPosition;
+        scrollArrows = GameObject.Find("ToolTipArrows");
     }
 
     private void OnEnable()
@@ -53,6 +55,11 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         {
             AddRuleTooltips();
         }
+
+        if(panelContainer.transform.childCount >=4)
+        {
+            scrollArrows.transform.localScale = Vector3.one;
+        }
        
     }
 
@@ -60,6 +67,10 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         ClearTooltips();
         panelContainer.GetComponent<RectTransform>().localPosition = containerStartPosition;
+        if(scrollArrows.transform.localScale == Vector3.one)
+        {
+            scrollArrows.transform.localScale = Vector3.zero;
+        }    
     }
 
     // Update is called once per frame
