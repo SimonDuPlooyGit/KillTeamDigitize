@@ -18,9 +18,27 @@ MonoBehaviour:
   DMGcrit: 4
   rules:
   - rid: 389751748437213245
+  - rid: 8107725500928491676
+  - rid: 8107725500928491677
+  - rid: 8107725500928491678
+  - rid: 8107725500928491679
   references:
     version: 2
     RefIds:
     - rid: 389751748437213245
       type: {class: WeaponRules/Balanced, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 8107725500928491676
+      type: {class: WeaponRules/Piercing, ns: , asm: Assembly-CSharp}
+      data:
+        piercingX: 0
+    - rid: 8107725500928491677
+      type: {class: WeaponRules/Lethal, ns: , asm: Assembly-CSharp}
+      data:
+        lethalX: 0
+    - rid: 8107725500928491678
+      type: {class: WeaponRules/Hot, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 8107725500928491679
+      type: {class: WeaponRules/Ceaseless, ns: , asm: Assembly-CSharp}
       data: 

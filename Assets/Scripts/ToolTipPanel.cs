@@ -15,6 +15,7 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private GameObject[] tooltips;
     [SerializeField]
     private GameObject panelContainer;
+    private Vector3 containerStartPosition;
     private List<GameObject> activePanels = new List<GameObject>();
     [SerializeField] 
     private TextMeshProUGUI weaponRuleText; 
@@ -29,6 +30,8 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         {
             panelContainer = GameObject.FindWithTag("RuleContainer");
         }
+
+        containerStartPosition = panelContainer.GetComponent<RectTransform>().localPosition;
     }
 
     private void OnEnable()
@@ -56,6 +59,7 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void OnPointerExit(PointerEventData eventData)
     {
         ClearTooltips();
+        panelContainer.GetComponent<RectTransform>().localPosition = containerStartPosition;
     }
 
     // Update is called once per frame
