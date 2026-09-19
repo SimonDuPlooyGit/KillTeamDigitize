@@ -18,7 +18,7 @@ public class ToolTipScroll : MonoBehaviour
         if (content != null)
         {
             contentRect = content.GetComponent<RectTransform>();
-            startingPos = contentRect.localPosition.x;
+            startingPos = -877.0505f;
         }
 
     }

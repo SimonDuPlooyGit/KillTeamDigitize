@@ -15,7 +15,8 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private GameObject[] tooltips;
     [SerializeField]
     private GameObject panelContainer;
-    private Vector3 containerStartPosition;
+    private Vector3 containerStartPosition = new Vector3 (-877.0505f, 0, 0);
+    private GameObject weaponTooltipHolder;
     private List<GameObject> activePanels = new List<GameObject>();
     [SerializeField] 
     private TextMeshProUGUI weaponRuleText; 
@@ -32,11 +33,8 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             panelContainer = GameObject.FindWithTag("RuleContainer");
         }
 
-        if (panelContainer != null)
-        {
-            containerStartPosition = panelContainer.GetComponent<RectTransform>().localPosition;
-        }
         scrollArrows = GameObject.Find("ToolTipArrows");
+        weaponTooltipHolder = GameObject.Find("WeaponRuleHolder");
     }
 
     private void OnEnable()
@@ -48,11 +46,18 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         MenuPanel.OnCloseMenu -= ClearTooltips;
         ClearTooltips();
+         if (scrollArrows.transform.localScale == Vector3.one)
+        {
+            scrollArrows.transform.localScale = Vector3.zero;
+        }
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (panelContainer == null) return; // <--- ADDED
-
+        if (panelContainer == null) return;
+        if(weaponTooltipHolder != null)
+        {
+            weaponTooltipHolder.transform.localPosition = containerStartPosition;
+        }
         ClearTooltips();
         if (!isRuleText)
         {
@@ -73,10 +78,6 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void OnPointerExit(PointerEventData eventData)
     {
         ClearTooltips();
-        if (panelContainer != null)
-        {
-            panelContainer.GetComponent<RectTransform>().localPosition = containerStartPosition;
-        }
         if (scrollArrows.transform.localScale == Vector3.one)
         {
             scrollArrows.transform.localScale = Vector3.zero;
@@ -126,7 +127,7 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             if (panel != null)
             {
                 
-                panel.transform.SetParent(null);
+                panel.transform.SetParent(null); //detatches the panel from its holder so that the backup clean method can work
                 Destroy(panel);
             }
         }
