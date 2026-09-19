@@ -19,6 +19,7 @@ public class OrbitCamera : MonoBehaviour
     private bool isFreecam = false;
     private float mouseX = 0f;
     private float mouseY = 0f;
+    public bool switchOffForMenu = false;
 
     void Update()
     {
@@ -47,41 +48,47 @@ public class OrbitCamera : MonoBehaviour
 
     private void HandleOrbitMovement()
     {
-        if (lookAtTarget == null) return;
-
-        // Orbit rotation using Left Mouse Button
-        if (Input.GetMouseButton(0))
+        if (!switchOffForMenu)
         {
-            mouseX = Input.GetAxis("Mouse X");
-            mouseY = Input.GetAxis("Mouse Y");
-            transform.eulerAngles += new Vector3(-mouseY * sensitivity, mouseX * sensitivity, 0);
+            if (lookAtTarget == null) return;
+
+            // Orbit rotation using Left Mouse Button
+            if (Input.GetMouseButton(0))
+            {
+                mouseX = Input.GetAxis("Mouse X");
+                mouseY = Input.GetAxis("Mouse Y");
+                transform.eulerAngles += new Vector3(-mouseY * sensitivity, mouseX * sensitivity, 0);
+            }
+
+            // Zoom with scroll wheel
+            orbitRadius -= Input.mouseScrollDelta.y * (sensitivity * 0.1f);
+            orbitRadius = Mathf.Clamp(orbitRadius, minimumDistance, maximumDistance);
+
+            // Position camera relative to target
+            transform.position = lookAtTarget.position - transform.forward * orbitRadius;
         }
-
-        // Zoom with scroll wheel
-        orbitRadius -= Input.mouseScrollDelta.y * (sensitivity * 0.1f);
-        orbitRadius = Mathf.Clamp(orbitRadius, minimumDistance, maximumDistance);
-
-        // Position camera relative to target
-        transform.position = lookAtTarget.position - transform.forward * orbitRadius;
     }
 
     private void HandleFreecamMovement()
     {
-        // Mouse Look Rotation
-        float mouseInputX = Input.GetAxis("Mouse X") * sensitivity;
-        float mouseInputY = Input.GetAxis("Mouse Y") * sensitivity;
+        if (!switchOffForMenu)
+        {
+            // Mouse Look Rotation
+            float mouseInputX = Input.GetAxis("Mouse X") * sensitivity;
+            float mouseInputY = Input.GetAxis("Mouse Y") * sensitivity;
         
-        transform.Rotate(-mouseInputY, mouseInputX, 0, Space.Self);
+            transform.Rotate(-mouseInputY, mouseInputX, 0, Space.Self);
         
-        // Lock roll to prevent camera tilt
-        Vector3 eulerRotation = transform.rotation.eulerAngles;
-        transform.rotation = Quaternion.Euler(eulerRotation.x, eulerRotation.y, 0);
+            // Lock roll to prevent camera tilt
+            Vector3 eulerRotation = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(eulerRotation.x, eulerRotation.y, 0);
 
-        // Keyboard Movement (WASD / Arrows)
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
-        Vector3 moveInput = new Vector3(moveX, 0f, moveZ);
+            // Keyboard Movement (WASD / Arrows)
+            float moveX = Input.GetAxis("Horizontal");
+            float moveZ = Input.GetAxis("Vertical");
+            Vector3 moveInput = new Vector3(moveX, 0f, moveZ);
         
-        transform.Translate(moveInput * speed * Time.deltaTime, Space.Self);
+            transform.Translate(moveInput * speed * Time.deltaTime, Space.Self);
+        }
     }
 }

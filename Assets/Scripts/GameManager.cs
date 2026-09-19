@@ -12,8 +12,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private DiceHandler diceHandler;
     [SerializeField] private OrbitCamera mainCamera;
     
-    //Direct access reference for UI buttons to evoke events
+    //State variables
+    public UnitActivationState unitActivationState ;
+    public ActionSelectionState actionSelectionState;
     public MovementState movementState;
+    public TargetingState targetingState;
+    public CombatState combatState;
+    public WeaponSelectState weaponSelectState;
+    public PauseState pauseState;
 
     private void Awake()
     {
@@ -23,13 +29,13 @@ public class GameManager : MonoBehaviour
         sharedContext.mainCameraScript = mainCamera;
 
         //Initialize states
-        var unitActivationState = new UnitActivationState(sharedContext, input, menu);
-        var actionSelectionState = new ActionSelectionState(sharedContext, menu);
+        unitActivationState = new UnitActivationState(sharedContext, input, menu);
+        actionSelectionState = new ActionSelectionState(sharedContext, menu);
         movementState = new MovementState(sharedContext, input, menu);
-        var targetingState = new TargetingState(sharedContext, input, menu);
-        var combatState = new CombatState(sharedContext, menu, diceHandler);
-        var weaponSelectState = new WeaponSelectState(sharedContext, menu);
-        var pauseState = new PauseState(sharedContext, input, stateMachine);
+        targetingState = new TargetingState(sharedContext, input, menu);
+        combatState = new CombatState(sharedContext, menu, diceHandler);
+        weaponSelectState = new WeaponSelectState(sharedContext, menu);
+        pauseState = new PauseState(sharedContext, input, stateMachine);
 
         //Define transitions
 
@@ -95,6 +101,14 @@ public class GameManager : MonoBehaviour
     public void Update()
     {
         stateMachine.Update(); //Keep the state machine updating
+        if (stateMachine.CurrentState == weaponSelectState)
+        {
+            mainCamera.switchOffForMenu = true;
+        }
+        else
+        {
+            mainCamera.switchOffForMenu = false;
+        }
     }
 
     public void OnMoveActionButtonPressed()
