@@ -36,6 +36,7 @@ public class MovementState : BaseState
             Context.currentlySelectedUnitScript.remainingMovement < 0.05f)
         {
             _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
+            _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
             Context.isMovementRequested = true;
             movementFinished = true;
         }

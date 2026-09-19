@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class CombatState : BaseState
@@ -9,10 +10,12 @@ public class CombatState : BaseState
     //The combat state that handles rolling and rules
     
     public DiceHandler _diceHandler; //Needs reference to the CombatManager script on the CombatManager GameObject
+    public MenuPanel _menu;
 
     public CombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
     {
         _diceHandler = diceHandler;
+        _menu = menu;
     }
     
     public override void OnEnter()
@@ -159,6 +162,8 @@ public class CombatState : BaseState
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
         Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
+        _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("ShootButton").gameObject.SetActive(false);
+        _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("ShootAPL").gameObject.SetActive(false);
         Context.Reset();
     }
     
