@@ -10,6 +10,7 @@ public class WeaponSelectState : BaseState
     public WeaponSelectState(InformationPackage context, MenuPanel menu) : base(context)
     {
         _menu = menu;
+        
     }
     public override void OnEnter()
     {
@@ -17,8 +18,7 @@ public class WeaponSelectState : BaseState
         _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
         _menu.OpenMenu(_menu.tutShoot);
-        _menu.CloseMenu(_menu.tpCounter);
-        _menu.CloseMenu(_menu.objective);
+        
     }
 
     public override void Update()
@@ -37,6 +37,7 @@ public class WeaponSelectState : BaseState
         
         _menu.CloseMenu(_menu.shootMenuHolder);
         _menu.CloseMenu(_menu.tutShoot);
+        _menu.ClearTooltipsBackup();
     }
 
     public void PopulateWeaponPanel() //Instantiate weapon panel prefabs into the shooting menu with the weapons that this unit has

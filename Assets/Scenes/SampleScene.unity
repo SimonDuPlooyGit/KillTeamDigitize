@@ -2774,6 +2774,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 458975251}
   m_CullTransparentMesh: 1
+--- !u!114 &467377760 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 47344954465138842, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
+  m_PrefabInstance: {fileID: 829525796}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e23c13fb3da8784186b633a9a5af8fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolTipPanel
 --- !u!1 &502752872
 GameObject:
   m_ObjectHideFlags: 0
@@ -11603,6 +11614,7 @@ MonoBehaviour:
   menu: {fileID: 1700968724}
   diceHandler: {fileID: 95257449}
   mainCamera: {fileID: 330585548}
+  toolTipPanel: {fileID: 467377760}
 --- !u!4 &1921963952
 Transform:
   m_ObjectHideFlags: 0

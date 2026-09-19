@@ -32,7 +32,10 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             panelContainer = GameObject.FindWithTag("RuleContainer");
         }
 
-        containerStartPosition = panelContainer.GetComponent<RectTransform>().localPosition;
+        if (panelContainer != null)
+        {
+            containerStartPosition = panelContainer.GetComponent<RectTransform>().localPosition;
+        }
         scrollArrows = GameObject.Find("ToolTipArrows");
     }
 
@@ -44,9 +47,13 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private void OnDisable()
     {
         MenuPanel.OnCloseMenu -= ClearTooltips;
+        ClearTooltips();
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (panelContainer == null) return; // <--- ADDED
+
+        ClearTooltips();
         if (!isRuleText)
         {
             AddTooltips();
@@ -66,8 +73,11 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void OnPointerExit(PointerEventData eventData)
     {
         ClearTooltips();
-        panelContainer.GetComponent<RectTransform>().localPosition = containerStartPosition;
-        if(scrollArrows.transform.localScale == Vector3.one)
+        if (panelContainer != null)
+        {
+            panelContainer.GetComponent<RectTransform>().localPosition = containerStartPosition;
+        }
+        if (scrollArrows.transform.localScale == Vector3.one)
         {
             scrollArrows.transform.localScale = Vector3.zero;
         }    
@@ -83,6 +93,7 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         for (int i = 0; i < tooltips.Length; i++)
         {
+            if (tooltips[i] == null) continue;
             GameObject toolTipPanel = Instantiate(tooltips[i],panelContainer.transform);
             activePanels.Add(toolTipPanel);
         }
@@ -107,12 +118,20 @@ public class ToolTipPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
     }
 
-    private void ClearTooltips()
+    public void ClearTooltips()
     {
-        foreach(GameObject panel in activePanels)
+        for (int i = activePanels.Count - 1; i >= 0; i--)
         {
-            Destroy(panel);
+            GameObject panel = activePanels[i];
+            if (panel != null)
+            {
+                
+                panel.transform.SetParent(null);
+                Destroy(panel);
+            }
         }
+
         activePanels.Clear();
     }
+
 }
