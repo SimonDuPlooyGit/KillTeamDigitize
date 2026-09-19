@@ -13,6 +13,9 @@ public class MenuPanel : MonoBehaviour
     public GameObject tutSelect, tutAction, tutReposition, tutShoot, tutTarget;
     public GameObject moveButton2;
     public GameObject diceRollMenu;
+    public GameObject tpCounter, objective;
+    [SerializeField]
+    private GameObject weaponTooltipHolder;
     
     void Start()
     {
@@ -70,6 +73,23 @@ public class MenuPanel : MonoBehaviour
         }
 
         OnCloseMenu?.Invoke();
+    }
+
+    public void ClearTooltipsBackup()
+    {
+        if (weaponTooltipHolder == null) return;
+
+        Transform holder = weaponTooltipHolder.transform;
+        for (int i = holder.childCount - 1; i >= 0; i--)
+        {
+            Transform child = holder.GetChild(i);
+            if (child != null)
+            {
+                // Unparent first so Unity doesn't throw the RectTransform dependency error
+                child.SetParent(null);
+                Destroy(child.gameObject);
+            }
+        }
     }
 
 }

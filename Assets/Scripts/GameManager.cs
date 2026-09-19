@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MenuPanel menu;
     [SerializeField] private DiceHandler diceHandler;
     [SerializeField] private OrbitCamera mainCamera;
-    
+
     //State variables
     public UnitActivationState unitActivationState ;
     public ActionSelectionState actionSelectionState;

@@ -18,6 +18,8 @@ public class ActionSelectionState : BaseState
         Debug.Log("ActionSelectionState entered");
         _menu.OpenMenu(_menu.actionMenu);
         _menu.OpenMenu(_menu.tutAction);
+        _menu.OpenMenu(_menu.tpCounter);
+        _menu.OpenMenu(_menu.objective);
     }
 
     public override void Update()
@@ -30,6 +32,8 @@ public class ActionSelectionState : BaseState
         Debug.Log("ActionSelectionState exited");
         _menu.CloseMenu(_menu.actionMenu);
         _menu.CloseMenu(_menu.tutAction);
+        _menu.CloseMenu(_menu.tpCounter);
+        _menu.CloseMenu(_menu.objective);
     }
     
     //Future action eligibility checks and logic
