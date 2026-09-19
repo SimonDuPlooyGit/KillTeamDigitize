@@ -17,6 +17,8 @@ public class WeaponSelectState : BaseState
         _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
         _menu.OpenMenu(_menu.tutShoot);
+        _menu.CloseMenu(_menu.tpCounter);
+        _menu.CloseMenu(_menu.objective);
     }
 
     public override void Update()

@@ -13,6 +13,7 @@ public class MenuPanel : MonoBehaviour
     public GameObject tutSelect, tutAction, tutReposition, tutShoot, tutTarget;
     public GameObject moveButton2;
     public GameObject diceRollMenu;
+    public GameObject tpCounter, objective;
     
     void Start()
     {
