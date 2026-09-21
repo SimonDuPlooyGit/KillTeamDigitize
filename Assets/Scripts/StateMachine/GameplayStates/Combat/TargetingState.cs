@@ -33,6 +33,7 @@ public class TargetingState : BaseState
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
         _menu.CloseMenu(_menu.tutTarget);
+        Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
@@ -71,9 +72,6 @@ public class TargetingState : BaseState
                     Context.currentlySelectedUnitScript.lineRenderer.material =
                         Context.currentlySelectedUnitScript.invalidLine;
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
-                } else if (distanceToEnemy == 0f)
-                {
-                    Debug.Log("Shot will be blocked");
                 }
             }
         }

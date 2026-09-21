@@ -48,7 +48,12 @@ public class MovementState : BaseState
         Debug.Log("MovementState exited");
         _menu.CloseMenu(_menu.tutReposition);
         _menu.moveButton2?.SetActive(false);
-        Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
+        if (Context.currentlySelectedUnitScript.remainingMovement < Context.currentlySelectedUnitScript.meterMovement)
+        {
+            Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
+            _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
+            _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
+        }
         Context.currentlySelectedUnitScript.Reset();
     }
 

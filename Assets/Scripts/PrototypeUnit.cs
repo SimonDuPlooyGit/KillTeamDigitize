@@ -14,7 +14,7 @@ public class PrototypeUnit : MonoBehaviour
     public OperativeTemplate operativeData;
     public GameObject unitGhost;
     public float movementStat;
-    private float meterMovement;
+    public float meterMovement;
     private float pathDistance;
     public bool selected = false;
     public int currentWounds;
