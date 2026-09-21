@@ -11970,6 +11970,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2048312039}
   m_CullTransparentMesh: 1
+--- !u!1001 &2067807255
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.2426095
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.032
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.0496284
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bd4d2ee0ac8401c4abb6705442e8f304, type: 2}
+    - target: {fileID: 919132149155446097, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
+      propertyPath: m_Name
+      value: KiriCaptain
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7bc37c8424729aa4db33aff0409ca0fc, type: 3}
 --- !u!1 &2077879479
 GameObject:
   m_ObjectHideFlags: 0
@@ -12606,3 +12667,4 @@ SceneRoots:
   - {fileID: 1762350475}
   - {fileID: 257584548}
   - {fileID: 1596748485205348383}
+  - {fileID: 2067807255}
