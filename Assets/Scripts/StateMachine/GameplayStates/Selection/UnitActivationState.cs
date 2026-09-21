@@ -20,9 +20,15 @@ public class UnitActivationState : BaseState
         Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;
         _input.Controls.Deselect.performed += OnDeselectPerformed;
-        _menu.OpenMenu(_menu.tutSelect);
         _menu.OpenMenu(_menu.tpCounter);
         _menu.OpenMenu(_menu.objective);
+
+        //tutorial panel
+        if(_menu.tutFlag1)
+        {
+            _menu.OpenMenu(_menu.tutSelect);
+            _menu.tutFlag1 = false;
+        }
     }
 
     public override void Update()

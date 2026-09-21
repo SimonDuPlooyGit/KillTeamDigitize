@@ -17,8 +17,17 @@ public class WeaponSelectState : BaseState
         Debug.Log("WeaponSelectState entered");
         _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
-        _menu.OpenMenu(_menu.tutShoot);
-        
+
+        //tutorial panel stuff
+        if (_menu.tutFlag2)
+        {
+            _menu.tutFlag2 = false; //prevents the action select tut panels from appearing
+        }
+        if(_menu.tutFlag5)
+        {
+            _menu.OpenMenu(_menu.tutShoot);
+        }
+
     }
 
     public override void Update()

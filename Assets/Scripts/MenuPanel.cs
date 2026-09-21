@@ -10,12 +10,19 @@ public class MenuPanel : MonoBehaviour
     private GameObject tooltipHolder;
     public ShootMenu shootMenuActualScript;
     public static event Action OnCloseMenu;
-    public GameObject tutSelect, tutAction, tutReposition, tutShoot, tutTarget;
+    public GameObject tutSelect, tutAction, tutReposition, tutShootPrompt ,tutShoot, tutTarget;
     public GameObject moveButton2;
     public GameObject diceRollMenu;
     public GameObject tpCounter, objective;
     [SerializeField]
     private GameObject weaponTooltipHolder;
+    [Header("Tutorial flags")]
+    public bool tutFlag1 = true; //flag to show the select unit tut panel
+    public bool tutFlag2 = true; //flag to show tut panels during action select 
+    public bool tutFlag3 = true; //flag to show reposition tut panel
+    public bool tutFlag4 = false; //flag to show prompt for clicking shoot in action select
+    public bool tutFlag4B = true; //I know its sloppy but flag to make sure Flag4 is only set to true once
+    public bool tutFlag5 = true; //flag for both shooting and targeting panels
     
     void Start()
     {

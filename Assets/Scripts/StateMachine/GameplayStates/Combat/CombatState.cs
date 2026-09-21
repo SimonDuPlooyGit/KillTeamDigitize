@@ -31,6 +31,16 @@ public class CombatState : BaseState
         Context.retainedNormals = 0;
         Context.retainedCritDefense = 0;
         Context.retainedNormalDefense = 0;
+
+        //tutorial panel flags
+        if(_menu.tutFlag5)
+        {
+            _menu.tutFlag5 = false;
+        }
+        if(_menu.tutFlag4)
+        {
+            _menu.tutFlag4 = false;
+        }
         
         _diceHandler.StartCoroutine(ResolveCombat());
     }

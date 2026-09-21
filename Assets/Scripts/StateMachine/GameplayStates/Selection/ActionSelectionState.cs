@@ -17,9 +17,18 @@ public class ActionSelectionState : BaseState
     {
         Debug.Log("ActionSelectionState entered");
         _menu.OpenMenu(_menu.actionMenu);
-        _menu.OpenMenu(_menu.tutAction);
         _menu.OpenMenu(_menu.tpCounter);
         _menu.OpenMenu(_menu.objective);
+
+        //tutorial panel
+        if(_menu.tutFlag2)
+        {
+            _menu.OpenMenu(_menu.tutAction);
+        }
+        if(_menu.tutFlag4)
+        {
+            _menu.OpenMenu(_menu.tutShootPrompt);
+        }
     }
 
     public override void Update()
@@ -34,6 +43,7 @@ public class ActionSelectionState : BaseState
         _menu.CloseMenu(_menu.tutAction);
         _menu.CloseMenu(_menu.tpCounter);
         _menu.CloseMenu(_menu.objective);
+        _menu.CloseMenu(_menu.tutShootPrompt);
     }
     
     //Future action eligibility checks and logic
