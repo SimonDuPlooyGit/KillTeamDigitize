@@ -16,6 +16,9 @@ public class MenuPanel : MonoBehaviour
     public GameObject tpCounter, objective;
     [SerializeField]
     private GameObject weaponTooltipHolder;
+    [Header("Tutorial flags")]
+    public bool tutFlag1 = true; //flag to show the select unit tut panel
+    public bool tutFlag2 = false; 
     
     void Start()
     {
