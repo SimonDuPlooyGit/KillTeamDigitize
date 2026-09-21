@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MenuPanel : MonoBehaviour
@@ -10,7 +11,7 @@ public class MenuPanel : MonoBehaviour
     private GameObject tooltipHolder;
     public ShootMenu shootMenuActualScript;
     public static event Action OnCloseMenu;
-    public GameObject tutSelect, tutAction, tutReposition, tutShootPrompt ,tutShoot, tutTarget;
+    public GameObject tutSelect, tutAction, tutReposition, tutRepoPrompt ,tutShoot, tutTarget, tutInvalid;
     public GameObject moveButton2;
     public GameObject diceRollMenu;
     public GameObject tpCounter, objective;
@@ -23,6 +24,8 @@ public class MenuPanel : MonoBehaviour
     public bool tutFlag4 = false; //flag to show prompt for clicking shoot in action select
     public bool tutFlag4B = true; //I know its sloppy but flag to make sure Flag4 is only set to true once
     public bool tutFlag5 = true; //flag for both shooting and targeting panels
+    public bool tutFlag6 = false; //Flag to disable targeting panel and enable invalid target panel
+    public bool tutFlag6B = true; //Flag to make sure invalid only pops up once
     
     void Start()
     {

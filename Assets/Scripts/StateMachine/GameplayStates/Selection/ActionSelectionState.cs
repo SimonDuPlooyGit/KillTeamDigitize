@@ -25,9 +25,9 @@ public class ActionSelectionState : BaseState
         {
             _menu.OpenMenu(_menu.tutAction);
         }
-        if(_menu.tutFlag4)
+        if(_menu.tutFlag4 && _menu.tutFlag4B)
         {
-            _menu.OpenMenu(_menu.tutShootPrompt);
+            _menu.OpenMenu(_menu.tutRepoPrompt);
         }
     }
 
@@ -43,7 +43,7 @@ public class ActionSelectionState : BaseState
         _menu.CloseMenu(_menu.tutAction);
         _menu.CloseMenu(_menu.tpCounter);
         _menu.CloseMenu(_menu.objective);
-        _menu.CloseMenu(_menu.tutShootPrompt);
+        _menu.CloseMenu(_menu.tutRepoPrompt);
     }
     
     //Future action eligibility checks and logic

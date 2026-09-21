@@ -30,15 +30,34 @@ public class TargetingState : BaseState
 
     public override void Update()
     {
-        //no operation
+        if(_menu.tutFlag6 && _menu.tutFlag6B)
+        {
+            _menu.OpenMenu(_menu.tutInvalid);
+            _menu.CloseMenu(_menu.tutTarget);
+            _menu.tutFlag5 = false;
+            _menu.tutFlag4 = true;
+        }
+        else
+        {
+            _menu.CloseMenu(_menu.tutInvalid);
+        }
     }
 
     public override void OnExit()
     {
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
-        _menu.CloseMenu(_menu.tutTarget);
         Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
+        
+        //tutorial panels
+        if(_menu.tutFlag6)
+        {
+            _menu.CloseMenu(_menu.tutTarget);
+            _menu.CloseMenu(_menu.tutInvalid);
+            _menu.tutFlag6 = false;
+            _menu.tutFlag6B = false;
+        }
+
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
@@ -76,6 +95,7 @@ public class TargetingState : BaseState
                     Context.validTarget = false;
                     Context.currentlySelectedUnitScript.lineRenderer.material =
                         Context.currentlySelectedUnitScript.invalidLine;
+                    _menu.tutFlag6 = true; //toggle invalid panel
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
                 }
             }

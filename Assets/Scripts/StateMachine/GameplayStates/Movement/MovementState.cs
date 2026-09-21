@@ -86,9 +86,9 @@ public class MovementState : BaseState
             {
                 _menu.tutFlag3 = false;
             }
-            if(!_menu.tutFlag4 && _menu.tutFlag4B && _menu.tutFlag5 ) //only toggles tut panel once and if player didn't shoot enemy before
+            if(_menu.tutFlag4B)
             {
-                _menu.tutFlag4 = true;
+                _menu.tutFlag4B = false;
             }
 
         }
