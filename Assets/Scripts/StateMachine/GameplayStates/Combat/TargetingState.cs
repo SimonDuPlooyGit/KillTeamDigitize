@@ -20,7 +20,12 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Entered");
         _input.Controls.Select.performed += OnSelectPerformed;
-        _menu.OpenMenu(_menu.tutTarget);
+        
+        //Tutorial panels
+        if(_menu.tutFlag5)
+        {
+            _menu.OpenMenu(_menu.tutTarget);
+        }
     }
 
     public override void Update()

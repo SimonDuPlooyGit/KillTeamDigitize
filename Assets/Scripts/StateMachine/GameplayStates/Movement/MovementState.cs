@@ -20,9 +20,19 @@ public class MovementState : BaseState
     {
         Debug.Log("MovementState entered");
         _input.Controls.Move.performed += OnMoveInputPerformed;
-        _menu.OpenMenu(_menu.tutReposition);
         _menu.moveButton2.SetActive(true);
         //You can activate move button here
+
+        //Tutorial panel stuff
+        if (_menu.tutFlag3)
+        {
+            _menu.OpenMenu(_menu.tutReposition);
+        }
+        if (_menu.tutFlag2)
+        {
+            _menu.tutFlag2 = false; //prevents the action select tut panels from appearing
+        }
+       
     }
 
     public override void Update()
@@ -66,6 +76,16 @@ public class MovementState : BaseState
         {
             Context.currentlySelectedUnitScript.MoveUnitToGhost();
             Context.isMovementConfirmed = true;
+            //set tutorial flags
+            if(_menu.tutFlag3)
+            {
+                _menu.tutFlag3 = false;
+            }
+            if(!_menu.tutFlag4 && _menu.tutFlag4B && _menu.tutFlag5 ) //only toggles tut panel once and if player didn't shoot enemy before
+            {
+                _menu.tutFlag4 = true;
+            }
+
         }
     }
 }
