@@ -102,7 +102,7 @@ public class PrototypeUnit : MonoBehaviour
         }
         
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.name != "Tabletop")
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.gameObject.tag == "Board")
         {
             //Debug.Log(hit.transform.name);
             if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
