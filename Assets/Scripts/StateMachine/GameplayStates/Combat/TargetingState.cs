@@ -48,12 +48,13 @@ public class TargetingState : BaseState
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
         Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
-        
+        _menu.CloseMenu(_menu.tutTarget);
+        _menu.CloseMenu(_menu.tutInvalid);
+
         //tutorial panels
-        if(_menu.tutFlag6)
+        if (_menu.tutFlag6)
         {
-            _menu.CloseMenu(_menu.tutTarget);
-            _menu.CloseMenu(_menu.tutInvalid);
+            
             _menu.tutFlag6 = false;
             _menu.tutFlag6B = false;
         }
