@@ -21,6 +21,8 @@ public class PrototypeUnit : MonoBehaviour
     public int currentAPL;
     public bool dead = false;
     public float remainingMovement;
+    public Material validLine;
+    public Material invalidLine;
     
     //Line of sight variables
     public Transform losStart; //assigned in inspector
@@ -256,12 +258,14 @@ public class PrototypeUnit : MonoBehaviour
 
         if (Physics.Raycast(losStart.position, direction, out RaycastHit hit, distance))
         {
+            lineRenderer.material = invalidLine;
             lineRenderer.SetPosition(1, hit.point);
             Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
             distance = 0;
         }
         else
         {
+            lineRenderer.material = validLine;
             lineRenderer.SetPosition(1, losEnd.position);
             Debug.Log($"LOS Clear. Total range to target: {distance}");
         }

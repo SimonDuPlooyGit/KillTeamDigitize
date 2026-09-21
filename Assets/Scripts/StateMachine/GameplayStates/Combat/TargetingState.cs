@@ -68,6 +68,8 @@ public class TargetingState : BaseState
                 } else if (distanceToEnemy > maxWeaponRange)
                 {
                     Context.validTarget = false;
+                    Context.currentlySelectedUnitScript.lineRenderer.material =
+                        Context.currentlySelectedUnitScript.invalidLine;
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
                 } else if (distanceToEnemy == 0f)
                 {
