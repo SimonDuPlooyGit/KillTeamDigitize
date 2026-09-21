@@ -37,6 +37,10 @@ public class CombatState : BaseState
         {
             _menu.tutFlag5 = false;
         }
+        if(_menu.tutFlag4)
+        {
+            _menu.tutFlag4 = false;
+        }
         
         _diceHandler.StartCoroutine(ResolveCombat());
     }
