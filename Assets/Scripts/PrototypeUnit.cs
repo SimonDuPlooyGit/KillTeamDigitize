@@ -55,7 +55,7 @@ public class PrototypeUnit : MonoBehaviour
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
         float spentSoFar = meterMovement - remainingMovement;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}";
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
     }
 
     public void UpdatePathDrawing()
@@ -92,7 +92,7 @@ public class PrototypeUnit : MonoBehaviour
         pathDrawn = false;
         unitGhost.SetActive(true);
 
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
 
         if (remainingMovement <= 0.05f)
         {
@@ -128,7 +128,7 @@ public class PrototypeUnit : MonoBehaviour
             }
         }
         float projectedSpentMeters = (meterMovement - remainingMovement) + currentPathDistance;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}";
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
     }
 
     private void DrawPath(Vector3[] points)
@@ -182,7 +182,7 @@ public class PrototypeUnit : MonoBehaviour
         if (transform.position == unitGhost.transform.position)
         {
             float spentSoFar = meterMovement - remainingMovement;
-            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}";
+            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
             Reset();
         }
     }
@@ -193,7 +193,7 @@ public class PrototypeUnit : MonoBehaviour
         lineRenderer.enabled = false;
         unitGhost.SetActive(false);
         float spentSoFar = meterMovement - remainingMovement;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}";
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
     }
 
     public void TakeDamage(int damage)

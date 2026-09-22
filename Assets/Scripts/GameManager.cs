@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement; 
 
 
 public class GameManager : MonoBehaviour
@@ -99,6 +100,12 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Scene currentScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(currentScene.buildIndex);
+        }
+        
         stateMachine.Update(); //Keep the state machine updating
         if (stateMachine.CurrentState == weaponSelectState)
         {
@@ -130,4 +137,9 @@ public class GameManager : MonoBehaviour
     
     private void OnEnable() => input.Enable();
     private void OnDisable() => input.Disable();
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }

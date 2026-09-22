@@ -56,8 +56,6 @@ public class CombatState : BaseState
         yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(Context.weapon.ATK, true, Context));
         
         //After attack roll
-        //Keep track of values before rerolls
-        List<int> oldAttackRolls = new List<int>(Context.attackRolls);
         ExecuteRulesInThisStep(AttackTimings.AfterAttackRoll);
         
         //Rerolls
@@ -65,8 +63,6 @@ public class CombatState : BaseState
         yield return new WaitForSeconds(2f);
 
         yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(Context.numDefenseDiceRoll, true, Context));
-        
-        List<int> oldDefenseRolls = new List<int>(Context.defenseRolls);
         
         //Attack Evaluation
         ExecuteRulesInThisStep(AttackTimings.AttackEvaluation);
