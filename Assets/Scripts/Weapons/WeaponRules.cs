@@ -1,6 +1,3 @@
-using System.ComponentModel.Design.Serialization;
-using UnityEditor.Timeline;
-
 public class WeaponRules
 {
     //ALPHABETICAL LIST OF WEAPON RULES!

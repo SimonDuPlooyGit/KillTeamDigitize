@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
-using Unity.VisualScripting;
 using TMPro;
-using UnityEditor.Timeline;
 using UnityEngine.UI;
 
 public class PrototypeUnit : MonoBehaviour
@@ -56,7 +54,8 @@ public class PrototypeUnit : MonoBehaviour
         movementInfo = gameObject.transform.Find("MoveMarker").Find("MarkerCanvas").Find("DistanceMarker").Find("DistanceText").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
+        float spentSoFar = meterMovement - remainingMovement;
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}";
     }
 
     public void UpdatePathDrawing()
@@ -128,8 +127,8 @@ public class PrototypeUnit : MonoBehaviour
                 currentPathDistance = pathDistance;
             }
         }
-        float projectedRemaining = remainingMovement - currentPathDistance;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedRemaining * 39.37f / 10)}/{movementStat}";
+        float projectedSpentMeters = (meterMovement - remainingMovement) + currentPathDistance;
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}";
     }
 
     private void DrawPath(Vector3[] points)
@@ -182,7 +181,8 @@ public class PrototypeUnit : MonoBehaviour
         
         if (transform.position == unitGhost.transform.position)
         {
-            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
+            float spentSoFar = meterMovement - remainingMovement;
+            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}";
             Reset();
         }
     }
@@ -192,7 +192,8 @@ public class PrototypeUnit : MonoBehaviour
         unitGhost.transform.position = transform.position;
         lineRenderer.enabled = false;
         unitGhost.SetActive(false);
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
+        float spentSoFar = meterMovement - remainingMovement;
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}";
     }
 
     public void TakeDamage(int damage)

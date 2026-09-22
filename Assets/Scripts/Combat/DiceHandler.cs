@@ -2,9 +2,8 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using TMPro;
 using System.Collections;
-using UnityEditor.Rendering.LookDev; //need this to access the Image component
+
 
 public class DiceHandler : MonoBehaviour
 {
