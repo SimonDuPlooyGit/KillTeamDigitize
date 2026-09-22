@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
-using Unity.VisualScripting;
 using TMPro;
-using UnityEditor.Timeline;
 using UnityEngine.UI;
 
 public class PrototypeUnit : MonoBehaviour
