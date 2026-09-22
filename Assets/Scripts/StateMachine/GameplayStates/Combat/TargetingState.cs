@@ -55,7 +55,6 @@ public class TargetingState : BaseState
         //tutorial panels
         if (_menu.tutFlag6)
         {
-            
             _menu.tutFlag6 = false;
             _menu.tutFlag6B = false;
         }
