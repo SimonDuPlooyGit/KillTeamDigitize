@@ -53,7 +53,7 @@ public class PrototypeUnit : MonoBehaviour
         currentWounds = operativeData.WOUNDS;
         currentAPL = operativeData.APL;
         healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
-        movementInfo = gameObject.transform.Find("UnitUI").Find("MovementDisp").Find("MoveNum").gameObject;
+        movementInfo = gameObject.transform.Find("MoveMarker").Find("MarkerCanvas").Find("DistanceMarker").Find("DistanceText").gameObject;
         aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
         SetHealth();
         movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
