@@ -128,7 +128,8 @@ public class PrototypeUnit : MonoBehaviour
                 currentPathDistance = pathDistance;
             }
         }
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
+        float projectedRemaining = remainingMovement - currentPathDistance;
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedRemaining * 39.37f / 10)}/{movementStat}";
     }
 
     private void DrawPath(Vector3[] points)
@@ -191,6 +192,7 @@ public class PrototypeUnit : MonoBehaviour
         unitGhost.transform.position = transform.position;
         lineRenderer.enabled = false;
         unitGhost.SetActive(false);
+        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}";
     }
 
     public void TakeDamage(int damage)
@@ -209,6 +211,7 @@ public class PrototypeUnit : MonoBehaviour
     private void HandleDeath()
     {
         Debug.Log($"{gameObject.name} has died!");
+        this.gameObject.SetActive(false);
     }
 
     public void SetHealth()

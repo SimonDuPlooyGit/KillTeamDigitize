@@ -47,6 +47,7 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
+        Context.currentlySelectedUnitScript.lineRenderer.material = Context.currentlySelectedUnitScript.validLine;
         Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
         _menu.CloseMenu(_menu.tutTarget);
         _menu.CloseMenu(_menu.tutInvalid);
@@ -59,6 +60,7 @@ public class TargetingState : BaseState
             _menu.tutFlag6B = false;
         }
 
+     
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
