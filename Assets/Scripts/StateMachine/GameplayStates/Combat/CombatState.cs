@@ -33,6 +33,7 @@ public class CombatState : BaseState
         Context.retainedNormalDefense = 0;
 
         //tutorial panel flags
+        _menu.tutFlag7B = true; //remove later
         if(_menu.tutFlag5)
         {
             _menu.tutFlag5 = false;

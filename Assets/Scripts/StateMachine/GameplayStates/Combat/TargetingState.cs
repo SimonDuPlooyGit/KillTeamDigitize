@@ -58,6 +58,10 @@ public class TargetingState : BaseState
             _menu.tutFlag6 = false;
             _menu.tutFlag6B = false;
         }
+        else if (!_menu.tutFlag6 && _menu.tutFlag7B) //remove later
+        {
+            _menu.tutFlag7 = true;
+        }
 
      
     }

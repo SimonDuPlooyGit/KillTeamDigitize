@@ -11,9 +11,10 @@ public class MenuPanel : MonoBehaviour
     private GameObject tooltipHolder;
     public ShootMenu shootMenuActualScript;
     public static event Action OnCloseMenu;
-    public GameObject tutSelect, tutAction, tutReposition, tutRepoPrompt ,tutShoot, tutTarget, tutInvalid;
+    public GameObject tutSelect, tutAction, tutReposition, tutRepoPrompt ,tutShoot, tutTarget, tutInvalid, tutReset;
     public GameObject moveButton2;
     public GameObject diceRollMenu;
+    public GameObject PauseScreen;
     public GameObject tpCounter, objective;
     [SerializeField]
     private GameObject weaponTooltipHolder;
@@ -26,6 +27,10 @@ public class MenuPanel : MonoBehaviour
     public bool tutFlag5 = true; //flag for both shooting and targeting panels
     public bool tutFlag6 = false; //Flag to disable targeting panel and enable invalid target panel
     public bool tutFlag6B = true; //Flag to make sure invalid only pops up once
+    //Temporary for reset panel remove later
+    public bool tutFlag7 = false; //Flag for the temp panel for resetting the scene
+    public bool tutFlag7B = true; //You know the deal. its temporary anyway
+    public bool tutFlag8 = false; //flag to see if you entered combat (also temp)
     
     void Start()
     {
