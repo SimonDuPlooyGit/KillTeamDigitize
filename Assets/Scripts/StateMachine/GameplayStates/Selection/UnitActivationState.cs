@@ -77,7 +77,6 @@ public class UnitActivationState : BaseState
                 Context.activatedUnitSO = Context.currentlySelectedUnitScript.operativeData;
                 Debug.Log("Selected Operative: " + Context.activatedUnitSO.name);
                 Context.currentlySelectedUnitScript.selected = true;
-                
                 _menu.OpenAction();
                 Context.isMovementRequested = true; 
             }
