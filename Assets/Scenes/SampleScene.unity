@@ -13053,6 +13053,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3938984383258412303, guid: f9293d93659dbb24aa1d095df4a6af90, type: 3}
+      propertyPath: glow
+      value: 
+      objectReference: {fileID: 2100000, guid: a2ff2e93a79c10f48a1dac3ab7e2288c, type: 2}
+    - target: {fileID: 3938984383258412303, guid: f9293d93659dbb24aa1d095df4a6af90, type: 3}
       propertyPath: unitGhost
       value: 
       objectReference: {fileID: 1609021641}
@@ -13376,7 +13380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2181909591876277859, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.411
+      value: -1.345
       objectReference: {fileID: 0}
     - target: {fileID: 2181909591876277859, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13384,7 +13388,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2181909591876277859, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.783
+      value: 0.752
       objectReference: {fileID: 0}
     - target: {fileID: 2181909591876277859, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
       propertyPath: m_LocalRotation.w
@@ -13430,10 +13434,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3627413615779176401, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
+      propertyPath: glow
+      value: 
+      objectReference: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
     - target: {fileID: 4461959473235027798, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
       propertyPath: m_Sources.Array.data[0].sourceTransform
       value: 
       objectReference: {fileID: 1700968725}
+    - target: {fileID: 8681381664162989415, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8681381664162989415, guid: 1da89622403a8984db1dcdab732fd539, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

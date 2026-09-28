@@ -21,6 +21,7 @@ public class PrototypeUnit : MonoBehaviour
     public float remainingMovement;
     public Material validLine;
     public Material invalidLine;
+    [SerializeField] public Material glow;
 
     //States
     public bool engaged;

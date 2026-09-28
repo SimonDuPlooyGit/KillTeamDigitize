@@ -77,10 +77,26 @@ public class UnitActivationState : BaseState
                 Context.activatedUnitSO = Context.currentlySelectedUnitScript.operativeData;
                 Debug.Log("Selected Operative: " + Context.activatedUnitSO.name);
                 Context.currentlySelectedUnitScript.selected = true;
+                AddGlow(Context.currentlySelectedUnitScript.glow);
                 _menu.OpenAction();
                 Context.isMovementRequested = true; 
             }
         }
+    }
+
+    public void AddGlow(Material glow)
+    {
+        Material[] currentMatArray = Context.currentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials;
+        Material[] newMatArray = new Material[currentMatArray.Length + 1];
+
+        for (int i = 0; i < currentMatArray.Length; i++)
+        {
+            newMatArray[i] = currentMatArray[i];
+        }
+        
+        newMatArray[newMatArray.Length - 1] = glow;
+        
+        Context.currentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials = newMatArray;
     }
     
     private void OnDeselectPerformed(InputAction.CallbackContext ctx) //Deselect the unit that was clicked with right-click
