@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public TargetingState targetingState;
     public CombatState combatState;
     public WeaponSelectState weaponSelectState;
-    public PauseState pauseState;
+    //public PauseState pauseState;
 
     private void Awake()
     {
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         targetingState = new TargetingState(sharedContext, input, menu);
         combatState = new CombatState(sharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(sharedContext, menu);
-        pauseState = new PauseState(sharedContext, input, stateMachine);
+        //pauseState = new PauseState(sharedContext, input, stateMachine);
 
         //Define transitions
 
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
         });
         
         //Global any transition
-        AnyT(pauseState, new FuncPredicate(() => input.Controls.Pause.WasPressedThisFrame() && stateMachine.CurrentState is not PauseState && Time.frameCount > stateMachine.LastTransitionFrame));
+        //AnyT(pauseState, new FuncPredicate(() => input.Controls.Pause.WasPressedThisFrame() && stateMachine.CurrentState is not PauseState && Time.frameCount > stateMachine.LastTransitionFrame));
     }
 
     //Helper function to do backwards transitions with right click as the predicate
