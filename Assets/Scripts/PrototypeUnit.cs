@@ -27,6 +27,9 @@ public class PrototypeUnit : MonoBehaviour
     public bool concealed;
     public bool closeToCover;
     
+    //Sampling data for cover and targeting lines
+    public List<GameObject> samplingPoints;
+    
     //Line of sight variables
     public Transform losStart; //assigned in inspector
     
@@ -46,6 +49,7 @@ public class PrototypeUnit : MonoBehaviour
 
     private void Awake()
     {
+        selected = false;
         movementStat = operativeData.MOVE;
         meterMovement = (movementStat/39.37f) * 10; //Changing the inches to meters and then applying 10x Scale.
         remainingMovement = meterMovement;
@@ -61,120 +65,140 @@ public class PrototypeUnit : MonoBehaviour
         SetHealth();
         float spentSoFar = meterMovement - remainingMovement;
         movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
+
+        Transform spHolder = gameObject.transform.Find("BaseSamplingPoints");
+        foreach (Transform pt in spHolder)
+        {
+            samplingPoints.Add(pt.gameObject);
+        }
     }
 
     public void UpdatePathDrawing()
     {
-        if (unitGhost.activeSelf &&
-            !pathDrawn &&
-            !agentGhost.pathPending &&
-            agentGhost.velocity.sqrMagnitude < 0.01f &&
-            agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
-            selected)
+        if (selected)
         {
-            DrawPath(limitedPoints.ToArray());
+            if (unitGhost.activeSelf &&
+                !pathDrawn &&
+                !agentGhost.pathPending &&
+                agentGhost.velocity.sqrMagnitude < 0.01f &&
+                agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
+                selected)
+            {
+                DrawPath(limitedPoints.ToArray());
+            }
         }
     }
 
     private void Update()
     {
-         if (unitGhost.activeSelf != false &&
-             !pathDrawn &&
-             !agentGhost.pathPending &&
-             agentGhost.velocity.sqrMagnitude < 0.01f &&
-             agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
-             selected == true)
-         {
-             DrawPath(limitedPoints.ToArray());
-         }
+        if (selected)
+        {
+            if (unitGhost.activeSelf != false &&
+                !pathDrawn &&
+                !agentGhost.pathPending &&
+                agentGhost.velocity.sqrMagnitude < 0.01f &&
+                agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
+                selected == true)
+            {
+                DrawPath(limitedPoints.ToArray());
+            }
+        }
     }
 
     public void ClickToPathfind()
     {
-        limitedPoints.Clear();
-        pathDistance = 0f;
-        lineRenderer.enabled = false;
-        pathDrawn = false;
-        unitGhost.SetActive(true);
-
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
-
-        if (remainingMovement <= 0.05f)
+        if (selected)
         {
-            Debug.Log($"No remaining movement: {remainingMovement}");
-            return;
-        }
-        
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.gameObject.tag == "Board")
-        {
-            //Debug.Log(hit.transform.name);
-            if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
+            limitedPoints.Clear();
+            pathDistance = 0f;
+            lineRenderer.enabled = false;
+            pathDrawn = false;
+            unitGhost.SetActive(true);
+
+            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
+
+            if (remainingMovement <= 0.05f)
             {
-                for (int i = 0; i < path.corners.Length - 1; i++)
+                Debug.Log($"No remaining movement: {remainingMovement}");
+                return;
+            }
+        
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.gameObject.tag == "Board")
+            {
+                //Debug.Log(hit.transform.name);
+                if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
                 {
-                    float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
-                    pathDistance += segment;
-                    //Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
+                    for (int i = 0; i < path.corners.Length - 1; i++)
+                    {
+                        float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
+                        pathDistance += segment;
+                        //Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
+                    }
+                }
+
+                if (pathDistance > remainingMovement)
+                {
+                    agentGhost.destination = LimitPath(path, remainingMovement);
+                    currentPathDistance = remainingMovement;
+                }
+                else
+                {
+                    limitedPoints.Add(transform.position);
+                    limitedPoints.Add(hit.point);
+                    agentGhost.destination = hit.point;
+                    currentPathDistance = pathDistance;
                 }
             }
-
-            if (pathDistance > remainingMovement)
-            {
-                agentGhost.destination = LimitPath(path, remainingMovement);
-                currentPathDistance = remainingMovement;
-            }
-            else
-            {
-                limitedPoints.Add(transform.position);
-                limitedPoints.Add(hit.point);
-                agentGhost.destination = hit.point;
-                currentPathDistance = pathDistance;
-            }
+            float projectedSpentMeters = (meterMovement - remainingMovement) + currentPathDistance;
+            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
         }
-        float projectedSpentMeters = (meterMovement - remainingMovement) + currentPathDistance;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
     }
 
     private void DrawPath(Vector3[] points)
     {
-        if (!pathDrawn)
+        if (selected)
         {
-            lineRenderer.positionCount = points.Length;
-            lineRenderer.SetPositions(points);
-            lineRenderer.enabled = true;
-            pathDrawn = true;
+            if (!pathDrawn)
+            {
+                lineRenderer.positionCount = points.Length;
+                lineRenderer.SetPositions(points);
+                lineRenderer.enabled = true;
+                pathDrawn = true;
+            }
         }
     }
     
     Vector3 LimitPath(NavMeshPath path, float maxDistance)
     {
-        float distance = 0f;
-
-        limitedPoints.Add(path.corners[0]);
-
-        for (int i = 0; i < path.corners.Length - 1; i++)
+        if (selected)
         {
-            float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
+            float distance = 0f;
 
-            if (distance + segment > maxDistance)
+            limitedPoints.Add(path.corners[0]);
+
+            for (int i = 0; i < path.corners.Length - 1; i++)
             {
-                float remaining = maxDistance - distance;
+                float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
 
-                Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
+                if (distance + segment > maxDistance)
+                {
+                    float remaining = maxDistance - distance;
 
-                Vector3 finalPoint = path.corners[i] + direction * remaining;
+                    Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
 
-                limitedPoints.Add(finalPoint);
+                    Vector3 finalPoint = path.corners[i] + direction * remaining;
 
-                return finalPoint;
+                    limitedPoints.Add(finalPoint);
+
+                    return finalPoint;
+                }
+
+                limitedPoints.Add(path.corners[i + 1]);
+
+                distance += segment;
             }
-
-            limitedPoints.Add(path.corners[i + 1]);
-
-            distance += segment;
         }
-
         return path.corners[path.corners.Length - 1];
     }
 
@@ -282,5 +306,54 @@ public class PrototypeUnit : MonoBehaviour
         lineRenderer.enabled = true;
         
         return distance;
+    }
+
+    public bool CheckTargetingLines(PrototypeUnit player, PrototypeUnit npo)
+    {
+        for (int i = 0; i < player.samplingPoints.Count; i++)
+        {
+            Vector3 playerSP = player.samplingPoints[i].transform.position;
+            for (int j = 0; j < npo.samplingPoints.Count; j++)
+            {
+                Vector3 npoSP1 = npo.samplingPoints[j].transform.position;
+
+                if (CheckLineObstruction(playerSP, npoSP1))
+                {
+                    int oppositeIndex = (j + (npo.samplingPoints.Count/2) % npo.samplingPoints.Count);
+                    Vector3 npoSP2 = npo.samplingPoints[oppositeIndex].transform.position;
+
+                    if (CheckLineObstruction(playerSP, npoSP2))
+                    {
+                        Debug.Log("Targeting lines found");
+                        Debug.DrawLine(playerSP, npoSP1, Color.cyan, 10f);
+                        Debug.DrawLine(playerSP, npoSP2, Color.cyan, 10f);
+                        return true;
+                    }
+                }
+            }
+        }
+        Debug.Log("Targeting lines not found");
+        return false;
+    }
+
+    private bool CheckLineObstruction(Vector3 start, Vector3 end)
+    {
+        Vector3 direction = (end - start).normalized;
+        float distance = Vector3.Distance(start, end);
+    
+        RaycastHit[] hits = Physics.RaycastAll(start, direction, distance);
+        
+        foreach (RaycastHit hit in hits)
+        {
+            //If any hit object is tagged Terrain, the line is blocked
+            if (hit.collider.CompareTag("Terrain"))
+            {
+                Debug.DrawLine(start, hit.point, Color.red, 2f);
+                return false; 
+            }
+        }
+        
+        Debug.DrawLine(start, end, Color.green, 10f);
+        return true;
     }
 }

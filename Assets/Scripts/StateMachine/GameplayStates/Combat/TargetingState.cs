@@ -68,41 +68,48 @@ public class TargetingState : BaseState
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     {
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
+        if (Context.currentlySelectedUnitScript.selected)
         {
-            if (hit.collider.gameObject.CompareTag("EnemyUnit")) //When you hit the enemy check for line of sight and range (called on unit)
+            //LOS checking and line renderer code
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
             {
-                Context.currentlySelectedTarget = hit.collider.gameObject;
-                Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<PrototypeUnit>();
-                Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
-                Debug.Log("Enemy targeted: " + Context.targetUnitSO.name);
-                float distanceToEnemy = Context.currentlySelectedUnitScript.DetermineLOSandDistance(Context.currentlySelectedTargetScript.losStart);
-                
-                //Assume infinite range first
-                float maxWeaponRange = Mathf.Infinity;
-                
-                //Find if the weapon has the range rule
-                var rangeRule = Context.weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
-                
-                //If the weapon has the range rule assign maxWeaponRange
-                if (rangeRule != null)
+                if (hit.collider.gameObject.CompareTag("EnemyUnit")) //When you hit the enemy check for line of sight and range (called on unit)
                 {
-                    // We multiply by your scale/conversion factor if needed, just like meterMovement
-                    maxWeaponRange = rangeRule.range; 
-                }
+                    Context.currentlySelectedTarget = hit.collider.gameObject;
+                    Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<PrototypeUnit>();
+                    Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
+                    Debug.Log("Enemy targeted: " + Context.targetUnitSO.name);
+                    float distanceToEnemy = Context.currentlySelectedUnitScript.DetermineLOSandDistance(Context.currentlySelectedTargetScript.losStart);
+                
+                    //Assume infinite range first
+                    float maxWeaponRange = Mathf.Infinity;
+                
+                    //Find if the weapon has the range rule
+                    var rangeRule = Context.weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
+                
+                    //If the weapon has the range rule assign maxWeaponRange
+                    if (rangeRule != null)
+                    {
+                        // We multiply by your scale/conversion factor if needed, just like meterMovement
+                        maxWeaponRange = rangeRule.range; 
+                    }
 
-                if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
-                {
-                    Context.validTarget = true;
-                    Debug.Log($"Target in range of: {maxWeaponRange}");
-                } else if (distanceToEnemy > maxWeaponRange)
-                {
-                    Context.validTarget = false;
-                    Context.currentlySelectedUnitScript.lineRenderer.material =
+                    if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
+                    {
+                        Context.validTarget = true;
+                        Debug.Log($"Target in range of: {maxWeaponRange}");
+                    } else if (distanceToEnemy > maxWeaponRange)
+                    {
+                        Context.validTarget = false;
+                        Context.currentlySelectedUnitScript.lineRenderer.material =
                         Context.currentlySelectedUnitScript.invalidLine;
-                    _menu.tutFlag6 = true; //toggle invalid panel
-                    Debug.Log($"Target out of range of: {maxWeaponRange}");
+                        _menu.tutFlag6 = true; //toggle invalid panel
+                        Debug.Log($"Target out of range of: {maxWeaponRange}");
+                    }
+                    
+                    //Targeting Lines Checking
+                    Context.currentlySelectedUnitScript.CheckTargetingLines(Context.currentlySelectedUnitScript, Context.currentlySelectedTargetScript);
                 }
             }
         }

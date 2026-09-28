@@ -9,6 +9,7 @@ TagManager:
   - RuleContainer
   - EnemyUnit
   - Board
+  - Terrain
   layers:
   - Default
   - TransparentFX
