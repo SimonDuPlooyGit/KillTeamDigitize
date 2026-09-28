@@ -348,7 +348,7 @@ public class PrototypeUnit : MonoBehaviour
             //If any hit object is tagged Terrain, the line is blocked
             if (hit.collider.CompareTag("Terrain"))
             {
-                Debug.DrawLine(start, hit.point, Color.red, 2f);
+                Debug.DrawLine(start, hit.point, Color.red, 10f);
                 return false; 
             }
         }
