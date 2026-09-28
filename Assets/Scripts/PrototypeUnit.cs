@@ -21,6 +21,11 @@ public class PrototypeUnit : MonoBehaviour
     public float remainingMovement;
     public Material validLine;
     public Material invalidLine;
+
+    //States
+    public bool engaged;
+    public bool concealed;
+    public bool closeToCover;
     
     //Line of sight variables
     public Transform losStart; //assigned in inspector
