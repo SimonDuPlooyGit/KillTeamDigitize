@@ -104,6 +104,8 @@ public class PrototypeUnit : MonoBehaviour
                 DrawPath(limitedPoints.ToArray());
             }
         }
+
+        CheckDistanceToTerrain();
     }
 
     public void ClickToPathfind()
@@ -356,5 +358,31 @@ public class PrototypeUnit : MonoBehaviour
         
         Debug.DrawLine(start, end, Color.green, 10f);
         return true;
+    }
+    
+    public bool CheckDistanceToTerrain()
+    {
+        float oneInchScaled = (1f / 39.37f) * 10f; 
+        bool isNearTerrain = false;
+
+        for (int i = 0; i < samplingPoints.Count; i++)
+        {
+            Vector3 startPos = samplingPoints[i].transform.position;
+            Vector3 direction = samplingPoints[i].transform.right;
+            
+            if (Physics.Raycast(startPos, direction, out RaycastHit hit, oneInchScaled))
+            {
+                if (hit.collider.CompareTag("Terrain"))
+                {
+                    Debug.DrawLine(startPos, hit.point, Color.magenta, 0.5f);
+                    isNearTerrain = true;
+                }
+            }
+            else
+            {
+                Debug.DrawLine(startPos, startPos + (direction * oneInchScaled), Color.yellow, 0.5f);
+            }
+        }
+        return isNearTerrain;
     }
 }
