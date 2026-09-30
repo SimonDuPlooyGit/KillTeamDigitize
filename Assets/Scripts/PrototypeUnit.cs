@@ -24,8 +24,8 @@ public class PrototypeUnit : MonoBehaviour
     [SerializeField] public Material glow;
 
     //States
-    public bool engaged;
-    public bool concealed;
+    [SerializeField] public bool engaged;
+    [SerializeField] public bool concealed;
     public bool closeToCover;
     
     //Sampling data for cover and targeting lines
@@ -105,7 +105,7 @@ public class PrototypeUnit : MonoBehaviour
             }
         }
 
-        CheckDistanceToTerrain();
+        closeToCover = CheckDistanceToTerrain();
     }
 
     public void ClickToPathfind()

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class TargetingState : BaseState
 {
@@ -80,6 +81,15 @@ public class TargetingState : BaseState
                     Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<PrototypeUnit>();
                     Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
                     Debug.Log("Enemy targeted: " + Context.targetUnitSO.name);
+                    
+                    //Cover and conceal checking
+                    if (Context.currentlySelectedTargetScript.concealed &&
+                        Context.currentlySelectedTargetScript.closeToCover) //Concealed and close to cover
+                    {
+                        Debug.Log("Not a valid target, concealed in cover");
+                        return;
+                    }
+                    
                     float distanceToEnemy = Context.currentlySelectedUnitScript.DetermineLOSandDistance(Context.currentlySelectedTargetScript.losStart);
                 
                     //Assume infinite range first
