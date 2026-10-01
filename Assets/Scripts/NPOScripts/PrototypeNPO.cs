@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +10,6 @@ public class PrototypeNPO : MonoBehaviour
 {
     //Initializing
     public OperativeTemplate npoData;
-    public GameObject unitGhost;
     public float movementStat;
     public float meterMovement;
     private float pathDistance;
@@ -21,10 +21,12 @@ public class PrototypeNPO : MonoBehaviour
     public Material validLine;
     public Material invalidLine;
     [SerializeField] public Material glow;
+    [SerializeField] public Material fog;
+    [SerializeField] private GameObject unitUI;
 
     [Header("Unit Settings")]
     public UnitArchetype archetype = UnitArchetype.Marksman;
-    public OrderState currentOrder = OrderState.Engage;
+    public OrderState currentOrder = OrderState.Conceal;
     public bool closeToCover;
     
     //Sampling data for cover and targeting lines
@@ -34,11 +36,8 @@ public class PrototypeNPO : MonoBehaviour
     public Transform losStart; //assigned in inspector
     
     //Movement and navmesh
-    private NavMeshAgent agentGhost;
     private NavMeshAgent agentUnit;
     public NavMeshPath path;
-    public LineRenderer lineRenderer;
-    private bool pathDrawn = false;
     List<Vector3> limitedPoints = new List<Vector3>();
     private float currentPathDistance;
     
@@ -52,7 +51,22 @@ public class PrototypeNPO : MonoBehaviour
     public bool CanFight() => inControlRange();
     public bool CanCharge() => possibleChargeTarget();
     public bool Fallback() => inDanger() && coverNear();
+
+    private void Awake()
+    {
+        Transform spHolder = gameObject.transform.Find("BaseSamplingPoints");
+        foreach (Transform pt in spHolder)
+        {
+            samplingPoints.Add(pt.gameObject);
+        }
+    }
     
+    private void Update()
+    {
+        closeToCover = CheckDistanceToTerrain();
+        fogEffectAndCoverToggle();
+    }
+
     //Action implementations
     public void PerformFight()
     {
@@ -112,5 +126,39 @@ public class PrototypeNPO : MonoBehaviour
     private bool coverNear()
     {
         return true;
+    }
+
+    private void fogEffectAndCoverToggle()
+    {
+        if (closeToCover)
+        {
+            unitUI.gameObject.transform.Find("StatusIcons").gameObject.transform.Find("Cover").gameObject.SetActive(true);
+        }
+    }
+    
+    public bool CheckDistanceToTerrain()
+    {
+        float oneInchScaled = (1f / 39.37f) * 10f; 
+        bool isNearTerrain = false;
+
+        for (int i = 0; i < samplingPoints.Count; i++)
+        {
+            Vector3 startPos = samplingPoints[i].transform.position;
+            Vector3 direction = samplingPoints[i].transform.right;
+            
+            if (Physics.Raycast(startPos, direction, out RaycastHit hit, oneInchScaled))
+            {
+                if (hit.collider.CompareTag("Terrain"))
+                {
+                    Debug.DrawLine(startPos, hit.point, Color.magenta, 0.5f);
+                    isNearTerrain = true;
+                }
+            }
+            else
+            {
+                Debug.DrawLine(startPos, startPos + (direction * oneInchScaled), Color.yellow, 0.5f);
+            }
+        }
+        return isNearTerrain;
     }
 }
