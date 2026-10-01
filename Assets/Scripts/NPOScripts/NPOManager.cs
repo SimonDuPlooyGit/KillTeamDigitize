@@ -12,27 +12,27 @@ public class NPOManager : MonoBehaviour
     [SerializeField] private List<PrototypeNPO> npoUnits = new();
 
     //1.1
-    public PrototypeNPO FindBestShootOrFightNPO()
+    /*public PrototypeNPO FindBestShootOrFightNPO()
     {
         //iterate through npoUnits and find which ones can shoot and or fight
         //pick the one with the strongest weapon
         //if no npo's can shoot or fight transition to 1.2
         
-    }
+    }*/
     
     //1.2
-    public PrototypeNPO FindNPONotInCover()
+    /*public PrototypeNPO FindNPONotInCover()
     {
         //pick an NPO that is most important/closest to death and that isn't in cover
         //if everyone is in cover then transition to 1.3
         
-    }
+    }*/
 
-    public PrototypeNPO FindNPOClosestToPlayer()
+    /*public PrototypeNPO FindNPOClosestToPlayer()
     {
         //pick the NPO closest to the player
         
-    }
+    }*/
 
     public void ActivateNPO(PrototypeNPO npo)
     {
