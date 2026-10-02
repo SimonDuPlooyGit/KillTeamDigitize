@@ -13436,6 +13436,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5437753920450681699, guid: f937fa0bbe4599c4c839d7b15d62251d, type: 3}
+      propertyPath: m_Name
+      value: BaseSamplingPoints
+      objectReference: {fileID: 0}
     - target: {fileID: 5467365290662992753, guid: f937fa0bbe4599c4c839d7b15d62251d, type: 3}
       propertyPath: m_Name
       value: TrooperMarksman
