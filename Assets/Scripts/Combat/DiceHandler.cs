@@ -374,4 +374,16 @@ public class DiceHandler : MonoBehaviour
         StartCoroutine(Reroll(isAlly));
     }
 
+    //=========================================================temp stuff
+    /*private IEnumerator tempCoroutine()
+    {
+        yield return StartCoroutine(ThrowAttackDice(3,true,context));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(ThrowDefenseDice(2, true, context));
+    }
+    public void TempRollFunction()
+    {
+        StartCoroutine(tempCoroutine());
+    }*/
+
 }
