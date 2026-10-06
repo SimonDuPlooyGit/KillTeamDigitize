@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BehaviourTrees;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NPOManager : MonoBehaviour
@@ -10,6 +11,11 @@ public class NPOManager : MonoBehaviour
     //  1.3 Is closer to player
 
     [SerializeField] private List<PrototypeNPO> npoUnits = new();
+    [SerializeField] private List<PrototypeUnit> playerUnits = new();
+    
+    private List<PrototypeNPO> sortedRangedWeapons = new();
+    private List<PrototypeNPO> sortedMeleeWeapons = new(); 
+    
 
     //1.1
     /*public PrototypeNPO FindBestShootOrFightNPO()
@@ -34,8 +40,54 @@ public class NPOManager : MonoBehaviour
         
     }*/
 
+    private void Awake()
+    {
+        ActivateNPO(findBestCandidate());
+    }
+    
+    public PrototypeNPO findBestCandidate()
+    {
+        PrototypeNPO bestCandidate = null;
+        int maxDamage = -1;
+
+        foreach (var npo in npoUnits)
+        {
+            if (npo == null || npo.dead) continue;
+
+            bool canShoot = npo.CanShoot();
+            bool canFight = npo.CanFight();
+
+            if (!canShoot && !canFight) continue;
+
+            int bestDamage = GetBestDamage(npo);
+
+            if (bestDamage > maxDamage)
+            {
+                maxDamage = bestDamage;
+                bestCandidate = npo;
+            }
+        }
+        
+        return bestCandidate;
+    }
+
+    private int GetBestDamage(PrototypeNPO npo)
+    {
+        if (npo.npoData == null || npo.npoData.weapons == null || npo.npoData.weapons.Count == 0) return 0;
+        
+        int highestDamage = 0;
+        foreach (var weapon in npo.npoData.weapons)
+        {
+            if (weapon.DMGnorm > highestDamage)
+            {
+                highestDamage = weapon.DMGnorm;
+            }
+        }
+        return highestDamage;
+    }
+    
     public void ActivateNPO(PrototypeNPO npo)
     {
-        
+        npo.selected = true;
     }
 }

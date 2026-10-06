@@ -12,11 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
   m_Name: Blades
   m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
-  ATK: 0
-  HIT: 0
-  DMGnorm: 0
-  DMGcrit: 0
-  rules: []
+  ATK: 4
+  HIT: 4
+  DMGnorm: 3
+  DMGcrit: 4
+  rules:
+  - rid: 7509494141420830785
+  - rid: 7509494141420830786
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7509494141420830785
+      type: {class: WeaponRules/Melee, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7509494141420830786
+      type: {class: WeaponRules/Ceaseless, ns: , asm: Assembly-CSharp}
+      data: 

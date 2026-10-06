@@ -16,7 +16,11 @@ MonoBehaviour:
   HIT: 4
   DMGnorm: 2
   DMGcrit: 3
-  rules: []
+  rules:
+  - rid: 7509494141420830782
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7509494141420830782
+      type: {class: WeaponRules/Melee, ns: , asm: Assembly-CSharp}
+      data: 
