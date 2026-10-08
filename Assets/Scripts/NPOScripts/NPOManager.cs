@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using BehaviourTrees;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class NPOManager : MonoBehaviour
@@ -10,11 +8,8 @@ public class NPOManager : MonoBehaviour
     //  1.2 Is not in COVER from player
     //  1.3 Is closer to player
 
-    [SerializeField] private List<PrototypeNPO> npoUnits = new();
-    [SerializeField] private List<PrototypeUnit> playerUnits = new();
-    
-    private List<PrototypeNPO> sortedRangedWeapons = new();
-    private List<PrototypeNPO> sortedMeleeWeapons = new(); 
+    [SerializeField] public List<PrototypeNPO> npoUnits = new();
+    [SerializeField] public List<PrototypeUnit> playerUnits = new();
     
 
     //1.1
@@ -40,17 +35,38 @@ public class NPOManager : MonoBehaviour
         
     }*/
 
-    private void Awake()
+    private void Update()
     {
-        ActivateNPO(findBestCandidate());
+        GetNPOUnitToActivate();
     }
     
-    public PrototypeNPO findBestCandidate()
+    public PrototypeNPO GetNPOUnitToActivate()
+    {
+        Debug.Log("GetNPOUnitToActivate called");
+        PrototypeNPO candidate = FindBestCandidate(npoUnits);
+        if (candidate != null)
+        {
+            candidate.selected = true;
+            return candidate;
+        }
+
+        candidate = FindNotInCover();
+        if (candidate != null)
+        {
+            candidate.selected = true;
+            return candidate;
+        }
+
+        
+        return FindClosestNPO();
+    }
+    
+    public PrototypeNPO FindBestCandidate(List<PrototypeNPO> npos)
     {
         PrototypeNPO bestCandidate = null;
         int maxDamage = -1;
 
-        foreach (var npo in npoUnits)
+        foreach (var npo in npos)
         {
             if (npo == null || npo.dead) continue;
 
@@ -68,6 +84,7 @@ public class NPOManager : MonoBehaviour
             }
         }
         
+        if (bestCandidate != null) Debug.Log("FindBestCandidate found: " + bestCandidate.name);
         return bestCandidate;
     }
 
@@ -85,9 +102,51 @@ public class NPOManager : MonoBehaviour
         }
         return highestDamage;
     }
-    
-    public void ActivateNPO(PrototypeNPO npo)
+
+    public PrototypeNPO FindNotInCover()
     {
-        npo.selected = true;
+        PrototypeNPO lowestOpenNpo = null;
+        int lowestWounds = int.MaxValue;
+
+        foreach (var npo in npoUnits)
+        {
+            if (npo == null || npo.dead || npo.acted || npo.closeToCover) continue;
+
+            if (npo.currentWounds < lowestWounds)
+            {
+                lowestWounds = npo.currentWounds;
+                lowestOpenNpo = npo;
+            }
+        }
+        if (lowestOpenNpo != null) Debug.Log("FindNotInCover found: " + lowestOpenNpo.name);
+        return lowestOpenNpo;
+    }
+
+    public PrototypeNPO FindClosestNPO()
+    {
+        PrototypeNPO closestNpo = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var npo in npoUnits)
+        {
+            if (npo == null || npo.dead || npo.acted) continue;
+
+            foreach (var player in playerUnits)
+            {
+                if (player == null || player.dead)
+                {
+                    float distance = Vector3.Distance(npo.transform.position, player.transform.position);
+
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestNpo = npo;
+                    }
+                }
+            }
+        }
+        if (closestNpo != null) Debug.Log("FindClosestNPO found: " + closestNpo.name);
+        closestNpo.selected = true;
+        return closestNpo;
     }
 }
