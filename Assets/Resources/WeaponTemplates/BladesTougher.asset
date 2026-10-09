@@ -10,17 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
-  m_Name: Chainsword
+  m_Name: BladesTougher
   m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
   ATK: 5
   HIT: 3
   DMGnorm: 4
   DMGcrit: 5
   rules:
-  - rid: 7509494141420830784
+  - rid: 7509494141420830787
+  - rid: 7509494141420830788
   references:
     version: 2
     RefIds:
-    - rid: 7509494141420830784
+    - rid: 7509494141420830787
       type: {class: WeaponRules/Melee, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7509494141420830788
+      type: {class: WeaponRules/Ceaseless, ns: , asm: Assembly-CSharp}
       data: 

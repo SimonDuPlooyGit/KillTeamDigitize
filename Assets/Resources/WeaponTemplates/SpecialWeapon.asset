@@ -12,11 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
   m_Name: SpecialWeapon
   m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
-  ATK: 0
-  HIT: 0
-  DMGnorm: 0
-  DMGcrit: 0
-  rules: []
+  ATK: 4
+  HIT: 4
+  DMGnorm: 4
+  DMGcrit: 5
+  rules:
+  - rid: 7509494141420830790
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7509494141420830790
+      type: {class: WeaponRules/Piercing, ns: , asm: Assembly-CSharp}
+      data:
+        piercingX: 1

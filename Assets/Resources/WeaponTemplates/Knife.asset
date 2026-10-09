@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
   m_Name: Knife
   m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
-  ATK: 0
-  HIT: 0
-  DMGnorm: 0
-  DMGcrit: 0
-  rules: []
+  ATK: 3
+  HIT: 4
+  DMGnorm: 2
+  DMGcrit: 3
+  rules:
+  - rid: 7509494141420830781
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7509494141420830781
+      type: {class: WeaponRules/Melee, ns: , asm: Assembly-CSharp}
+      data: 

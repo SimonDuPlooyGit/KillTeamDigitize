@@ -20,7 +20,7 @@ MonoBehaviour:
   Aabilities: []
   Pabilities: []
   weapons:
-  - {fileID: 11400000, guid: b524f3b6be1f17c4c9286118608b5c0f, type: 2}
+  - {fileID: 11400000, guid: f5be88f608be05c4f9720efb78ba4608, type: 2}
   - {fileID: 11400000, guid: 1375ed1c4fdbd3e4199709f2d2c01f6b, type: 2}
   references:
     version: 2
