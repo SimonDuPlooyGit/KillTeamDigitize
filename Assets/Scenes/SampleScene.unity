@@ -15527,7 +15527,7 @@ GameObject:
   - component: {fileID: 1921963952}
   - component: {fileID: 1921963951}
   m_Layer: 0
-  m_Name: GMprototype
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15548,6 +15548,7 @@ MonoBehaviour:
   menu: {fileID: 1700968724}
   diceHandler: {fileID: 95257449}
   mainCamera: {fileID: 330585548}
+  npoManager: {fileID: 1588116391}
 --- !u!4 &1921963952
 Transform:
   m_ObjectHideFlags: 0

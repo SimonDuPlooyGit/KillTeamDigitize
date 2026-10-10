@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MenuPanel menu;
     [SerializeField] private DiceHandler diceHandler;
     [SerializeField] private OrbitCamera mainCamera;
+    [SerializeField] private NPOManager npoManager;
 
     //State variables
     public UnitActivationState unitActivationState ;
@@ -19,6 +20,8 @@ public class GameManager : MonoBehaviour
     public TargetingState targetingState;
     public CombatState combatState;
     public WeaponSelectState weaponSelectState;
+
+    public NPOSelection npoSelectState;
     //public PauseState pauseState;
 
     private void Awake()
@@ -35,6 +38,7 @@ public class GameManager : MonoBehaviour
         targetingState = new TargetingState(sharedContext, input, menu);
         combatState = new CombatState(sharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(sharedContext, menu);
+        npoSelectState = new NPOSelection(sharedContext, npoManager);
         //pauseState = new PauseState(sharedContext, input, stateMachine);
 
         //Define transitions
@@ -47,6 +51,12 @@ public class GameManager : MonoBehaviour
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.validTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentAPL == 0));
+        
+        //TEMPORARY TRANSITION TO TEST GOING TO NPO ACTIVATION
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentAPL == 3));
+        
+        //AddT for pressing a pass turn button
         stateMachine.SetState(unitActivationState);
 
         //Backwards transitions
