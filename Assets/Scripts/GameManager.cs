@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
 
-    //State variables
+    //Player states
     public UnitActivationState unitActivationState ;
     public ActionSelectionState actionSelectionState;
     public MovementState movementState;
@@ -21,7 +21,10 @@ public class GameManager : MonoBehaviour
     public CombatState combatState;
     public WeaponSelectState weaponSelectState;
 
+    //NPO states
     public NPOSelection npoSelectState;
+    public NPOActionSelect npoActionSelectState;
+    
     //public PauseState pauseState;
 
     private void Awake()
@@ -39,6 +42,7 @@ public class GameManager : MonoBehaviour
         combatState = new CombatState(sharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(sharedContext, menu);
         npoSelectState = new NPOSelection(sharedContext, npoManager);
+        npoActionSelectState = new NPOActionSelect(sharedContext, npoManager);
         //pauseState = new PauseState(sharedContext, input, stateMachine);
 
         //Define transitions
@@ -52,6 +56,7 @@ public class GameManager : MonoBehaviour
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.validTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
         AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentAPL == 0));
+        AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => sharedContext.currentlyActivatedNPO != null));
         
         //TEMPORARY TRANSITION TO TEST GOING TO NPO ACTIVATION
         AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentAPL == 3));

@@ -11,7 +11,7 @@ public class NPOSelection : BaseState
     public override void OnEnter()
     {
         Debug.Log("NPOSelection OnEnter");
-        _npoManager.GetNPOUnitToActivate();
+        Context.currentlyActivatedNPO = _npoManager.GetNPOUnitToActivate();
     }
 
     public override void Update()

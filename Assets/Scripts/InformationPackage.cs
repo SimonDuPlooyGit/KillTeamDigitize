@@ -8,6 +8,12 @@ public class InformationPackage
     public PrototypeUnit currentlySelectedUnitScript;
     public GameObject currentlySelectedTarget;
     public PrototypeUnit currentlySelectedTargetScript;
+
+    //New assignments to differentiate when an NPO is selected and choosing targets
+    public PrototypeNPO currentlyActivatedNPO;
+    public GameObject targetPlayerObject;
+    public PrototypeUnit targetPlayerScript;
+    
     public DiceHandler diceHandler;
     public OrbitCamera mainCameraScript;
     
