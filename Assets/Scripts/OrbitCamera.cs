@@ -91,4 +91,9 @@ public class OrbitCamera : MonoBehaviour
             transform.Translate(moveInput * speed * Time.deltaTime, Space.Self);
         }
     }
+
+    public void ToggleCam()
+    {
+        isFreecam = !isFreecam;
+    }
 }
