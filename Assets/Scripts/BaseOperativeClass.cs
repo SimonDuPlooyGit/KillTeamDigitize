@@ -40,10 +40,15 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [Header("Materials To Apply")]
     public GameObject fogEffect;
     public Material glow;
+
+    [Header("Animation")]
+    private Animator animator;
     
 
     protected virtual void Awake()
     {
+        animator = GetComponent<Animator>();
+        
         fogEffect.SetActive(false);
         
         SetHealth();
@@ -200,6 +205,20 @@ public abstract class BaseOperativeClass : MonoBehaviour
     {
         currentWounds -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage. Current health: {currentWounds}");
+
+        damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
+        damagePopOut.SetActive(true);
+
+        if(animator != null)
+        {
+            animator.ResetTrigger("TakeDamage");
+            animator.SetTrigger("TakeDamage");
+
+            
+
+            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        }
+       
 
         if (currentWounds <= 0)
         {
