@@ -71,6 +71,12 @@ public class PrototypeUnit : BaseOperativeClass
 
     public void ClickToPathfind()
     {
+        // Do not pathfind if clicking on UI elements/buttons
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return; 
+        }
+        
         if (selected)
         {
             Debug.Log("ClickToPathfind is entered and unit is selected");
