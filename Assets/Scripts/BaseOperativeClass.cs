@@ -46,6 +46,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     {
         fogEffect.SetActive(false);
         
+        SetHealth();
+        
         //Null check and initialization
         if (operativeData != null)
         {
