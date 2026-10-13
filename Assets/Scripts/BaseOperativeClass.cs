@@ -36,14 +36,16 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject injuredSymbol;
     public GameObject concealInCoverSymbol;
     public GameObject damagePopOut;
-    
+
     [Header("Materials To Apply")]
-    public Material foggyConcealInCover;
+    public GameObject fogEffect;
     public Material glow;
     
 
     protected virtual void Awake()
     {
+        fogEffect.SetActive(false);
+        
         //Null check and initialization
         if (operativeData != null)
         {
@@ -67,6 +69,16 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
     protected virtual void Update()
     {
+        if (currentOrder == OrderState.Engage)
+        {
+            engageSymbol.SetActive(true);
+            concealSymbol.SetActive(false);
+        } else if (currentOrder == OrderState.Conceal)
+        {
+            engageSymbol.SetActive(false);
+            concealSymbol.SetActive(true);
+        }
+        
         closeToCover = CheckDistanceToTerrain();
         FogEffectAndCoverToggle();
     }
@@ -247,9 +259,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
     
     private void FogEffectAndCoverToggle()
     {
-        if (closeToCover && unitUI != null)
+        if (closeToCover && unitUI != null && currentOrder == OrderState.Conceal)
         {
             concealInCoverSymbol.SetActive(true);
+            fogEffect.SetActive(true);
         }
     }
 }
