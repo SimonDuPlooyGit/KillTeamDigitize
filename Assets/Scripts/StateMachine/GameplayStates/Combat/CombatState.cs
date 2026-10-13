@@ -168,7 +168,7 @@ public class CombatState : BaseState
         Debug.Log("CombatState Exited");
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
-        Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
+        Context.currentlySelectedUnitScript.UpdateApl(Context.currentlySelectedUnitScript.currentApl -= 1);
         _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("ShootButton").gameObject.SetActive(false);
         _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("ShootAPL").gameObject.SetActive(false);
         Context.Reset();

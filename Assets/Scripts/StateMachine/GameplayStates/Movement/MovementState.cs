@@ -60,7 +60,7 @@ public class MovementState : BaseState
         _menu.moveButton2?.SetActive(false);
         if (Context.currentlySelectedUnitScript.remainingMovement < Context.currentlySelectedUnitScript.meterMovement)
         {
-            Context.currentlySelectedUnitScript.UpdateAPL(Context.currentlySelectedUnitScript.currentAPL -= 1);
+            Context.currentlySelectedUnitScript.UpdateApl(Context.currentlySelectedUnitScript.currentApl -= 1);
             _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
             _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
         }
@@ -79,7 +79,7 @@ public class MovementState : BaseState
     {
         if (Context.currentlySelectedUnitScript != null)
         {
-            Context.currentlySelectedUnitScript.MoveUnitToGhost();
+            Context.currentlySelectedUnitScript.MoveOperativeToMarker();
             Context.isMovementConfirmed = true;
             //set tutorial flags
             if(_menu.tutFlag3)

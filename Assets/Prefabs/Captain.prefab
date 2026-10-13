@@ -232,25 +232,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   operativeData: {fileID: 11400000, guid: 4686860a63079e74e999a1e87c705c6b, type: 2}
-  unitGhost: {fileID: 4911655982508512261}
-  movementStat: 6
+  movementStat: 0
   meterMovement: 0
-  selected: 0
   currentWounds: 0
-  currentAPL: 0
+  currentApl: 0
   dead: 0
-  remainingMovement: 0
-  validLine: {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
-  invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
-  glow: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
-  engaged: 0
-  concealed: 0
+  selected: 0
   closeToCover: 0
+  acted: 0
+  currentOrder: 1
   samplingPoints: []
   losStart: {fileID: 5258051469875849874}
   lineRenderer: {fileID: 3336415197397129480}
-  healthFill: {fileID: 0}
-  aplCount: {fileID: 0}
+  validLine: {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
+  invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
+  unitUI: {fileID: 7349437687743831676}
+  healthFill: {fileID: 7172793185270654120}
+  aplCount: {fileID: 3588786014776836531}
+  concealSymbol: {fileID: 2546804341604678988}
+  engageSymbol: {fileID: 2339199557233422925}
+  concealInCoverSymbol: {fileID: 7240368255749030530}
+  damagePopOut: {fileID: 0}
+  foggyConcealInCover: {fileID: 2100000, guid: 7813f9a3e95e99448a908cbb8f1a07fe, type: 2}
+  glow: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
+  moveMarker: {fileID: 4911655982508512261}
+  remainingMovement: 0
   movementInfo: {fileID: 0}
 --- !u!120 &3336415197397129480
 LineRenderer:

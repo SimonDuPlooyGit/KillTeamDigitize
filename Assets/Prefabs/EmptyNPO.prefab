@@ -1424,26 +1424,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrototypeNPO
   operativeData: {fileID: 0}
-  unitGhost: {fileID: 0}
   movementStat: 0
   meterMovement: 0
-  selected: 0
   currentWounds: 0
-  currentAPL: 0
+  currentApl: 0
   dead: 0
-  remainingMovement: 0
+  selected: 0
+  closeToCover: 0
+  acted: 0
+  currentOrder: 1
+  samplingPoints: []
+  losStart: {fileID: 6362797004194422301}
+  lineRenderer: {fileID: 0}
   validLine: {fileID: 0}
   invalidLine: {fileID: 0}
-  glow: {fileID: 0}
-  engaged: 0
-  concealed: 0
-  closeToCover: 0
-  samplingPoints: []
-  losStart: {fileID: 0}
-  lineRenderer: {fileID: 0}
-  healthFill: {fileID: 0}
-  aplCount: {fileID: 0}
-  movementInfo: {fileID: 0}
+  unitUI: {fileID: 9148851836553294364}
+  healthFill: {fileID: 412011990471696305}
+  aplCount: {fileID: 1831111955096741274}
+  concealSymbol: {fileID: 3695502065742472221}
+  engageSymbol: {fileID: 1537822427575237835}
+  concealInCoverSymbol: {fileID: 4020290979881973716}
+  damagePopOut: {fileID: 0}
+  foggyConcealInCover: {fileID: 2100000, guid: 7813f9a3e95e99448a908cbb8f1a07fe, type: 2}
+  glow: {fileID: 2100000, guid: a2ff2e93a79c10f48a1dac3ab7e2288c, type: 2}
+  npoManager: {fileID: 0}
+  archetype: 1
 --- !u!1 &5617084948804177651
 GameObject:
   m_ObjectHideFlags: 0

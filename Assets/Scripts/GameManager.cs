@@ -55,11 +55,11 @@ public class GameManager : MonoBehaviour
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.validTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentAPL == 0));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentApl == 0));
         AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => sharedContext.currentlyActivatedNPO != null));
         
         //TEMPORARY TRANSITION TO TEST GOING TO NPO ACTIVATION
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentAPL == 3));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentApl == 3));
         
         //AddT for pressing a pass turn button
         stateMachine.SetState(unitActivationState);

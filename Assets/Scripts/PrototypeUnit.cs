@@ -6,71 +6,50 @@ using UnityEngine.AI;
 using TMPro;
 using UnityEngine.UI;
 
-public class PrototypeUnit : MonoBehaviour
+public class PrototypeUnit : BaseOperativeClass
 {
-    //Initializing
-    public OperativeTemplate operativeData;
-    public GameObject unitGhost;
-    public float movementStat;
-    public float meterMovement;
-    private float pathDistance;
-    public bool selected = false;
-    public int currentWounds;
-    public int currentAPL;
-    public bool dead = false;
+    [Header("Navmesh and moving info")]
+    public GameObject moveMarker;
     public float remainingMovement;
-    public Material validLine;
-    public Material invalidLine;
-    [SerializeField] public Material glow;
-
-    //States
-    [SerializeField] public bool engaged;
-    [SerializeField] public bool concealed;
-    public bool closeToCover;
-    
-    //Sampling data for cover and targeting lines
-    public List<GameObject> samplingPoints;
-    
-    //Line of sight variables
-    public Transform losStart; //assigned in inspector
-    
-    //Movement and navmesh
-    private NavMeshAgent agentGhost;
-    private NavMeshAgent agentUnit;
-    public NavMeshPath path;
-    public LineRenderer lineRenderer;
-    private bool pathDrawn = false;
-    List<Vector3> limitedPoints = new List<Vector3>();
-    private float currentPathDistance;
-    
-    //Unit UI variables
-    public GameObject healthFill;
-    public GameObject aplCount;
     public GameObject movementInfo;
 
-    private void Awake()
-    {
-        selected = false;
-        movementStat = operativeData.MOVE;
-        meterMovement = (movementStat/39.37f) * 10; //Changing the inches to meters and then applying 10x Scale.
-        remainingMovement = meterMovement;
-        agentUnit = GetComponent<NavMeshAgent>();
-        agentGhost = unitGhost.GetComponent<NavMeshAgent>();
-        path = new NavMeshPath();
-        unitGhost.SetActive(false);
-        currentWounds = operativeData.WOUNDS;
-        currentAPL = operativeData.APL;
-        healthFill = gameObject.transform.Find("UnitUI").Find("HealthBar").Find("HealthFill").gameObject;
-        movementInfo = gameObject.transform.Find("MoveMarker").Find("MarkerCanvas").Find("DistanceMarker").Find("DistanceText").gameObject;
-        aplCount = gameObject.transform.Find("UnitUI").Find("APL").Find("APLNumber").gameObject;
-        SetHealth();
-        float spentSoFar = meterMovement - remainingMovement;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
+    private NavMeshAgent _operativeAgent;
+    private NavMeshAgent _moveMarkerAgent;
+    public NavMeshPath Path;
+    private bool _pathDrawn;
+    List<Vector3> _limitedPoints = new List<Vector3>();
+    private float _currentPathDistance;
 
-        Transform spHolder = gameObject.transform.Find("BaseSamplingPoints");
-        foreach (Transform pt in spHolder)
+    protected override void Awake()
+    {
+        base.Awake();
+        acted = false;
+        
+        remainingMovement = meterMovement;
+        _operativeAgent = GetComponent<NavMeshAgent>();
+        _moveMarkerAgent = moveMarker.GetComponent<NavMeshAgent>();
+        Path = new NavMeshPath();
+        moveMarker.SetActive(false);
+
+        //Find UI for this operative
+        healthFill = transform.Find("UnitUI/HealthBar/HealthFill").gameObject;
+        movementInfo = transform.Find("MoveMarker/MarkerCanvas/DistanceMarker/DistanceText").gameObject;
+        aplCount = transform.Find("UnitUI/APL/APLNumber").gameObject;
+
+        SetHealth();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (selected)
         {
-            samplingPoints.Add(pt.gameObject);
+            if (moveMarker.activeSelf && !_pathDrawn && !_moveMarkerAgent.pathPending &&
+                _moveMarkerAgent.velocity.sqrMagnitude < 0.01f)
+            {
+                DrawPath(_limitedPoints.ToArray());
+            }
         }
     }
 
@@ -78,83 +57,68 @@ public class PrototypeUnit : MonoBehaviour
     {
         if (selected)
         {
-            if (unitGhost.activeSelf &&
-                !pathDrawn &&
-                !agentGhost.pathPending &&
-                agentGhost.velocity.sqrMagnitude < 0.01f &&
-                agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
+            if (moveMarker.activeSelf &&
+                !_pathDrawn &&
+                !_moveMarkerAgent.pathPending &&
+                _moveMarkerAgent.velocity.sqrMagnitude < 0.01f &&
+                _moveMarkerAgent.remainingDistance <= _moveMarkerAgent.stoppingDistance &&
                 selected)
             {
-                DrawPath(limitedPoints.ToArray());
+                DrawPath(_limitedPoints.ToArray());
             }
         }
-    }
-
-    private void Update()
-    {
-        if (selected)
-        {
-            if (unitGhost.activeSelf != false &&
-                !pathDrawn &&
-                !agentGhost.pathPending &&
-                agentGhost.velocity.sqrMagnitude < 0.01f &&
-                agentGhost.remainingDistance <= agentGhost.stoppingDistance &&
-                selected == true)
-            {
-                DrawPath(limitedPoints.ToArray());
-            }
-        }
-
-        closeToCover = CheckDistanceToTerrain();
     }
 
     public void ClickToPathfind()
     {
         if (selected)
         {
-            limitedPoints.Clear();
-            pathDistance = 0f;
+            _limitedPoints.Clear();
+            _currentPathDistance = 0f;
             lineRenderer.enabled = false;
-            pathDrawn = false;
-            unitGhost.SetActive(true);
+            _pathDrawn = false;
+            moveMarker.SetActive(true);
 
-            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
 
             if (remainingMovement <= 0.05f)
             {
                 Debug.Log($"No remaining movement: {remainingMovement}");
                 return;
             }
-        
+
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) && selected == true && hit.transform.gameObject.tag == "Board")
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
+                selected && hit.transform.CompareTag("Board"))
             {
                 //Debug.Log(hit.transform.name);
-                if (NavMesh.CalculatePath(transform.position, hit.point, agentUnit.areaMask, path))
+                if (NavMesh.CalculatePath(transform.position, hit.point, _operativeAgent.areaMask, Path))
                 {
-                    for (int i = 0; i < path.corners.Length - 1; i++)
+                    for (int i = 0; i < Path.corners.Length - 1; i++)
                     {
-                        float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
-                        pathDistance += segment;
-                        //Debug.Log($"Segment {i}: {segment}, Total: {pathDistance}");
+                        float segment = Vector3.Distance(Path.corners[i], Path.corners[i + 1]);
+                        _currentPathDistance += segment;
+                        //Debug.Log($"Segment {i}: {segment}, Total: {_currentPathDistance}");
                     }
                 }
 
-                if (pathDistance > remainingMovement)
+                if (_currentPathDistance > remainingMovement)
                 {
-                    agentGhost.destination = LimitPath(path, remainingMovement);
-                    currentPathDistance = remainingMovement;
+                    _moveMarkerAgent.destination = LimitPath(remainingMovement);
+                    _currentPathDistance = remainingMovement;
                 }
                 else
                 {
-                    limitedPoints.Add(transform.position);
-                    limitedPoints.Add(hit.point);
-                    agentGhost.destination = hit.point;
-                    currentPathDistance = pathDistance;
+                    _limitedPoints.Add(transform.position);
+                    _limitedPoints.Add(hit.point);
+                    _moveMarkerAgent.destination = hit.point;
                 }
             }
-            float projectedSpentMeters = (meterMovement - remainingMovement) + currentPathDistance;
-            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
+
+            float projectedSpentMeters = (meterMovement - remainingMovement) + _currentPathDistance;
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
         }
     }
 
@@ -162,227 +126,71 @@ public class PrototypeUnit : MonoBehaviour
     {
         if (selected)
         {
-            if (!pathDrawn)
+            if (!_pathDrawn)
             {
                 lineRenderer.positionCount = points.Length;
                 lineRenderer.SetPositions(points);
                 lineRenderer.enabled = true;
-                pathDrawn = true;
+                _pathDrawn = true;
             }
         }
     }
-    
-    Vector3 LimitPath(NavMeshPath path, float maxDistance)
+
+    Vector3 LimitPath(float maxDistance)
     {
         if (selected)
         {
             float distance = 0f;
 
-            limitedPoints.Add(path.corners[0]);
+            _limitedPoints.Add(Path.corners[0]);
 
-            for (int i = 0; i < path.corners.Length - 1; i++)
+            for (int i = 0; i < Path.corners.Length - 1; i++)
             {
-                float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
+                float segment = Vector3.Distance(Path.corners[i], Path.corners[i + 1]);
 
                 if (distance + segment > maxDistance)
                 {
                     float remaining = maxDistance - distance;
 
-                    Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
+                    Vector3 direction = (Path.corners[i + 1] - Path.corners[i]).normalized;
 
-                    Vector3 finalPoint = path.corners[i] + direction * remaining;
+                    Vector3 finalPoint = Path.corners[i] + direction * remaining;
 
-                    limitedPoints.Add(finalPoint);
+                    _limitedPoints.Add(finalPoint);
 
                     return finalPoint;
                 }
 
-                limitedPoints.Add(path.corners[i + 1]);
+                _limitedPoints.Add(Path.corners[i + 1]);
 
                 distance += segment;
             }
         }
-        return path.corners[path.corners.Length - 1];
+
+        return Path.corners[Path.corners.Length - 1];
     }
 
-    public void MoveUnitToGhost()
+    public void MoveOperativeToMarker()
     {
-        agentUnit.destination = unitGhost.transform.position;
-        remainingMovement -= currentPathDistance;
-        currentPathDistance = 0f;
-        
-        if (transform.position == unitGhost.transform.position)
+        _operativeAgent.destination = moveMarker.transform.position;
+        remainingMovement -= _currentPathDistance;
+        _currentPathDistance = 0f;
+
+        if (transform.position == moveMarker.transform.position)
         {
             float spentSoFar = meterMovement - remainingMovement;
-            movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
             Reset();
         }
     }
 
     public void Reset()
     {
-        unitGhost.transform.position = transform.position;
+        moveMarker.transform.position = transform.position;
         lineRenderer.enabled = false;
-        unitGhost.SetActive(false);
+        moveMarker.SetActive(false);
         float spentSoFar = meterMovement - remainingMovement;
         movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
-    }
-
-    public void TakeDamage(int damage)
-    {
-        currentWounds -= damage;
-        Debug.Log($"{gameObject.name} took {damage} damage! Current Health: {currentWounds}");
-
-        if (currentWounds <= 0)
-        {
-            currentWounds = 0;
-            dead = true;
-            HandleDeath();
-        }
-    }
-
-    private void HandleDeath()
-    {
-        Debug.Log($"{gameObject.name} has died!");
-        this.gameObject.SetActive(false);
-    }
-
-    public void SetHealth()
-    {
-        healthFill.gameObject.GetComponent<Image>().fillAmount = 1;
-        healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = operativeData.WOUNDS.ToString();
-    }
-
-    public void SetAPL(int apl)
-    {
-        aplCount.gameObject.GetComponent<TextMeshProUGUI>().text = apl.ToString();
-    }
-
-    public void UpdateHealth(float currentHealth, float maxHealth)
-    {
-        healthFill.gameObject.GetComponent<Image>().fillAmount = currentHealth / maxHealth;
-        Image healthFillImage = healthFill.gameObject.GetComponent<Image>();
-        healthFill.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = currentHealth.ToString();
-        if(healthFillImage.fillAmount <= 0.25f)
-        {
-
-            healthFillImage.color = new Color32(245, 32, 0, 255); //red for < 25%
-        }
-        else if (healthFillImage.fillAmount <= 0.5f)
-        {
-            healthFillImage.color = new Color32(245, 180, 0, 255); //Orange for < 50%
-        }
-        else
-        {
-            healthFillImage.color = new Color32(0, 245, 47, 255); //Green otherwise
-        }
-
-    }
-
-    public void UpdateAPL(int currentAPL)
-    {
-        aplCount.gameObject.GetComponent<TextMeshProUGUI>().text = currentAPL.ToString();
-    }
-
-    public float DetermineLOSandDistance(Transform losEnd)
-    {
-        float distance = (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
-        print(distance + "\"");
-        Vector3 direction = (losEnd.position - losStart.position).normalized;
-        lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, losStart.position);
-
-        if (Physics.Raycast(losStart.position, direction, out RaycastHit hit, distance))
-        {
-            lineRenderer.material = invalidLine;
-            lineRenderer.SetPosition(1, hit.point);
-            Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
-            distance = 0;
-        }
-        else
-        {
-            lineRenderer.material = validLine;
-            lineRenderer.SetPosition(1, losEnd.position);
-            Debug.Log($"LOS Clear. Total range to target: {distance}");
-        }
-        
-        lineRenderer.enabled = true;
-        
-        return distance;
-    }
-
-    public bool CheckTargetingLines(PrototypeUnit player, PrototypeUnit npo)
-    {
-        for (int i = 0; i < player.samplingPoints.Count; i++)
-        {
-            Vector3 playerSP = player.samplingPoints[i].transform.position;
-            for (int j = 0; j < npo.samplingPoints.Count; j++)
-            {
-                Vector3 npoSP1 = npo.samplingPoints[j].transform.position;
-
-                if (CheckLineObstruction(playerSP, npoSP1))
-                {
-                    int oppositeIndex = (j + (npo.samplingPoints.Count/2) % npo.samplingPoints.Count);
-                    Vector3 npoSP2 = npo.samplingPoints[oppositeIndex].transform.position;
-
-                    if (CheckLineObstruction(playerSP, npoSP2))
-                    {
-                        Debug.Log("Targeting lines found");
-                        Debug.DrawLine(playerSP, npoSP1, Color.cyan, 10f);
-                        Debug.DrawLine(playerSP, npoSP2, Color.cyan, 10f);
-                        return true;
-                    }
-                }
-            }
-        }
-        Debug.Log("Targeting lines not found");
-        return false;
-    }
-
-    private bool CheckLineObstruction(Vector3 start, Vector3 end)
-    {
-        Vector3 direction = (end - start).normalized;
-        float distance = Vector3.Distance(start, end);
-    
-        RaycastHit[] hits = Physics.RaycastAll(start, direction, distance);
-        
-        foreach (RaycastHit hit in hits)
-        {
-            //If any hit object is tagged Terrain, the line is blocked
-            if (hit.collider.CompareTag("Terrain"))
-            {
-                Debug.DrawLine(start, hit.point, Color.red, 10f);
-                return false; 
-            }
-        }
-        
-        Debug.DrawLine(start, end, Color.green, 10f);
-        return true;
-    }
-    
-    public bool CheckDistanceToTerrain()
-    {
-        float oneInchScaled = (1f / 39.37f) * 10f; 
-        bool isNearTerrain = false;
-
-        for (int i = 0; i < samplingPoints.Count; i++)
-        {
-            Vector3 startPos = samplingPoints[i].transform.position;
-            Vector3 direction = samplingPoints[i].transform.right;
-            
-            if (Physics.Raycast(startPos, direction, out RaycastHit hit, oneInchScaled))
-            {
-                if (hit.collider.CompareTag("Terrain"))
-                {
-                    Debug.DrawLine(startPos, hit.point, Color.magenta, 0.5f);
-                    isNearTerrain = true;
-                }
-            }
-            else
-            {
-                Debug.DrawLine(startPos, startPos + (direction * oneInchScaled), Color.yellow, 0.5f);
-            }
-        }
-        return isNearTerrain;
     }
 }
