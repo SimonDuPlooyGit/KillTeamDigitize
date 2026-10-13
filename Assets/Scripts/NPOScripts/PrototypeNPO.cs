@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 
 public enum UnitArchetype {Brawler, Marksman}
 public enum OrderState {Engage, Conceal}
@@ -49,13 +51,16 @@ public class PrototypeNPO : MonoBehaviour
     public GameObject movementInfo;
     
     //Action conditions (Predicates)
-    public bool CanShoot() => currentOrder == OrderState.Engage && hasValidShootTarget(npoManager.playerUnits);
+    public bool CanShoot() => currentOrder == OrderState.Engage && HasValidShootTarget(npoManager.playerUnits);
     public bool CanFight() => inControlRange();
     public bool CanCharge() => possibleChargeTarget();
-    public bool Fallback() => inDanger() && coverNear();
+    public bool Fallback() => inDanger() && !coverNear();
 
     private void Awake()
     {
+        currentWounds = npoData.WOUNDS;
+        currentAPL = npoData.APL;
+        movementStat = npoData.MOVE;
         npoManager = GetComponentInParent<NPOManager>();
         acted = false;
         
@@ -69,7 +74,7 @@ public class PrototypeNPO : MonoBehaviour
     private void Update()
     {
         closeToCover = CheckDistanceToTerrain();
-        fogEffectAndCoverToggle();
+        FogEffectAndCoverToggle();
     }
 
     //Action implementations
@@ -85,12 +90,84 @@ public class PrototypeNPO : MonoBehaviour
 
     public void PerformShoot()
     {
+        Debug.Log($"{name} performs Shoot");
         
+        //Null check
+        if (npoData == null || npoData.weapons == null || npoData.weapons.Count == 0)
+        {
+            Debug.Log($"{name} has not weapons");
+            acted = true;
+            return;
+        }
+
+        WeaponTemplate chosenWeapon = null;
+        int highestDamage = -1;
+        
+        foreach (var weapon in npoData.weapons)
+        {
+            if (weapon.rules.OfType<WeaponRules.Melee>().Any()) continue;
+            
+            if (weapon.DMGnorm > highestDamage)
+            {
+                highestDamage = weapon.DMGnorm;
+                chosenWeapon = weapon;
+            }
+        }
+
+        if (chosenWeapon == null)
+        {
+            acted = true;
+            return;
+        }
+
+        PrototypeUnit targetPlayer = null;
+        bool prioritizeWeakest = true;
+        
+        int bestHealthMetric = prioritizeWeakest ? int.MaxValue : int.MinValue;
+
+        if (npoManager != null && npoManager.playerUnits != null)
+        {
+            foreach (var player in npoManager.playerUnits)
+            {
+                if (IsValidTarget(player))
+                {
+                    int playerHealth = player.currentWounds;
+
+                    if (prioritizeWeakest)
+                    {
+                        if (playerHealth < bestHealthMetric)
+                        {
+                            bestHealthMetric = playerHealth;
+                            targetPlayer = player;
+                        }
+                    }
+                    else
+                    {
+                        if (playerHealth > bestHealthMetric)
+                        {
+                            bestHealthMetric = playerHealth;
+                            targetPlayer = player;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (targetPlayer != null)
+        {
+            Debug.Log($"{name} is going to shoot {targetPlayer.name} (Wounds: {bestHealthMetric}) using {chosenWeapon.name} for {highestDamage} normal damage!");
+        }
+        else
+        {
+            Debug.Log($"{name} attempted to shoot, but no valid target was in line of sight.");
+        }
+
+        acted = true;
     }
 
     public void PerformFallback()
     {
-        
+        Debug.Log("PerformFallback was called");
     }
 
     public void PerformReposition()
@@ -108,7 +185,7 @@ public class PrototypeNPO : MonoBehaviour
         currentOrder = newOrderState;
     }
 
-    private bool hasValidShootTarget(List<PrototypeUnit> playerUnits)
+    private bool HasValidShootTarget(List<PrototypeUnit> playerUnits)
     {
         foreach (var player in playerUnits)
         {
@@ -201,15 +278,23 @@ public class PrototypeNPO : MonoBehaviour
 
     private bool inDanger()
     {
+        Debug.Log($"{name} inDanger called");
+        if (currentWounds < npoData.WOUNDS)
+        {
+            Debug.Log($"{name} has lost health, returning true");
+            return true;
+        }
+        Debug.Log($"{name} has not lost health, returning false");
         return false;
     }
 
     private bool coverNear()
     {
-        return true;
+        Debug.Log($"{name} calling a check to see if cover is near");
+        return CheckDistanceToTerrain();
     }
 
-    private void fogEffectAndCoverToggle()
+    private void FogEffectAndCoverToggle()
     {
         if (closeToCover)
         {

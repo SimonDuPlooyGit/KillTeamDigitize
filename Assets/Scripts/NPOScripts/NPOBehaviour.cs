@@ -41,6 +41,7 @@ public class NPOBehaviour : MonoBehaviour
 
     private PrototypeNPO unit;
     private PrioritySelector treeRoot;
+    public bool isRunning { get; private set; } = false;
 
     private void Awake()
     {
@@ -59,9 +60,11 @@ public class NPOBehaviour : MonoBehaviour
         if (unit.archetype == UnitArchetype.Marksman)
         {
             BuildMarksmanTree();
+            Debug.Log("Building marksman tree");
         } else if (unit.archetype == UnitArchetype.Brawler)
         {
             BuildBrawlerTree();
+            Debug.Log("Building brawler tree");
         }
     }
     
@@ -129,8 +132,22 @@ public class NPOBehaviour : MonoBehaviour
     {
         if (treeRoot != null)
         {
+            Debug.Log("Executing Turn");
             treeRoot.Reset();
-            treeRoot.Process();
+            isRunning = true;
+        }
+    }
+
+    public void TickTurn()
+    {
+        if (!isRunning || treeRoot == null) return;
+
+        Node.Status status = treeRoot.Process();
+
+        if (status == Node.Status.Success || status == Node.Status.Failure)
+        {
+            isRunning = false;
+            Debug.Log("Turn Ended");
         }
     }
 }
