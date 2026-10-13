@@ -13,7 +13,7 @@ public class NPOManager : MonoBehaviour
     
     public PrototypeNPO GetNPOUnitToActivate()
     {
-        //Debug.Log("GetNPOUnitToActivate called");
+        Debug.Log("GetNPOUnitToActivate called");
         PrototypeNPO candidate = FindBestCandidate(npoUnits);
         if (candidate != null)
         {
