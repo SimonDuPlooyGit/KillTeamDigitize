@@ -79,7 +79,7 @@ public class UnitActivationState : BaseState
                 Context.currentlySelectedUnitScript.selected = true;
                 AddGlow(Context.currentlySelectedUnitScript.glow);
                 _menu.OpenAction();
-                Context.isMovementRequested = true; 
+                Context.isPlayerActivationRequested = true; 
             }
         }
     }

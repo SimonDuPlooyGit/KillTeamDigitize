@@ -48,18 +48,18 @@ public class GameManager : MonoBehaviour
         //Define transitions
 
         //Forward transitions
-        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript != null));
-        AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isMovementRequested && sharedContext.currentlySelectedUnitScript != null));
+        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => sharedContext.isPlayerActivationRequested && sharedContext.currentlySelectedUnitScript != null));
+        AddT(actionSelectionState, movementState, new FuncPredicate(() => !sharedContext.isPlayerActivationRequested && sharedContext.currentlySelectedUnitScript != null));
         AddT(movementState, actionSelectionState, new FuncPredicate(() => movementState.movementFinished));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => sharedContext.isShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => sharedContext.isWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => sharedContext.validTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => sharedContext.isShootingConfirmed));
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentApl == 0));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.acted));
         AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => sharedContext.currentlyActivatedNPO != null));
         
         //TEMPORARY TRANSITION TO TEST GOING TO NPO ACTIVATION
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentApl == 3));
+        //AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => sharedContext.currentlySelectedUnitScript.currentApl == 3));
         
         //AddT for pressing a pass turn button
         stateMachine.SetState(unitActivationState);
@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
         });
         GoBackAState(movementState, actionSelectionState, () =>
         {
-            sharedContext.isMovementRequested = true;
+            sharedContext.isPlayerActivationRequested = true;
         });
         GoBackAState(weaponSelectState, actionSelectionState, () =>
         {
@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
 
     public void OnMoveActionButtonPressed()
     {
-        sharedContext.isMovementRequested = false;
+        sharedContext.isPlayerActivationRequested = false;
     }
     
     public void OnConfirmMovementButtonPressed()

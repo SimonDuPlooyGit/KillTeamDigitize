@@ -174,7 +174,6 @@ public class CombatState : BaseState
         Context.Reset();
     }
     
-
     private void ExecuteRulesInThisStep(AttackTimings currentStep)
     {
         List<Action> rulesToExecute = new(); //List of rules that need to be executed from units and weapons

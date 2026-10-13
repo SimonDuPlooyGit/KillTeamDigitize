@@ -73,6 +73,7 @@ public class PrototypeUnit : BaseOperativeClass
     {
         if (selected)
         {
+            Debug.Log("ClickToPathfind is entered and unit is selected");
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;

@@ -33,6 +33,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject aplCount;
     public GameObject concealSymbol;
     public GameObject engageSymbol;
+    public GameObject injuredSymbol;
     public GameObject concealInCoverSymbol;
     public GameObject damagePopOut;
     
@@ -73,8 +74,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this)
     public float DetermineLOSandDistance(Transform losEnd)
     {
-        float distance =
-            (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
+        float distance = (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
         print(distance + "\"");
         Vector3 direction = (losEnd.position - losStart.position).normalized;
         lineRenderer.positionCount = 2;
@@ -82,16 +82,19 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
         if (Physics.Raycast(losStart.position, direction, out RaycastHit hit, distance))
         {
-            lineRenderer.material = invalidLine;
-            lineRenderer.SetPosition(1, hit.point);
-            Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
-            distance = 0;
-        }
-        else
-        {
-            lineRenderer.material = validLine;
-            lineRenderer.SetPosition(1, losEnd.position);
-            Debug.Log($"LOS Clear. Total range to target: {distance}");
+            if (hit.collider.CompareTag("EnemyUnit"))
+            {
+                lineRenderer.material = validLine;
+                lineRenderer.SetPosition(1, losEnd.position);
+                Debug.Log($"LOS Clear. Total range to target: {distance}");
+            }
+            else
+            {
+                lineRenderer.material = invalidLine;
+                lineRenderer.SetPosition(1, hit.point);
+                Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
+                distance = 0;
+            }
         }
 
         lineRenderer.enabled = true;

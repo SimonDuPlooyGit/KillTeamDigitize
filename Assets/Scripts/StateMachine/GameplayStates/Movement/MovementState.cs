@@ -47,7 +47,7 @@ public class MovementState : BaseState
         {
             _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
             _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
-            Context.isMovementRequested = true;
+            Context.isPlayerActivationRequested = true;
             movementFinished = true;
         }
     }
@@ -67,15 +67,21 @@ public class MovementState : BaseState
         Context.currentlySelectedUnitScript.Reset();
     }
 
-    public void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the ghost to where you have clicked to move
+    public void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move
     {
+        Debug.Log("OnMoveInputPerformed");
         if (Context.currentlySelectedUnitScript != null)
         {
+            Debug.Log("Calling ClickToPathfind");
             Context.currentlySelectedUnitScript.ClickToPathfind();
+        }
+        else
+        {
+            Debug.Log("Context.currentlySelectedUnitScript == null");
         }
     }
 
-    public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to ghost preview
+    public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to marker preview
     {
         if (Context.currentlySelectedUnitScript != null)
         {

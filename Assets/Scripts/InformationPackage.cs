@@ -7,7 +7,7 @@ public class InformationPackage
     public GameObject currentlySelectedUnit;
     public PrototypeUnit currentlySelectedUnitScript;
     public GameObject currentlySelectedTarget;
-    public PrototypeUnit currentlySelectedTargetScript;
+    public BaseOperativeClass currentlySelectedTargetScript;
 
     //New assignments to differentiate when an NPO is selected and choosing targets
     public PrototypeNPO currentlyActivatedNPO;
@@ -36,7 +36,7 @@ public class InformationPackage
     public bool ignoreCover;
     
     //Flags for state completion
-    public bool isMovementRequested;
+    public bool isPlayerActivationRequested;
     public bool isMovementConfirmed;
     public bool isShootingRequested;
     public bool isShootingConfirmed;
@@ -58,7 +58,7 @@ public class InformationPackage
         retainedCrits = 0;
         canReroll = false;
         ignoreCover = false;
-        isMovementRequested = false;
+        isPlayerActivationRequested = false;
         isMovementConfirmed = false;
         isShootingRequested = false;
         isShootingConfirmed = false;

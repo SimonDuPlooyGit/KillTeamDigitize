@@ -78,7 +78,7 @@ public class TargetingState : BaseState
                 if (hit.collider.gameObject.CompareTag("EnemyUnit")) //When you hit the enemy check for line of sight and range (called on unit)
                 {
                     Context.currentlySelectedTarget = hit.collider.gameObject;
-                    Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<PrototypeUnit>();
+                    Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<BaseOperativeClass>();
                     Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
                     Debug.Log("Enemy targeted: " + Context.targetUnitSO.name);
                     

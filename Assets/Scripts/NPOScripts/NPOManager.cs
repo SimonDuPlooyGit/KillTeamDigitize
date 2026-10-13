@@ -8,9 +8,11 @@ public class NPOManager : MonoBehaviour
     //  1.2 Is not in COVER from player
     //  1.3 Is closer to player
 
+    //Lists keeping track of the different player units and NPOs
     [SerializeField] public List<PrototypeNPO> npoUnits = new();
     [SerializeField] public List<PrototypeUnit> playerUnits = new();
     
+    //Find the NPO to activate according the priority above
     public PrototypeNPO GetNPOUnitToActivate()
     {
         Debug.Log("GetNPOUnitToActivate called");
@@ -32,6 +34,7 @@ public class NPOManager : MonoBehaviour
         return FindClosestNPO();
     }
     
+    //The actual logic to find the best candidate that can shoot
     public PrototypeNPO FindBestCandidate(List<PrototypeNPO> npos)
     {
         Debug.Log("FindBestCandidate called");
@@ -60,6 +63,7 @@ public class NPOManager : MonoBehaviour
         return bestCandidate;
     }
 
+    //Find the NPO that can do the most shooting damage
     private int GetBestDamage(PrototypeNPO npo)
     {
         if (npo.npoData == null || npo.npoData.weapons == null || npo.npoData.weapons.Count == 0) return 0;
@@ -75,6 +79,7 @@ public class NPOManager : MonoBehaviour
         return highestDamage;
     }
 
+    //Find the NPO that isn't in cover
     public PrototypeNPO FindNotInCover()
     {
         PrototypeNPO lowestOpenNpo = null;
@@ -94,8 +99,10 @@ public class NPOManager : MonoBehaviour
         return lowestOpenNpo;
     }
 
+    //Find the NPO that is closest to a player unit
     public PrototypeNPO FindClosestNPO()
     {
+        Debug.Log("FindClosestNPO called");
         PrototypeNPO closestNpo = null;
         float closestDistance = float.MaxValue;
 
@@ -105,7 +112,7 @@ public class NPOManager : MonoBehaviour
 
             foreach (var player in playerUnits)
             {
-                if (player == null || player.dead)
+                if (player != null || !player.dead)
                 {
                     float distance = Vector3.Distance(npo.transform.position, player.transform.position);
 

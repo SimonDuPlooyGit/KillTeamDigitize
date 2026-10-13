@@ -44,7 +44,7 @@ public class ActionSelectionState : BaseState
         _menu.CloseMenu(_menu.tpCounter);
         _menu.CloseMenu(_menu.objective);
         _menu.CloseMenu(_menu.tutRepoPrompt);
-        Context.Reset();
+        Context.isPlayerActivationRequested = false;
     }
     
     //Future action eligibility checks and logic
