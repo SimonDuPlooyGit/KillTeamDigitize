@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -42,6 +43,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public Material glow;
 
     [Header("Animation")]
+    [SerializeField]
+    private ParticleSystem deathParticles;
     private Animator animator;
     
 
@@ -206,17 +209,19 @@ public abstract class BaseOperativeClass : MonoBehaviour
         currentWounds -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage. Current health: {currentWounds}");
 
-        damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
-        damagePopOut.SetActive(true);
+        
 
-        if(animator != null)
+        if(animator != null && damage>0)
         {
-            animator.ResetTrigger("TakeDamage");
             animator.SetTrigger("TakeDamage");
 
-            
-
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
+            damagePopOut.SetActive(true);
+        }
+        else if(damage == 0)
+        {
+            damagePopOut.GetComponent<TextMeshProUGUI>().text = "Miss";
+            damagePopOut.SetActive(true);
         }
        
 
@@ -274,8 +279,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Do animations or effects of a unit dying in here
     public void HandleDeath()
     {
-        Debug.Log($"{gameObject.name} has died.");
-        gameObject.SetActive(false);
+        StartCoroutine(deathSequence());
     }
     
     private void FogEffectAndCoverToggle()
@@ -285,5 +289,16 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealInCoverSymbol.SetActive(true);
             fogEffect.SetActive(true);
         }
+    }
+
+    private IEnumerator deathSequence()
+    {
+        Debug.Log($"{gameObject.name} has died.");
+        animator.SetTrigger("Die");
+        yield return new WaitForSeconds(3.0f);
+        deathParticles.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
+        deathParticles.Play();
+        yield return null;
+        gameObject.SetActive(false);
     }
 }
