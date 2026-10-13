@@ -147,6 +147,7 @@ public class PrototypeNPO : BaseOperativeClass
 
     private bool HasValidShootTarget(List<PrototypeUnit> playerUnits)
     {
+        Debug.Log("HasValidShootTarget called");
         foreach (var player in playerUnits)
         {
             if (IsValidTarget(player))
@@ -160,10 +161,27 @@ public class PrototypeNPO : BaseOperativeClass
 
     public bool IsValidTarget(BaseOperativeClass target)
     {
-        if (target == null || target.dead || !target.gameObject.activeInHierarchy) return false;
-        if (!HasLineOfSight(target)) return false;
-        if (target.concealed && target.closeToCover) return false;
-        return CheckTargetingLines(target);
+        bool validTargetFound = false;
+        Debug.Log("IsValidTarget called");
+        if (target == null || target.dead || !target.gameObject.activeInHierarchy)
+        {
+            Debug.Log("The checked target is dead or doesn't exist");
+            return false;
+        }
+
+        if (!HasLineOfSight(target))
+        {
+            Debug.Log("The checked target is out of sight");
+            return false;
+        }
+
+        if (target.concealed && target.closeToCover)
+        {
+            Debug.Log("The checked target is concealed in cover");
+            return CheckTargetingLines(target);
+        }
+
+        return false;
     }
 
     private bool HasLineOfSight(BaseOperativeClass target)

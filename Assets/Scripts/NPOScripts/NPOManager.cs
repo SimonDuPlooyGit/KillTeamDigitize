@@ -34,6 +34,7 @@ public class NPOManager : MonoBehaviour
     
     public PrototypeNPO FindBestCandidate(List<PrototypeNPO> npos)
     {
+        Debug.Log("FindBestCandidate called");
         PrototypeNPO bestCandidate = null;
         int maxDamage = -1;
 
