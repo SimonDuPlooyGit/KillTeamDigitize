@@ -41,6 +41,11 @@ public class PrototypeUnit : BaseOperativeClass
 
     protected override void Update()
     {
+        if (currentApl == 0)
+        {
+            acted = true;
+        }
+        
         base.Update();
 
         if (selected)

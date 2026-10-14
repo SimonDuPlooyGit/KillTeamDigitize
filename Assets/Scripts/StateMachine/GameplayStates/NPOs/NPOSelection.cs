@@ -12,6 +12,11 @@ public class NPOSelection : BaseState
     {
         Debug.Log("NPOSelection OnEnter");
         Context.currentlyActivatedNPO = _npoManager.GetNPOUnitToActivate();
+        
+        if (Context.currentlyActivatedNPO != null)
+        {
+            Context.currentlyActivatedNPO.ResetActionFlags();
+        }
     }
 
     public override void Update()
