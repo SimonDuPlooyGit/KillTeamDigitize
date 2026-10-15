@@ -390,15 +390,6 @@ public class PrototypeNPO : BaseOperativeClass
         return CheckDistanceToTerrain();
     }
 
-    private void CheckTurnEnd()
-    {
-        if (currentApl <= 0)
-        {
-            acted = true;
-            Debug.Log($"{name} ran out of APL and its turn is over");
-        }
-    }
-
     public void ResetActionFlags()
     {
         hasRepositioned = false;

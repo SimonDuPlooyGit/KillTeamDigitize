@@ -293,6 +293,15 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
     }
 
+    public virtual void CheckTurnEnd()
+    {
+        if (currentApl == 0)
+        {
+            acted = true;
+            Debug.Log($"{name} ran out of APL and its turn is over");
+        }
+    }
+
     private IEnumerator DeathSequence()
     {
         Debug.Log($"{gameObject.name} has died.");
