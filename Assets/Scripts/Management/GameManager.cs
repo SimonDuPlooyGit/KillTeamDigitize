@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private InputActions _input;
-    private InformationPackage _sharedContext; //The script holding information to exchange between all scripts and states
+    public InformationPackage SharedContext; //The script holding information to exchange between all scripts and states
     private StateMachine _stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
     [SerializeField] private DiceHandler diceHandler;
@@ -31,32 +31,32 @@ public class GameManager : MonoBehaviour
     {
         _input = new InputActions();
         _stateMachine = new StateMachine();
-        _sharedContext = new InformationPackage();
-        _sharedContext.MainCameraScript = mainCamera;
+        SharedContext = new InformationPackage();
+        SharedContext.MainCameraScript = mainCamera;
 
         //Initialize states
-        unitActivationState = new UnitActivationState(_sharedContext, _input, menu);
-        actionSelectionState = new ActionSelectionState(_sharedContext, menu);
-        movementState = new MovementState(_sharedContext, _input, menu);
-        targetingState = new TargetingState(_sharedContext, _input, menu);
-        combatState = new CombatState(_sharedContext, menu, diceHandler);
-        weaponSelectState = new WeaponSelectState(_sharedContext, menu);
-        npoSelectState = new NPOSelection(_sharedContext, npoManager);
-        npoActionSelectState = new NPOActionSelect(_sharedContext);
-        //pauseState = new PauseState(_sharedContext, _input, _stateMachine);
+        unitActivationState = new UnitActivationState(SharedContext, _input, menu);
+        actionSelectionState = new ActionSelectionState(SharedContext, menu);
+        movementState = new MovementState(SharedContext, _input, menu);
+        targetingState = new TargetingState(SharedContext, _input, menu);
+        combatState = new CombatState(SharedContext, menu, diceHandler);
+        weaponSelectState = new WeaponSelectState(SharedContext, menu);
+        npoSelectState = new NPOSelection(SharedContext, npoManager);
+        npoActionSelectState = new NPOActionSelect(SharedContext);
+        //pauseState = new PauseState(SharedContext, _input, _stateMachine);
 
         //Define transitions
 
         //Forward transitions
-        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => _sharedContext.IsPlayerActivationRequested && _sharedContext.CurrentlySelectedUnitScript != null));
-        AddT(actionSelectionState, movementState, new FuncPredicate(() => !_sharedContext.IsPlayerActivationRequested && _sharedContext.CurrentlySelectedUnitScript != null));
+        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
+        AddT(actionSelectionState, movementState, new FuncPredicate(() => !SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
         AddT(movementState, actionSelectionState, new FuncPredicate(() => movementState.MovementFinished));
-        AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => _sharedContext.IsShootingRequested));
-        AddT(weaponSelectState, targetingState, new FuncPredicate(() => _sharedContext.IsWeaponSelected));
-        AddT(targetingState, combatState, new FuncPredicate(() => _sharedContext.ValidTarget));
-        AddT(combatState, unitActivationState, new FuncPredicate(() => _sharedContext.IsShootingConfirmed));
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => _sharedContext.CurrentlySelectedUnitScript.acted));
-        AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => _sharedContext.CurrentlyActivatedNpo != null));
+        AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => SharedContext.IsShootingRequested));
+        AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
+        AddT(targetingState, combatState, new FuncPredicate(() => SharedContext.ValidTarget));
+        AddT(combatState, unitActivationState, new FuncPredicate(() => SharedContext.IsShootingConfirmed));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
+        AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null));
         
         //AddT for pressing a pass turn button
         _stateMachine.SetState(unitActivationState);
@@ -64,26 +64,26 @@ public class GameManager : MonoBehaviour
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState, () =>
         {
-            _sharedContext.CurrentlySelectedUnitScript.selected = false;
-            _sharedContext.CurrentlySelectedUnitScript.Reset();
-            _sharedContext.Reset();
+            SharedContext.CurrentlySelectedUnitScript.selected = false;
+            SharedContext.CurrentlySelectedUnitScript.Reset();
+            SharedContext.Reset();
         });
         GoBackAState(movementState, actionSelectionState, () =>
         {
-            _sharedContext.IsPlayerActivationRequested = true;
+            SharedContext.IsPlayerActivationRequested = true;
         });
         GoBackAState(weaponSelectState, actionSelectionState, () =>
         {
-            _sharedContext.IsShootingRequested = false;
+            SharedContext.IsShootingRequested = false;
         });
         GoBackAState(targetingState, weaponSelectState, () =>
         {
-            _sharedContext.IsWeaponSelected = false;
-            _sharedContext.Weapon = null;
+            SharedContext.IsWeaponSelected = false;
+            SharedContext.Weapon = null;
         });
         GoBackAState(combatState, targetingState, () =>
         {
-            _sharedContext.CurrentlySelectedTarget = null;
+            SharedContext.CurrentlySelectedTarget = null;
         });
         
         //Global any transition
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
 
     public void OnMoveActionButtonPressed()
     {
-        _sharedContext.IsPlayerActivationRequested = false;
+        SharedContext.IsPlayerActivationRequested = false;
     }
     
     public void OnConfirmMovementButtonPressed()
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
 
     public void OnShootingButtonPressed()
     {
-        _sharedContext.IsShootingRequested = true;
+        SharedContext.IsShootingRequested = true;
     }
     
     private void OnEnable() => _input.Enable();
@@ -162,6 +162,6 @@ public class GameManager : MonoBehaviour
 
     public void OnEndTurnPressed()
     {
-        _sharedContext.CurrentlySelectedUnitScript.acted = true;
+        SharedContext.CurrentlySelectedUnitScript.acted = true;
     }
 }

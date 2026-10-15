@@ -12,8 +12,6 @@ public class InformationPackage
 
     //New assignments to differentiate when an NPO is selected and choosing targets
     public PrototypeNPO CurrentlyActivatedNpo;
-    public GameObject TargetPlayerObject;
-    public PrototypeUnit TargetPlayerScript;
     
     public DiceHandler DiceHandler;
     public OrbitCamera MainCameraScript;

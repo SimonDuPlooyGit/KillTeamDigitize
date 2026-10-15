@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,8 +14,8 @@ public class PrototypeNPO : BaseOperativeClass
     public NavMeshAgent npoAgent;
     public NPOCoverNodes[] allCoverNodes;
 
-    [Header("Tracking for actions")] public bool hasRepositioned;
-
+    [Header("Tracking for actions")]
+    public bool hasRepositioned;
     public bool hasDashed;
     public bool hasFought;
     public bool hasCharged;
@@ -28,6 +29,11 @@ public class PrototypeNPO : BaseOperativeClass
 
     [Header("Unit Settings")]
     public UnitArchetype archetype = UnitArchetype.Marksman;
+    
+    [Header("Combat References")]
+    public DiceHandler diceHandler;
+    private InformationPackage _context;
+    public bool IsShootingComplete { get; private set; }
     
     //Action conditions (Predicates)
     public bool CanShoot() => currentOrder == OrderState.Engage && HasValidShootTarget(npoManager.playerUnits) && (shootCount < (canShootTwice ? 2 : 1));
@@ -46,6 +52,8 @@ public class PrototypeNPO : BaseOperativeClass
     protected override void Awake()
     {
         base.Awake();
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        _context = gm.SharedContext;
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
@@ -71,12 +79,129 @@ public class PrototypeNPO : BaseOperativeClass
 
     public void PerformShoot()
     {
+        IsShootingComplete = false;
+        StartCoroutine(ExecuteNpoShoot());
+    }
+
+    private IEnumerator ExecuteNpoShoot()
+    {
+        Debug.Log($"{name} starts shoot coroutine");
+
+        WeaponTemplate chosenWeapon = null;
+        int highestDamage = 1;
+
+        foreach (var weapon in operativeData.weapons)
+        {
+            if (weapon.rules.OfType<WeaponRules.Melee>().Any()) continue;
+
+            if (weapon.dmgNorm > highestDamage)
+            {
+                highestDamage = weapon.dmgNorm;
+                chosenWeapon = weapon;
+            }
+        }
+
+        PrototypeUnit targetPlayer = null;
+        foreach (var player in npoManager.playerUnits)
+        {
+            if (IsValidTarget(player))
+            {
+                targetPlayer = player;
+                break;
+            }
+        }
+
+        if (targetPlayer != null && diceHandler != null)
+        {
+            _context.ActivatedUnitSo = operativeData;
+            _context.Weapon = chosenWeapon;
+            _context.CurrentlySelectedUnitScript = null;
+            _context.CurrentlySelectedTargetScript = targetPlayer;
+            _context.TargetUnitSo = targetPlayer.operativeData;
+            
+            _context.AttackRolls.Clear();
+            _context.DefenseRolls.Clear();
+            _context.RetainedCrits = 0;
+            _context.RetainedNormals = 0;
+
+            yield return StartCoroutine(diceHandler.ThrowAttackDice(chosenWeapon.atk, false, _context));
+            yield return StartCoroutine(diceHandler.ThrowDefenseDice(_context.NumDefenseDiceRoll, false, _context));
+            EvaluateNpoCombatHitsAndSaves(_context, targetPlayer);
+        }
+        else
+        {
+            Debug.Log("No LOS");
+        }
+
+        shootCount++;
+        currentApl -= 1;
+        CheckTurnEnd();
+        IsShootingComplete = true;
+    }
+
+    private void EvaluateNpoCombatHitsAndSaves(InformationPackage context, PrototypeUnit target)
+    {
+        int crit = 0;
+        int norm = 0;
+        int critDef = 0;
+        int normDef = 0;
+
+        foreach (int roll in context.AttackRolls)
+        {
+            if (roll >= context.Weapon.hit)
+            {
+                if (roll == 6) crit++;
+                else norm++;
+            }
+        }
+
+        foreach (int roll in context.DefenseRolls)
+        {
+            if (roll >= target.operativeData.save)
+            {
+                if (roll == 6) critDef++;
+                else normDef++;
+            }
+        }
+
+        if (critDef >= crit)
+        {
+            critDef -= crit;
+            crit = 0;
+        }
+        else
+        {
+            crit -= critDef;
+            critDef = 0;
+        }
+
+        norm -= critDef;
+        norm -= normDef;
+        if (norm < 0)
+        {
+            norm = 0;
+        }
+
+        int totalDamage = (crit * context.Weapon.dmgCrit) + (norm * context.Weapon.dmgNorm);
+        target.TakeDamage(totalDamage);
+        target.UpdateHealth(target.currentWounds, target.operativeData.wounds);
+        
+        diceHandler.ClearDiceRolls();
+    }
+
+    public bool IsShootingFinished()
+    {
+        return IsShootingComplete;
+    }
+    
+    /*public void PerformShoot()
+    {
         Debug.Log($"{name} performs Shoot");
         
         //Null check
         if (operativeData == null || operativeData.weapons == null || operativeData.weapons.Count == 0)
         {
-            Debug.Log($"{name} has not weapons");
+            Debug.Log($"{name} has no weapons");
             acted = true;
             return;
         }
@@ -146,7 +271,7 @@ public class PrototypeNPO : BaseOperativeClass
         shootCount++;
         currentApl -= 1;
         CheckTurnEnd();
-    }
+    }*/
 
     public void PerformFallback()
     {

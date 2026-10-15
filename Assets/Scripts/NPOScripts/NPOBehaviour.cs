@@ -120,7 +120,7 @@ public class NPOBehaviour : MonoBehaviour
         // 2. SHOOT
         var shootSequence = new Sequence("Shoot Sequence", priority: 30);
         shootSequence.AddChild(new Leaf("Can Shoot?", new Condition(_unit.CanShoot)));
-        shootSequence.AddChild(new Leaf("Do Shoot", new ActionStrategy(_unit.PerformShoot))); //Also async for combat coroutines
+        shootSequence.AddChild(new Leaf("Do Shoot", new AsyncActionStrategy(_unit.PerformShoot, _unit.IsShootingFinished)));
         _treeRoot.AddChild(shootSequence);
 
         // 3. REPOSITION
