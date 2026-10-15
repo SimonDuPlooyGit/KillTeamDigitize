@@ -552,4 +552,20 @@ public class PrototypeNPO : BaseOperativeClass
         }
         return false;
     }
+
+    public bool MovementFinished()
+    {
+        if (npoAgent == null) return true;
+
+        if (npoAgent.pathPending) return false;
+
+        if (npoAgent.remainingDistance <= npoAgent.stoppingDistance)
+        {
+            if (!npoAgent.hasPath || npoAgent.velocity.sqrMagnitude < 0.01f)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

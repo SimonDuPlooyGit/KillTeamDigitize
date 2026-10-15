@@ -124,7 +124,7 @@ public class NPOBehaviour : MonoBehaviour
         // 3. REPOSITION (Only if hasn't repositioned yet)
         var repoSequence = new Sequence("Reposition Sequence", priority: 20);
         repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(unit.CanReposition)));
-        repoSequence.AddChild(new Leaf("Do Reposition", new ActionStrategy(unit.PerformReposition)));
+        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(unit.PerformReposition, unit.MovementFinished)));
         treeRoot.AddChild(repoSequence);
 
         // 4. DASH (Only if hasn't dashed yet)
@@ -157,6 +157,11 @@ public class NPOBehaviour : MonoBehaviour
         
         Node.Status status = treeRoot.Process();
 
+        if (status == Node.Status.Running)
+        {
+            return;
+        }
+        
         if (status == Node.Status.Success)
         {
             Debug.Log($"{unit.name} action completed. Re-evaluate priority action");
