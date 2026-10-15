@@ -19,6 +19,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool closeToCover;
     public bool acted;
     public OrderState currentOrder = OrderState.Engage;
+    public float dashDistanceScaled = (3f / 39.37f) * 10;
     public bool concealed => currentOrder == OrderState.Conceal;
     
     [Header("Sampling and LOS")]

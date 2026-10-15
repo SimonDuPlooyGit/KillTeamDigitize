@@ -11,6 +11,7 @@ public class PrototypeNPO : BaseOperativeClass
     [Header("Cover and Navmesh")] 
     public NPOCoverNodes currentCoverSpot;
     public NavMeshAgent npoAgent;
+    public NPOCoverNodes[] allCoverNodes;
     
     [Header("Tracking for actions")]
     public bool hasRepositioned = false;
@@ -45,6 +46,7 @@ public class PrototypeNPO : BaseOperativeClass
     private void Awake()
     {
         base.Awake();
+        allCoverNodes = FindObjectsOfType<NPOCoverNodes>();
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
         acted = false;
@@ -162,42 +164,138 @@ public class PrototypeNPO : BaseOperativeClass
     public void PerformReposition()
     {
         Debug.Log($"{name} performs Reposition");
-        
-        bool needShootLOS = CanShoot() || currentOrder == OrderState.Engage;
-        NPOCoverNodes targetCover = FindBestCoverNode(requireShootLOS: needShootLOS);
+
+        NPOCoverNodes targetCover = FindBestCoverNode(true, meterMovement);
 
         if (targetCover != null)
         {
-            currentCoverSpot = targetCover;
-            targetCover.occupied = true;
-            npoAgent.SetDestination(targetCover.spotToStand.position);
-            Debug.Log($"{name} repositioning to cover node at {targetCover.transform.position}");
-        }
-        else
-        {
-            Debug.Log($"{name} found no optimal cover node, holding position or advancing");
+            SetOrderState(OrderState.Engage);
+            ExecuteMoveToCover(targetCover, meterMovement);
+            Debug.Log($"{name} repositioned into {targetCover.name} and changed to ENGAGE");
+            hasRepositioned = true;
+            currentApl -= 1;
+            CheckTurnEnd();
+            return;
         }
         
-        currentApl -= 1;
+        targetCover = FindBestCoverNode(requireShootLOS: false, meterMovement);
+        
+        if (targetCover != null)
+        {
+            SetOrderState(OrderState.Conceal);
+
+            if (targetCover != null)
+            {
+                ExecuteMoveToCover(targetCover, meterMovement);
+                Debug.Log($"{name} repositioned into {targetCover.name} and changed to CONCEAL");
+                Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
+                hasRepositioned = true;
+                currentApl = 0; //End turn early cause it can't shoot at all and we got to cover
+                CheckTurnEnd();
+                return;
+            }
+            
+            NPOCoverNodes partialCover = FindClosestCoverNode();
+            
+            if (partialCover != null)
+                {
+                    ExecuteMoveToCover(partialCover, meterMovement);
+                    Debug.Log($"{name} could not fully reach cover, repositioning closer to ${partialCover.name}");
+                }
+                else
+                {
+                    MoveTowardSafePosition();
+                    Debug.Log($"{name} found no cover nodes, stepping closer to safety.");
+                }
+            
+        }
+        
         hasRepositioned = true;
+        currentApl -= 1;
         CheckTurnEnd();
     }
 
     public void PerformDash()
     {
         Debug.Log($"{name} performs Dash");
+        
+        NPOCoverNodes dashCover = FindBestCoverNode(true, dashDistanceScaled);
 
-        NPOCoverNodes targetCover = FindBestCoverNode(requireShootLOS: false);
-        if (targetCover != null)
+        if (dashCover != null)
         {
-            currentCoverSpot = targetCover;
-            targetCover.occupied = true;
-            npoAgent.SetDestination(targetCover.spotToStand.position);
+            ExecuteMoveToCover(dashCover, dashDistanceScaled);
+            Debug.Log($"{name} dashed into {dashCover.name}");
+        }
+        else
+        {
+            MoveTowardSafePosition();
+            Debug.Log($"{name} dashed into safety");
         }
         
-        currentApl -= 1;
         hasDashed = true;
+        currentApl -= 1;
         CheckTurnEnd();
+}
+
+    private Vector3 LimitDestination(Vector3 destination, float maxDistance)
+    {
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path))
+        {
+            float accumulatedDistance = 0f;
+
+            for (int i = 0; i < path.corners.Length - 1; i++)
+            {
+                float segmentDistance = Vector3.Distance(path.corners[i], path.corners[i + 1]);
+
+                if (accumulatedDistance + segmentDistance > maxDistance)
+                {
+                    // We exceeded the limit on this segment; return a point partway along it
+                    float remainingDistance = maxDistance - accumulatedDistance;
+                    Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
+                    return path.corners[i] + direction * remainingDistance;
+                }
+
+                accumulatedDistance += segmentDistance;
+            }
+
+            // If the entire path fits within the limit, return the final target position
+            return path.corners[path.corners.Length - 1];
+        }
+
+        return destination;
+    }
+
+    private void ExecuteMoveToCover(NPOCoverNodes coverNode, float maxDistance)
+    {
+        currentCoverSpot = coverNode;
+        coverNode.occupied = true;
+        Vector3 limitedSpot = LimitDestination(coverNode.spotToStand.position, maxDistance);
+        npoAgent.SetDestination(limitedSpot);
+    }
+
+    private void MoveTowardSafePosition()
+    {
+        Debug.Log("MoveTowardSafePosition called");
+    }
+
+    private NPOCoverNodes FindClosestCoverNode()
+    {
+        NPOCoverNodes closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var node in allCoverNodes)
+        {
+            if (node.occupied) continue;
+            float distance = Vector3.Distance(transform.position, node.spotToStand.position);
+            if (distance < minDist)
+            {
+                minDist = distance;
+                closest = node;
+            }
+        }
+
+        return closest;
     }
 
     public void SetOrderState(OrderState newOrderState)
@@ -317,82 +415,98 @@ public class PrototypeNPO : BaseOperativeClass
         shootCount = 0;
     }
 
-    public NPOCoverNodes FindBestCoverNode(bool requireShootLOS)
+    public NPOCoverNodes FindBestCoverNode(bool requireShootLOS, float maxMovement)
+{
+    Debug.Log($"FindBestCoverNode called with requireShootLOS: {requireShootLOS}");
+    NPOCoverNodes bestCoverNode = null;
+    float shortestDistance = float.MaxValue;
+
+    foreach (var node in allCoverNodes)
     {
-        NPOCoverNodes[] allCoverNodes = FindObjectsOfType<NPOCoverNodes>();
-        NPOCoverNodes bestCoverNode = null;
-        float shortestDistance = float.MaxValue;
-
-        foreach (var node in allCoverNodes)
+        if (node.occupied)
         {
-            if (node.occupied) continue;
-            
-            if (node.deepCover == requireShootLOS) continue; //If we want shoot cover we want deepCover == false
-            
-            float pathDistance = GetPathDistance(transform.position, node.spotToStand.position);
-            
-            if (pathDistance > meterMovement && hasRepositioned) continue;
+            Debug.Log($"{node.name} is occupied");
+            continue;
+        }
 
-            if (requireShootLOS)
+        if (node.deepCover != !requireShootLOS) 
+        {
+            Debug.Log($"{node.name} cover type does not match requirement (node.deepCover={node.deepCover}, requireShootLOS={requireShootLOS})");
+            continue;
+        }
+        
+        float pathDistance = GetPathDistance(transform.position, node.spotToStand.position);
+
+        if (pathDistance > maxMovement)
+        {
+            continue;
+        }
+
+        // If we require Shoot LOS, validate that standing there opens a shooting angle
+        if (requireShootLOS)
+        {
+            bool hasValidShotFromNode = false;
+
+            foreach (var player in npoManager.playerUnits)
             {
-                bool hasValidShotFromNode = false;
+                if (player.dead || player == null) continue;
+                
+                Vector3 simulatedLOSStartPos = node.spotToStand.position + (losStart.position - transform.position);
+                Vector3 targetPos = player.losStart != null ? player.losStart.position : player.transform.position;
+                
+                float distance = Vector3.Distance(simulatedLOSStartPos, targetPos);
+                Vector3 direction = (targetPos - simulatedLOSStartPos).normalized;
 
-                foreach (var player in npoManager.playerUnits)
+                bool directLOSClear = true;
+                RaycastHit[] hits = Physics.RaycastAll(simulatedLOSStartPos, direction, distance);
+
+                foreach (var hit in hits)
                 {
-                    if (player.dead || player == null) continue;
+                    if (hit.transform == transform || hit.transform.IsChildOf(transform)) continue;
+                    if (hit.transform == player.transform || hit.transform.IsChildOf(player.transform)) continue;
                     
-                    Vector3 simulatedLOSStartPos = node.spotToStand.position + (losStart.position - transform.position);
-                    Vector3 targetPos = player.losStart != null ? player.losStart.position : player.transform.position;
-                    
-                    float distance = Vector3.Distance(simulatedLOSStartPos, targetPos);
-                    Vector3 direction = (targetPos - simulatedLOSStartPos).normalized;
-
-                    bool directLOSClear = true;
-                    RaycastHit[] hits = Physics.RaycastAll(simulatedLOSStartPos, direction, distance);
-
-                    foreach (var hit in hits)
+                    if (hit.collider.CompareTag("Terrain"))
                     {
-                        if (hit.transform == transform || hit.transform.IsChildOf(transform)) continue;
-                        if (hit.transform == player.transform || hit.transform.IsChildOf(player.transform)) continue;
-                        
-                        if (hit.collider.CompareTag("Terrain"))
-                        {
-                            directLOSClear = false;
-                            break;
-                        }
-                    }
-                    
-                    if (!directLOSClear) continue;
-                    
-                    bool targetingLinesValid = CheckTargetingLinesFromPosition(node.spotToStand.position, player);
-
-                    if (player.concealed && player.closeToCover)
-                    {
-                        if (targetingLinesValid)
-                        {
-                            hasValidShotFromNode = true;
-                            Debug.Log($"Can see {player.name} even in concealed cover from {node.name} since LOS and targeting lines valid");
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        hasValidShotFromNode = true;
-                        Debug.Log($"Can see {player.name} with valid LOS from {node.name} since they are in the open");
+                        directLOSClear = false;
                         break;
                     }
                 }
-                if (!hasValidShotFromNode) continue;
+                
+                if (!directLOSClear) continue;
+                
+                bool targetingLinesValid = CheckTargetingLinesFromPosition(node.spotToStand.position, player);
 
-                if (pathDistance < shortestDistance)
+                if (player.concealed && player.closeToCover)
                 {
-                    shortestDistance = pathDistance;
-                    bestCoverNode = node;
+                    if (targetingLinesValid)
+                    {
+                        hasValidShotFromNode = true;
+                        Debug.Log($"Can see {player.name} even in concealed cover from {node.name} since LOS and targeting lines valid");
+                        break;
+                    }
+                }
+                else
+                {
+                    hasValidShotFromNode = true;
+                    Debug.Log($"Can see {player.name} with valid LOS from {node.name} since they are in the open");
+                    break;
                 }
             }
+
+            if (!hasValidShotFromNode) continue; // Skip if this node doesn't provide a valid shot
         }
-        return bestCoverNode;
+
+        // FIX: Moved this outside the `if (requireShootLOS)` block so it evaluates distance and picks the 
+        // closest valid node whether we are looking for Shoot Cover OR Deep Cover!
+        if (pathDistance < shortestDistance)
+        {
+            shortestDistance = pathDistance;
+            bestCoverNode = node;
+            Debug.Log($"Found valid cover candidate: {node.name} at distance {pathDistance}");
+        }
     }
+    return bestCoverNode;
+}
 
     private float GetPathDistance(Vector3 start, Vector3 end)
     {
