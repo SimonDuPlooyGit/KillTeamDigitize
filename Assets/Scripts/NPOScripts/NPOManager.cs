@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//-----NPOManager Class (Picks an NPO to activate)-----
 public class NPOManager : MonoBehaviour
 {
     //1 Activation priority
@@ -13,7 +14,7 @@ public class NPOManager : MonoBehaviour
     [SerializeField] public List<PrototypeUnit> playerUnits = new();
     
     //Find the NPO to activate according the priority above
-    public PrototypeNPO GetNPOUnitToActivate()
+    public PrototypeNPO GetNpoUnitToActivate()
     {
         Debug.Log("GetNPOUnitToActivate called");
         PrototypeNPO candidate = FindBestCandidate(npoUnits);
@@ -31,11 +32,11 @@ public class NPOManager : MonoBehaviour
         }
 
         
-        return FindClosestNPO();
+        return FindClosestNpo();
     }
     
     //The actual logic to find the best candidate that can shoot
-    public PrototypeNPO FindBestCandidate(List<PrototypeNPO> npos)
+    private PrototypeNPO FindBestCandidate(List<PrototypeNPO> npos)
     {
         Debug.Log("FindBestCandidate called");
         PrototypeNPO bestCandidate = null;
@@ -67,21 +68,21 @@ public class NPOManager : MonoBehaviour
     //Find the NPO that can do the most shooting damage
     private int GetBestDamage(PrototypeNPO npo)
     {
-        if (npo.npoData == null || npo.npoData.weapons == null || npo.npoData.weapons.Count == 0) return 0;
+        if (npo.NpoData == null || npo.NpoData.weapons == null || npo.NpoData.weapons.Count == 0) return 0;
         
         int highestDamage = 0;
-        foreach (var weapon in npo.npoData.weapons)
+        foreach (var weapon in npo.NpoData.weapons)
         {
-            if (weapon.DMGnorm > highestDamage)
+            if (weapon.dmgNorm > highestDamage)
             {
-                highestDamage = weapon.DMGnorm;
+                highestDamage = weapon.dmgNorm;
             }
         }
         return highestDamage;
     }
 
     //Find the NPO that isn't in cover
-    public PrototypeNPO FindNotInCover()
+    private PrototypeNPO FindNotInCover()
     {
         PrototypeNPO lowestOpenNpo = null;
         int lowestWounds = int.MaxValue;
@@ -101,7 +102,7 @@ public class NPOManager : MonoBehaviour
     }
 
     //Find the NPO that is closest to a player unit
-    public PrototypeNPO FindClosestNPO()
+    private PrototypeNPO FindClosestNpo()
     {
         Debug.Log("FindClosestNPO called");
         PrototypeNPO closestNpo = null;

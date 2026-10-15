@@ -1,7 +1,8 @@
 using System;
 
-namespace BehaviourTrees
+namespace BehaviourTree
 {
+    //-----Base IStrategy Interface-----
     public interface IStrategy
         {
             Node.Status Process();
@@ -12,57 +13,61 @@ namespace BehaviourTrees
             }
         }
 
+    //-----Condition Class (IStrategy that evaluates a predicate)-----
     public class Condition : IStrategy
     {
-        readonly Func<bool> predicate;
+        readonly Func<bool> _predicate;
 
         public Condition(Func<bool> predicate)
         {
-            this.predicate = predicate;
+            _predicate = predicate;
         }
         
-        public Node.Status Process() => predicate() ? Node.Status.Success : Node.Status.Failure;
+        public Node.Status Process() => _predicate() ? Node.Status.Success : Node.Status.Failure;
     }
 
+    //-----Action Strategy Class (Evaluates an immediate action)-----
     public class ActionStrategy : IStrategy
     {
-        readonly Action doSomething;
+        readonly Action _doSomething; //Action is a built-in delegate from System.Action. You can pass a function into it
 
         public ActionStrategy(Action doSomething)
         {
-            this.doSomething = doSomething;
+            _doSomething = doSomething;
         }
 
         public Node.Status Process()
         {
-            doSomething();
+            _doSomething();
             return Node.Status.Success;
         }
     }
 
+    //-----AsyncActionStrategy (Evaluates an action that takes time to complete like coroutines or navmesh movements)-----
     public class AsyncActionStrategy : IStrategy
     {
-        readonly Action startAction;
-        readonly Func<bool> isCompleted;
-        private bool hasStarted = false;
+        readonly Action _startAction;
+        readonly Func<bool> _isCompleted;
+        private bool _hasStarted;
 
         public AsyncActionStrategy(Action startAction, Func<bool> isCompleted)
         {
-            this.startAction = startAction;
-            this.isCompleted = isCompleted;
+            _startAction = startAction;
+            _isCompleted = isCompleted;
+            _hasStarted = false;
         }
 
         public Node.Status Process()
         {
-            if (!hasStarted)
+            if (!_hasStarted)
             {
-                startAction?.Invoke();
-                hasStarted = true;
+                _startAction?.Invoke();
+                _hasStarted = true;
             }
 
-            if (isCompleted())
+            if (_isCompleted())
             {
-                hasStarted = false;
+                _hasStarted = false;
                 return Node.Status.Success;
             }
             
@@ -71,8 +76,7 @@ namespace BehaviourTrees
 
         public void Reset()
         {
-            hasStarted = false;
+            _hasStarted = false;
         }
     }
 }
-

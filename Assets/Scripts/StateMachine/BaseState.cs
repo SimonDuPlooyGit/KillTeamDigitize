@@ -1,5 +1,4 @@
-using UnityEngine;
-
+//-----BaseState Class (Class states inherit from)-----
 public abstract class BaseState : IState
 {
     //A default base state to be in, implementing IState

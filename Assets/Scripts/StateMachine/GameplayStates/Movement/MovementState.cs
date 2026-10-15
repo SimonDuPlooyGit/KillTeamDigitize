@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//-----MovementState Class (Handles movement for the player in terms of UI and the confirm move button)-----
 public class MovementState : BaseState
 {
     //Inherits from BaseState
@@ -8,12 +9,13 @@ public class MovementState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private readonly MenuPanel _menu;
-    public bool movementFinished = false;
+    public bool MovementFinished;
 
     public MovementState(InformationPackage context, InputActions input, MenuPanel menu) : base(context) //Needs base(context) for sending context to the BaseState constructor first
     {
         _input = input;
         _menu = menu;
+        MovementFinished = false;
     }
 
     public override void OnEnter()
@@ -37,18 +39,18 @@ public class MovementState : BaseState
 
     public override void Update()
     {
-        if (Context.currentlySelectedUnitScript != null)
+        if (Context.CurrentlySelectedUnitScript != null)
         {
-            Context.currentlySelectedUnitScript.UpdatePathDrawing(); //If there is a unit script update its pathdrawing
+            Context.CurrentlySelectedUnitScript.UpdatePathDrawing(); //If there is a unit script update its path drawing
         }
 
-        if (Context.currentlySelectedUnitScript != null &&
-            Context.currentlySelectedUnitScript.remainingMovement < 0.05f)
+        if (Context.CurrentlySelectedUnitScript != null &&
+            Context.CurrentlySelectedUnitScript.remainingMovement < 0.05f)
         {
             _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
             _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
-            Context.isPlayerActivationRequested = true;
-            movementFinished = true;
+            Context.IsPlayerActivationRequested = true;
+            MovementFinished = true;
         }
     }
 
@@ -58,35 +60,35 @@ public class MovementState : BaseState
         Debug.Log("MovementState exited");
         _menu.CloseMenu(_menu.tutReposition);
         _menu.moveButton2?.SetActive(false);
-        if (Context.currentlySelectedUnitScript.remainingMovement < Context.currentlySelectedUnitScript.meterMovement)
+        if (Context.CurrentlySelectedUnitScript.remainingMovement < Context.CurrentlySelectedUnitScript.meterMovement)
         {
-            Context.currentlySelectedUnitScript.UpdateApl(Context.currentlySelectedUnitScript.currentApl -= 1);
+            Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
             _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
             _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
         }
-        Context.currentlySelectedUnitScript.Reset();
+        Context.CurrentlySelectedUnitScript.Reset();
     }
 
-    public void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move
+    private void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move
     {
         Debug.Log("OnMoveInputPerformed");
-        if (Context.currentlySelectedUnitScript != null)
+        if (Context.CurrentlySelectedUnitScript != null)
         {
             Debug.Log("Calling ClickToPathfind");
-            Context.currentlySelectedUnitScript.ClickToPathfind();
+            Context.CurrentlySelectedUnitScript.ClickToPathfind();
         }
         else
         {
-            Debug.Log("Context.currentlySelectedUnitScript == null");
+            Debug.Log("Context.CurrentlySelectedUnitScript == null");
         }
     }
 
     public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to marker preview
     {
-        if (Context.currentlySelectedUnitScript != null)
+        if (Context.CurrentlySelectedUnitScript != null)
         {
-            Context.currentlySelectedUnitScript.MoveOperativeToMarker();
-            Context.isMovementConfirmed = true;
+            Context.CurrentlySelectedUnitScript.MoveOperativeToMarker();
+            Context.IsMovementConfirmed = true;
             //set tutorial flags
             if(_menu.tutFlag3)
             {
@@ -96,7 +98,6 @@ public class MovementState : BaseState
             {
                 _menu.tutFlag4B = false;
             }
-
         }
     }
 }

@@ -1,8 +1,9 @@
 using UnityEngine;
 
+//-----NPOSelection Class (Selects an NPO to activate)-----
 public class NPOSelection : BaseState
 {
-    private NPOManager _npoManager;
+    private readonly NPOManager _npoManager;
     public NPOSelection(InformationPackage context, NPOManager npoManager) : base(context)
     {
         _npoManager = npoManager;
@@ -11,11 +12,11 @@ public class NPOSelection : BaseState
     public override void OnEnter()
     {
         Debug.Log("NPOSelection OnEnter");
-        Context.currentlyActivatedNPO = _npoManager.GetNPOUnitToActivate();
+        Context.CurrentlyActivatedNpo = _npoManager.GetNpoUnitToActivate();
         
-        if (Context.currentlyActivatedNPO != null)
+        if (Context.CurrentlyActivatedNpo != null)
         {
-            Context.currentlyActivatedNPO.ResetActionFlags();
+            Context.CurrentlyActivatedNpo.ResetActionFlags();
         }
     }
 

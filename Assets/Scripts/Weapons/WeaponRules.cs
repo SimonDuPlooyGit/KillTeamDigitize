@@ -1,3 +1,4 @@
+//-----WeaponRules Class (all of the weapon rules)-----
 public class WeaponRules
 {
     //ALPHABETICAL LIST OF WEAPON RULES!
@@ -69,8 +70,8 @@ public class WeaponRules
 
         public void Execute(InformationPackage context)
         {
-            context.diceHandler.maxAllowedSelections = 1;
-            context.diceHandler.currentSelectionMode = DiceHandler.DiceSelectionMode.Attack;
+            context.DiceHandler.maxAllowedSelections = 1;
+            context.DiceHandler.currentSelectionMode = DiceHandler.DiceSelectionMode.Attack;
         }
         
         public override string ToString() => "Balanced";
@@ -101,7 +102,7 @@ public class WeaponRules
         public void Execute(InformationPackage context)
         {
             //Defender collects x less defense dice
-            context.numDefenseDiceRoll -= piercingX;
+            context.NumDefenseDiceRoll -= piercingX;
         }
         
         public override string ToString() => $"Piercing: {piercingX}";
@@ -130,12 +131,12 @@ public class WeaponRules
         public void Execute(InformationPackage context)
         {
             //Successful dice rolls > x are crits
-            for (int i = 0; i < context.attackRolls.Count; i++)
+            for (int i = 0; i < context.AttackRolls.Count; i++)
             {
-                if (context.attackRolls[i] >= lethalX && context.attackRolls[i] < 6)
+                if (context.AttackRolls[i] >= lethalX && context.AttackRolls[i] < 6)
                 {
-                    context.retainedNormals -= 1;
-                    context.retainedCrits += 1;
+                    context.RetainedNormals -= 1;
+                    context.RetainedCrits += 1;
                 }
             }
         }
@@ -193,12 +194,12 @@ public class WeaponRules
 
         public void Execute(InformationPackage context)
         {
-            if (context.retainedCrits >= pCritX)
+            if (context.RetainedCrits >= pCritX)
             {
-                context.numDefenseDiceRoll -= pCritX;
-            } else if (context.retainedCrits < pCritX && context.retainedCrits > 0)
+                context.NumDefenseDiceRoll -= pCritX;
+            } else if (context.RetainedCrits < pCritX && context.RetainedCrits > 0)
             {
-                context.numDefenseDiceRoll -= context.retainedCrits;
+                context.NumDefenseDiceRoll -= context.RetainedCrits;
             }
         }
         
@@ -330,5 +331,4 @@ public class WeaponRules
         
         public override string ToString() => "Ceaseless";
     }
-    
 }

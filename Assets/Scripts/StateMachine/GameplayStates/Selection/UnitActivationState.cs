@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//-----UnitActivationState Class (Handles clicking on a player unit to activate them)-----
 public class UnitActivationState : BaseState
 {
     //Inherits from BaseState
@@ -14,6 +15,7 @@ public class UnitActivationState : BaseState
         _input = input;
         _menu = menu;
     }
+    
     public override void OnEnter()
     {
         Debug.Log("UnitActivationState entered");
@@ -39,10 +41,6 @@ public class UnitActivationState : BaseState
         {
             _menu.OpenMenu(_menu.tutReset);
         }
-        //--
-        
-
-        
     }
 
     public override void Update()
@@ -62,7 +60,6 @@ public class UnitActivationState : BaseState
         {
             _menu.tutFlag7 = false;
         }
-        
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
@@ -72,21 +69,21 @@ public class UnitActivationState : BaseState
         {
             if (hit.collider.gameObject.CompareTag("AllyUnit"))
             {
-                Context.currentlySelectedUnit = hit.collider.gameObject;
-                Context.currentlySelectedUnitScript = Context.currentlySelectedUnit.GetComponent<PrototypeUnit>();
-                Context.activatedUnitSO = Context.currentlySelectedUnitScript.operativeData;
-                Debug.Log("Selected Operative: " + Context.activatedUnitSO.name);
-                Context.currentlySelectedUnitScript.selected = true;
-                AddGlow(Context.currentlySelectedUnitScript.glow);
+                Context.CurrentlySelectedUnit = hit.collider.gameObject;
+                Context.CurrentlySelectedUnitScript = Context.CurrentlySelectedUnit.GetComponent<PrototypeUnit>();
+                Context.ActivatedUnitSo = Context.CurrentlySelectedUnitScript.operativeData;
+                Debug.Log("Selected Operative: " + Context.ActivatedUnitSo.name);
+                Context.CurrentlySelectedUnitScript.selected = true;
+                AddGlow(Context.CurrentlySelectedUnitScript.glow);
                 _menu.OpenAction();
-                Context.isPlayerActivationRequested = true; 
+                Context.IsPlayerActivationRequested = true;
             }
         }
     }
 
-    public void AddGlow(Material glow)
+    private void AddGlow(Material glow)
     {
-        Material[] currentMatArray = Context.currentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials;
+        Material[] currentMatArray = Context.CurrentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials;
         Material[] newMatArray = new Material[currentMatArray.Length + 1];
 
         for (int i = 0; i < currentMatArray.Length; i++)
@@ -96,17 +93,16 @@ public class UnitActivationState : BaseState
         
         newMatArray[newMatArray.Length - 1] = glow;
         
-        Context.currentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials = newMatArray;
+        Context.CurrentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials = newMatArray;
     }
     
     private void OnDeselectPerformed(InputAction.CallbackContext ctx) //Deselect the unit that was clicked with right-click
     {
-        if (Context.currentlySelectedUnitScript != null)
+        if (Context.CurrentlySelectedUnitScript != null)
         {
-            Context.currentlySelectedUnitScript.Reset();
-            Context.currentlySelectedUnitScript.selected = false;
+            Context.CurrentlySelectedUnitScript.Reset();
+            Context.CurrentlySelectedUnitScript.selected = false;
         }
         Context.Reset();
     }
-    
 }

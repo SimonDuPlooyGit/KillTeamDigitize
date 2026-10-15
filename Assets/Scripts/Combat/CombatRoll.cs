@@ -1,36 +1,36 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+//-----CombatRoll Class-----
 public class CombatRoll : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     Sprite[] diceSprites; 
-    private GameObject dicePanel; //Child gameobject which is just the sprite
-    private Animator diceAnimator;
-    private Image diceImage;
-    public DiceRoll PhysicalDie { get; private set; } //reference for the physical dice correspondong with the panel
+    private GameObject _dicePanel; //Child gameObject which is just the sprite
+    private Animator _diceAnimator;
+    private Image _diceImage;
+    public DiceRoll PhysicalDie { get; private set; } //reference for the physical dice corresponding with the panel
     public bool IsSelected { get; private set; }
-    private DiceHandler handler;
-    private bool isAttackDie;
-
+    private DiceHandler _handler;
+    private bool _isAttackDie;
+    
     private void Awake()
     {
-        dicePanel = transform.Find("Dice").gameObject;
-        diceAnimator = dicePanel.GetComponent<Animator>();
-        diceImage = dicePanel.GetComponent<Image>();
+        _dicePanel = transform.Find("Dice").gameObject;
+        _diceAnimator = _dicePanel.GetComponent<Animator>();
+        _diceImage = _dicePanel.GetComponent<Image>();
     }
 
     public void Initialize(DiceRoll physicalDie, DiceHandler diceHandler, bool isAttack)
     {
         PhysicalDie = physicalDie;  
-        handler = diceHandler;
-        isAttackDie = isAttack;
+        _handler = diceHandler;
+        _isAttackDie = isAttack;
 
         int value = physicalDie.GetUpwardFace();
-        diceAnimator.enabled = false;
-        diceImage.sprite = diceSprites[value - 1];
+        _diceAnimator.enabled = false;
+        _diceImage.sprite = diceSprites[value - 1];
 
         Deselect();
     }
@@ -44,38 +44,38 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // Check with DiceHandler if max selected panels exceeded
-        if (handler != null && handler.CanSelectDie(isAttackDie))
+        // Check with Dice_handler if max selected panels exceeded
+        if (_handler != null && _handler.CanSelectDie(_isAttackDie))
         {
             Select();
         }
     }
-    public void Select()
+    private void Select()
     {
         IsSelected = true;
-        diceImage.color = Color.black; //temp feedback for now
+        _diceImage.color = Color.black; //temp feedback for now
 
-        if (handler != null)
+        if (_handler != null)
         {
-            handler.UpdateRerollButtonVisibility();
+            _handler.UpdateRerollButtonVisibility();
         }
     }
 
-    public void Deselect()
+    private void Deselect()
     {
         IsSelected = false;
-        diceImage.color = Color.white;
+        _diceImage.color = Color.white;
 
-        if (handler != null)
+        if (_handler != null)
         {
-            handler.UpdateRerollButtonVisibility();
+            _handler.UpdateRerollButtonVisibility();
         }
     }
 
     //might not be needed anymore, may delete later
     public void RollTo(int finalValue)
     {
-        diceAnimator.enabled = false;
-        dicePanel.GetComponent<Image>().sprite = diceSprites[finalValue - 1];
+        _diceAnimator.enabled = false;
+        _dicePanel.GetComponent<Image>().sprite = diceSprites[finalValue - 1];
     }
 }

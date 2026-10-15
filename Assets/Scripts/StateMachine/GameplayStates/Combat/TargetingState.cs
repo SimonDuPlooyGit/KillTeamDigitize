@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
-using Unity.VisualScripting;
 
+//-----TargetingState Class (When you have picked a weapon on your unit and you want to click an NPO to shoot)-----
 public class TargetingState : BaseState
 {
     //Inherits from BaseState
-    //State that handles targeting an enemy unit after a weapon has been selected
+    //State that handles targeting an enemy unit after a Weapon has been selected
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private MenuPanel _menu; //Needs access to the menu from GameManager
@@ -48,8 +48,8 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
-        Context.currentlySelectedUnitScript.lineRenderer.material = Context.currentlySelectedUnitScript.validLine;
-        Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
+        Context.CurrentlySelectedUnitScript.lineRenderer.material = Context.CurrentlySelectedUnitScript.validLine;
+        Context.CurrentlySelectedUnitScript.lineRenderer.enabled = false;
         _menu.CloseMenu(_menu.tutTarget);
         _menu.CloseMenu(_menu.tutInvalid);
 
@@ -69,7 +69,7 @@ public class TargetingState : BaseState
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     {
-        if (Context.currentlySelectedUnitScript.selected)
+        if (Context.CurrentlySelectedUnitScript.selected)
         {
             //LOS checking and line renderer code
             RaycastHit hit;
@@ -77,28 +77,28 @@ public class TargetingState : BaseState
             {
                 if (hit.collider.gameObject.CompareTag("EnemyUnit")) //When you hit the enemy check for line of sight and range (called on unit)
                 {
-                    Context.currentlySelectedTarget = hit.collider.gameObject;
-                    Context.currentlySelectedTargetScript = Context.currentlySelectedTarget.GetComponent<BaseOperativeClass>();
-                    Context.targetUnitSO = Context.currentlySelectedTargetScript.operativeData;
-                    Debug.Log("Enemy targeted: " + Context.targetUnitSO.name);
+                    Context.CurrentlySelectedTarget = hit.collider.gameObject;
+                    Context.CurrentlySelectedTargetScript = Context.CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
+                    Context.TargetUnitSo = Context.CurrentlySelectedTargetScript.operativeData;
+                    Debug.Log("Enemy targeted: " + Context.TargetUnitSo.name);
                     
                     //Cover and conceal checking
-                    if (Context.currentlySelectedTargetScript.concealed &&
-                        Context.currentlySelectedTargetScript.closeToCover) //Concealed and close to cover
+                    if (Context.CurrentlySelectedTargetScript.Concealed &&
+                        Context.CurrentlySelectedTargetScript.closeToCover) //Concealed and close to cover
                     {
                         Debug.Log("Not a valid target, concealed in cover");
                         return;
                     }
                     
-                    float distanceToEnemy = Context.currentlySelectedUnitScript.DetermineLOSandDistance(Context.currentlySelectedTargetScript.losStart);
+                    float distanceToEnemy = Context.CurrentlySelectedUnitScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
                 
                     //Assume infinite range first
                     float maxWeaponRange = Mathf.Infinity;
                 
-                    //Find if the weapon has the range rule
-                    var rangeRule = Context.weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
+                    //Find if the Weapon has the range rule
+                    var rangeRule = Context.Weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
                 
-                    //If the weapon has the range rule assign maxWeaponRange
+                    //If the Weapon has the range rule assign maxWeaponRange
                     if (rangeRule != null)
                     {
                         // We multiply by your scale/conversion factor if needed, just like meterMovement
@@ -107,19 +107,19 @@ public class TargetingState : BaseState
 
                     if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
                     {
-                        Context.validTarget = true;
+                        Context.ValidTarget = true;
                         Debug.Log($"Target in range of: {maxWeaponRange}");
                     } else if (distanceToEnemy > maxWeaponRange)
                     {
-                        Context.validTarget = false;
-                        Context.currentlySelectedUnitScript.lineRenderer.material =
-                        Context.currentlySelectedUnitScript.invalidLine;
+                        Context.ValidTarget = false;
+                        Context.CurrentlySelectedUnitScript.lineRenderer.material =
+                        Context.CurrentlySelectedUnitScript.invalidLine;
                         _menu.tutFlag6 = true; //toggle invalid panel
                         Debug.Log($"Target out of range of: {maxWeaponRange}");
                     }
                     
                     //Targeting Lines Checking
-                    Context.currentlySelectedUnitScript.CheckTargetingLines(Context.currentlySelectedUnitScript, Context.currentlySelectedTargetScript);
+                    Context.CurrentlySelectedUnitScript.CheckTargetingLines(Context.CurrentlySelectedUnitScript, Context.CurrentlySelectedTargetScript);
                 }
             }
         }

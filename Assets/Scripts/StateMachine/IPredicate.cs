@@ -1,6 +1,4 @@
-using System;
-using UnityEngine;
-
+//-----IPredicate Interface (Says child classes must have an Evaluate method that returns a bool)-----
 public interface IPredicate
 {
     //The interface for a predicate function

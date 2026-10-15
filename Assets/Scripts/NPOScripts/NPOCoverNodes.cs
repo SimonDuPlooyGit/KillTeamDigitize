@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//-----NPOCoverNodes Class (Empty spots for NPOs to pathfind to for cover. Can be shootCover or deepCover)-----
 public class NPOCoverNodes : MonoBehaviour
 {
     public bool occupied = false;

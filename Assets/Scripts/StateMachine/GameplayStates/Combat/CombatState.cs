@@ -1,16 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
+//-----CombatState Class (Handles all of combat)-----
 public class CombatState : BaseState
 {
     //Inherits from BaseState.
     //The combat state that handles rolling and rules
     
-    public DiceHandler _diceHandler; //Needs reference to the CombatManager script on the CombatManager GameObject
-    public MenuPanel _menu;
+    private DiceHandler _diceHandler; //Needs reference to the CombatManager script on the CombatManager GameObject
+    private MenuPanel _menu;
 
     public CombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
     {
@@ -22,15 +22,15 @@ public class CombatState : BaseState
     {
         Debug.Log("CombatState entered");
         
-        Context.diceHandler = _diceHandler;
+        Context.DiceHandler = _diceHandler;
         
         //Reset
-        Context.attackRolls.Clear();
-        Context.defenseRolls.Clear();
-        Context.retainedCrits = 0;
-        Context.retainedNormals = 0;
-        Context.retainedCritDefense = 0;
-        Context.retainedNormalDefense = 0;
+        Context.AttackRolls.Clear();
+        Context.DefenseRolls.Clear();
+        Context.RetainedCrits = 0;
+        Context.RetainedNormals = 0;
+        Context.RetainedCritDefense = 0;
+        Context.RetainedNormalDefense = 0;
 
         //tutorial panel flags
         _menu.tutFlag7B = true; //remove later
@@ -54,7 +54,7 @@ public class CombatState : BaseState
         ExecuteRulesInThisStep(AttackTimings.PreRoll);
         
         //Roll Attack Dice and defense dice
-        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(Context.weapon.ATK, true, Context));
+        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(Context.Weapon.atk, true, Context));
         
         //After attack roll
         ExecuteRulesInThisStep(AttackTimings.AfterAttackRoll);
@@ -63,7 +63,7 @@ public class CombatState : BaseState
         
         yield return new WaitForSeconds(2f);
 
-        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(Context.numDefenseDiceRoll, true, Context));
+        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(Context.NumDefenseDiceRoll, true, Context));
         
         //Attack Evaluation
         ExecuteRulesInThisStep(AttackTimings.AttackEvaluation);
@@ -75,86 +75,86 @@ public class CombatState : BaseState
         
         yield return new WaitForSeconds(1.5f);
         _diceHandler.ClearDiceRolls();
-        Context.currentlySelectedUnitScript.lineRenderer.enabled = false;
-        Context.isShootingConfirmed = true;
+        Context.CurrentlySelectedUnitScript.lineRenderer.enabled = false;
+        Context.IsShootingConfirmed = true;
     }
     
     private void EvaluateHitsAndSaves()
     {
         Debug.Log("Evaluating hits and saves");
-        for (int i = 0; i < Context.attackRolls.Count; i++)
+        for (int i = 0; i < Context.AttackRolls.Count; i++)
         {
-            if (Context.attackRolls[i] >= Context.weapon.HIT)
+            if (Context.AttackRolls[i] >= Context.Weapon.hit)
             {
-                if (Context.attackRolls[i] == 6)
+                if (Context.AttackRolls[i] == 6)
                 {
-                    Context.retainedCrits += 1;
-                    Debug.Log("Number of crits: " + Context.retainedCrits.ToString());
+                    Context.RetainedCrits += 1;
+                    Debug.Log("Number of crits: " + Context.RetainedCrits.ToString());
                 }
                 else
                 {
-                    Context.retainedNormals += 1;
-                    Debug.Log("Number of normals: " + Context.retainedNormals.ToString());
+                    Context.RetainedNormals += 1;
+                    Debug.Log("Number of normals: " + Context.RetainedNormals.ToString());
                 }
             }
         }
 
-        for (int i = 0; i < Context.defenseRolls.Count; i++)
+        for (int i = 0; i < Context.DefenseRolls.Count; i++)
         {
-            if (Context.defenseRolls[i] >= Context.targetUnitSO.SAVE)
+            if (Context.DefenseRolls[i] >= Context.TargetUnitSo.save)
             {
-                if (Context.defenseRolls[i] == 6)
+                if (Context.DefenseRolls[i] == 6)
                 {
-                    Context.retainedCritDefense += 1;
-                    Debug.Log("Number of crit saves: " + Context.retainedCritDefense.ToString());
+                    Context.RetainedCritDefense += 1;
+                    Debug.Log("Number of crit saves: " + Context.RetainedCritDefense.ToString());
                 }
                 else
                 {
-                    Context.retainedNormalDefense += 1;
-                    Debug.Log("Number of normals saves: " + Context.retainedNormalDefense.ToString());
+                    Context.RetainedNormalDefense += 1;
+                    Debug.Log("Number of normals saves: " + Context.RetainedNormalDefense.ToString());
                 }
             }
         }
 
-        if (Context.retainedCritDefense >= Context.retainedCrits)
+        if (Context.RetainedCritDefense >= Context.RetainedCrits)
         {
-            Context.retainedCritDefense -= Context.retainedCrits;
-            Context.retainedCrits = 0;
-        } else if (Context.retainedCritDefense < Context.retainedCrits)
+            Context.RetainedCritDefense -= Context.RetainedCrits;
+            Context.RetainedCrits = 0;
+        } else if (Context.RetainedCritDefense < Context.RetainedCrits)
         {
-            Context.retainedCrits -= Context.retainedCritDefense;
-            Context.retainedCritDefense = 0;
+            Context.RetainedCrits -= Context.RetainedCritDefense;
+            Context.RetainedCritDefense = 0;
         }
         
-        Context.retainedNormals -= Context.retainedCritDefense;
-        Context.retainedNormals -= Context.retainedNormalDefense;
+        Context.RetainedNormals -= Context.RetainedCritDefense;
+        Context.RetainedNormals -= Context.RetainedNormalDefense;
 
-        if (Context.retainedNormals <= 0)
+        if (Context.RetainedNormals <= 0)
         {
-            Context.retainedNormals = 0;
+            Context.RetainedNormals = 0;
         }
         
-        Debug.Log("Remaining crit attacks: " + Context.retainedCrits.ToString());
-        Debug.Log("Remaining normal attacks: " + Context.retainedNormals.ToString());
+        Debug.Log("Remaining crit attacks: " + Context.RetainedCrits.ToString());
+        Debug.Log("Remaining normal attacks: " + Context.RetainedNormals.ToString());
     }
 
     private void ApplyFinalDamage()
     {
         int totalDamage = 0;
         
-        for (int i = 0; i < Context.retainedCrits; i++)
+        for (int i = 0; i < Context.RetainedCrits; i++)
         {
-            totalDamage += Context.weapon.DMGcrit;
+            totalDamage += Context.Weapon.dmgCrit;
         }
 
-        for (int i = 0; i < Context.retainedNormals; i++)
+        for (int i = 0; i < Context.RetainedNormals; i++)
         {
-            totalDamage += Context.weapon.DMGnorm;
+            totalDamage += Context.Weapon.dmgNorm;
         }
         
-        Context.currentlySelectedTargetScript.TakeDamage(totalDamage);
+        Context.CurrentlySelectedTargetScript.TakeDamage(totalDamage);
 
-        Context.currentlySelectedTargetScript.UpdateHealth(Context.currentlySelectedTargetScript.currentWounds, Context.currentlySelectedTargetScript.operativeData.WOUNDS);
+        Context.CurrentlySelectedTargetScript.UpdateHealth(Context.CurrentlySelectedTargetScript.currentWounds, Context.CurrentlySelectedTargetScript.operativeData.wounds);
         
     }
 
@@ -168,7 +168,7 @@ public class CombatState : BaseState
         Debug.Log("CombatState Exited");
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
-        Context.currentlySelectedUnitScript.UpdateApl(Context.currentlySelectedUnitScript.currentApl -= 1);
+        Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
         _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("ShootButton").gameObject.SetActive(false);
         _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("ShootAPL").gameObject.SetActive(false);
         Context.Reset();
@@ -178,9 +178,9 @@ public class CombatState : BaseState
     {
         List<Action> rulesToExecute = new(); //List of rules that need to be executed from units and weapons
 
-        if (Context.weapon != null)
+        if (Context.Weapon != null)
         {
-            foreach (var rule in Context.weapon.rules) //Gather all weapon rules for this step
+            foreach (var rule in Context.Weapon.rules) //Gather all weapon rules for this step
             {
                 if (rule.Step == currentStep)
                 {
@@ -189,36 +189,36 @@ public class CombatState : BaseState
             }
         }
 
-        if (Context.activatedUnitSO != null) //Gather all active abilities for this step
+        if (Context.ActivatedUnitSo != null) //Gather all active abilities for this step
         {
-            foreach (var rule in Context.activatedUnitSO.Aabilities)
+            foreach (var rule in Context.ActivatedUnitSo.aabilities)
             {
                 if (rule.Step == currentStep)
                 {
                     rulesToExecute.Add(() => rule.Execute(Context));
                 }
             }
-            foreach (var rule in Context.activatedUnitSO.Pabilities)
+            foreach (var rule in Context.ActivatedUnitSo.pabilities)
             {
                 if (rule.Step == currentStep)
                     rulesToExecute.Add(() => rule.Execute(Context));
             }
         }
         
-        if (Context.targetUnitSO != null) //Gather all passive abilities for this step
+        if (Context.TargetUnitSo != null) //Gather all passive abilities for this step
         {
-            foreach (var rule in Context.targetUnitSO.Aabilities)
+            foreach (var rule in Context.TargetUnitSo.aabilities)
             {
                 if (rule.Step == currentStep)
                     rulesToExecute.Add(() => rule.Execute(Context));
             }
-            foreach (var rule in Context.targetUnitSO.Pabilities)
+            foreach (var rule in Context.TargetUnitSo.pabilities)
             {
                 if (rule.Step == currentStep)
                     rulesToExecute.Add(() => rule.Execute(Context));
             }
         }
-        foreach (var executeAction in rulesToExecute) //Run all of the delegate function held in rulesToExecute
+        foreach (var executeAction in rulesToExecute) //Run all the delegate functions held in rulesToExecute
         {
             executeAction.Invoke();
         }

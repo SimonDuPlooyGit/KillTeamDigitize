@@ -1,21 +1,22 @@
 using System.Collections.Generic;using UnityEngine;
 
 [CreateAssetMenu(fileName = "OperativeTemplate", menuName = "Scriptable Objects/OperativeTemplate")]
+//-----OperativeTemplate Class (Scriptable object of an operative)------
 public class OperativeTemplate : ScriptableObject
 {
     //Stats
-    public int APL, MOVE, SAVE, WOUNDS;
+    public int apl, move, save, wounds;
     
     //Keywords such as Imperium, Astartes, Warrior etc
     public Keywords keywords;
     
     //Active abilities
     [SerializeReference, SubclassSelector]
-    public List<IActive> Aabilities = new List<IActive>();
+    public List<IActive> aabilities = new List<IActive>();
     
     //Passive abilities
     [SerializeReference, SubclassSelector]
-    public List<IPassive> Pabilities = new List<IPassive>();
+    public List<IPassive> pabilities = new List<IPassive>();
     
     //Loadout of weapons
     public List<WeaponTemplate> weapons = new List<WeaponTemplate>();
@@ -43,4 +44,3 @@ public enum Keywords
     Eliminator = 1 << 12,
     Sniper = 1 << 13,
 }
-

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public interface IActive
 {
     AttackTimings Step { get; } //Properties of c# - Get at what timing this rule applies
@@ -7,6 +5,8 @@ public interface IActive
     void Execute(InformationPackage context); //Execute active ability logic
 }
 
+//This is the only active ability in the game WE ARE GOING TO CUT THIS
+//We are cutting this because we aren't implementing OBSCURED
 [System.Serializable]
 public class Optics : IActive
 {

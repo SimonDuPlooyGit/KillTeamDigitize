@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//-----ActionSelectionState (Where player can select an action from action menu)-----
 public class ActionSelectionState : BaseState
 {
     //Inherits from BaseState
@@ -44,7 +45,7 @@ public class ActionSelectionState : BaseState
         _menu.CloseMenu(_menu.tpCounter);
         _menu.CloseMenu(_menu.objective);
         _menu.CloseMenu(_menu.tutRepoPrompt);
-        Context.isPlayerActivationRequested = false;
+        Context.IsPlayerActivationRequested = false;
     }
     
     //Future action eligibility checks and logic

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+//-----StateMachine Class-----
 public class StateMachine
 {
     //The StateMachine class manages different states and transitions

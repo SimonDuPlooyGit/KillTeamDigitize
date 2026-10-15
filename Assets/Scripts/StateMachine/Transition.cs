@@ -1,3 +1,4 @@
+//-----Transition Class (Transitions state if its predicate condition is true)-----
 public class Transition : ITransition //Transition class implementing ITransition
 {
     public IState To { get; }

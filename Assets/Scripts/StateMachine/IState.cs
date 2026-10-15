@@ -1,5 +1,4 @@
-using UnityEngine;
-
+//-----IState Interface (Every state class must have a OnEnter, Update() and OnExit method)-----
 public interface IState
 { 
    //The interface for a state
@@ -10,5 +9,3 @@ public interface IState
    void Update();
    void OnExit();
 }
-
-

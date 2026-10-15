@@ -4,8 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public enum OrderState {Engage, Conceal}
+
+//-----BaseOperativeClass (The main unit class that NPOs and Player units should inherit from)-----
 public abstract class BaseOperativeClass : MonoBehaviour
 {
     [Header("Base Operative Class Data")]
@@ -20,7 +21,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool acted;
     public OrderState currentOrder = OrderState.Engage;
     public float dashDistanceScaled = (3f / 39.37f) * 10;
-    public bool concealed => currentOrder == OrderState.Conceal;
+    public bool Concealed => currentOrder == OrderState.Conceal;
     
     [Header("Sampling and LOS")]
     public List<GameObject> samplingPoints = new List<GameObject>();
@@ -46,12 +47,12 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [Header("Animation")]
     [SerializeField]
     private ParticleSystem deathParticles;
-    private Animator animator;
+    private Animator _animator;
     
 
     protected virtual void Awake()
     {
-        animator = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
         
         fogEffect.SetActive(false);
         
@@ -60,9 +61,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
         //Null check and initialization
         if (operativeData != null)
         {
-            currentWounds = operativeData.WOUNDS;
-            currentApl = operativeData.APL;
-            movementStat = operativeData.MOVE;
+            currentWounds = operativeData.wounds;
+            currentApl = operativeData.apl;
+            movementStat = operativeData.move;
             meterMovement = (movementStat / 39.37f) * 10;
         }
         
@@ -95,7 +96,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this)
-    public float DetermineLOSandDistance(Transform losEnd)
+    public float DetermineLosAndDistance(Transform losEnd)
     {
         float distance = (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
         print(distance + "\"");
@@ -212,9 +213,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
         
 
-        if(animator != null && damage>0)
+        if(_animator != null && damage>0)
         {
-            animator.SetTrigger("TakeDamage");
+            _animator.SetTrigger("TakeDamage");
 
             damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
             damagePopOut.SetActive(true);
@@ -241,7 +242,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         var img = healthFill.GetComponent<Image>();
         if (img != null) img.fillAmount = 1;
         var textComp = healthFill.GetComponentInChildren<TextMeshProUGUI>();
-        if (textComp != null) textComp.text = operativeData.WOUNDS.ToString();
+        if (textComp != null) textComp.text = operativeData.wounds.ToString();
     }
     
     //Update the healthbar
@@ -280,7 +281,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Do animations or effects of a unit dying in here
     public void HandleDeath()
     {
-        StartCoroutine(deathSequence());
+        StartCoroutine(DeathSequence());
     }
     
     private void FogEffectAndCoverToggle()
@@ -292,10 +293,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
     }
 
-    private IEnumerator deathSequence()
+    private IEnumerator DeathSequence()
     {
         Debug.Log($"{gameObject.name} has died.");
-        animator.SetTrigger("Die");
+        _animator.SetTrigger("Die");
         yield return new WaitForSeconds(3.0f);
         deathParticles.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
         deathParticles.Play();

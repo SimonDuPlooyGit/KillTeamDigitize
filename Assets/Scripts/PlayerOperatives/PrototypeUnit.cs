@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 using TMPro;
-using UnityEngine.UI;
 
+//-----PrototypeUnit Class (Specific functionality for the player units, inherits BaseOperativeClass)
 public class PrototypeUnit : BaseOperativeClass
 {
     [Header("Navmesh and moving info")]

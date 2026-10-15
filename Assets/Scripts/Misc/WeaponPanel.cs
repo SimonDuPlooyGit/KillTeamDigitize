@@ -23,9 +23,9 @@ public class WeaponPanel : MonoBehaviour
         _onSelectedCallback = onSelected;
 
         name.text = weapon.name;
-        atk.text = weapon.ATK.ToString();
-        hit.text = weapon.HIT.ToString();
-        dmg.text = $"{weapon.DMGnorm}/{weapon.DMGcrit}";
+        atk.text = weapon.atk.ToString();
+        hit.text = weapon.hit.ToString();
+        dmg.text = $"{weapon.dmgNorm}/{weapon.dmgCrit}";
 
         if (weapon.rules != null && weapon.rules.Count > 0)
         {

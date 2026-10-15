@@ -1,3 +1,4 @@
+//-----IWeaponRule (The interface for a weapon rule)-----
 public interface IWeaponRule
 {
     AttackTimings Step { get; } //Get-only auto property have to provide a public way to read this enum variable

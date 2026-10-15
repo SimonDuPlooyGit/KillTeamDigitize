@@ -1,6 +1,7 @@
 using UnityEngine;
-using BehaviourTrees;
+using BehaviourTree;
 
+//-----NPOBehaviour Class (Building the behaviour trees for either a brawler or marksman)-----
 public class NPOBehaviour : MonoBehaviour
 {
     //1 Activation priority
@@ -39,13 +40,14 @@ public class NPOBehaviour : MonoBehaviour
     // IF CAN'T SHOOT: CONCEAL
     // Start at step 3
 
-    private PrototypeNPO unit;
-    private PrioritySelector treeRoot;
-    public bool isRunning { get; private set; } = false;
+    private PrototypeNPO _unit;
+    private PrioritySelector _treeRoot;
+    public bool IsRunning { get; private set; }
 
     private void Awake()
     {
-        unit = GetComponent<PrototypeNPO>();
+        _unit = GetComponent<PrototypeNPO>();
+        IsRunning = false;
     }
 
     private void Start()
@@ -53,15 +55,15 @@ public class NPOBehaviour : MonoBehaviour
         BuildTree();
     }
 
-    public void BuildTree()
+    private void BuildTree()
     {
-        treeRoot = new PrioritySelector($"{unit.name}_Brain");
+        _treeRoot = new PrioritySelector($"{_unit.name}_Brain");
 
-        if (unit.archetype == UnitArchetype.Marksman)
+        if (_unit.archetype == UnitArchetype.Marksman)
         {
             BuildMarksmanTree();
             Debug.Log("Building marksman tree");
-        } else if (unit.archetype == UnitArchetype.Brawler)
+        } else if (_unit.archetype == UnitArchetype.Brawler)
         {
             BuildBrawlerTree();
             Debug.Log("Building brawler tree");
@@ -78,22 +80,22 @@ public class NPOBehaviour : MonoBehaviour
     {
         //1. FIGHT
         var fightSequence = new Sequence("Fight Sequence", priority: 40);
-        fightSequence.AddChild(new Leaf("Can Fight?", new Condition(unit.CanFight)));
-        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(unit.PerformFight)));
+        fightSequence.AddChild(new Leaf("Can Fight?", new Condition(_unit.CanFight)));
+        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(_unit.PerformFight)));
         
         //2. CHARGE
         var chargeSequence = new Sequence("Charge Sequence", priority: 30);
-        chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(unit.CanCharge)));
-        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(unit.PerformCharge)));
+        chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(_unit.CanCharge)));
+        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(_unit.PerformCharge)));
         
         // 3. CONCEAL & REPOSITION
         var concealRepositionSequence = new Sequence("Conceal & Reposition", priority: 20);
-        concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => unit.SetOrderState(OrderState.Conceal))));
-        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new ActionStrategy(unit.PerformReposition)));
-        treeRoot.AddChild(concealRepositionSequence);
+        concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => _unit.SetOrderState(OrderState.Conceal))));
+        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new ActionStrategy(_unit.PerformReposition)));
+        _treeRoot.AddChild(concealRepositionSequence);
 
         // 4. DASH
-        treeRoot.AddChild(new Leaf("Dash", new ActionStrategy(unit.PerformDash), priority: 10));
+        _treeRoot.AddChild(new Leaf("Dash", new ActionStrategy(_unit.PerformDash), priority: 10));
     }
     
     //MARKSMAN ARCHETYPE PRIORITY
@@ -110,52 +112,52 @@ public class NPOBehaviour : MonoBehaviour
     {
         // 1. FALL BACK (Only if can shoot and needs fallback)
         var fallbackSequence = new Sequence("Fall Back Sequence", priority: 40);
-        fallbackSequence.AddChild(new Leaf("Can Shoot?", new Condition(unit.CanShoot)));
-        fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(unit.Fallback)));
-        fallbackSequence.AddChild(new Leaf("Do Fall Back", new ActionStrategy(unit.PerformFallback)));
-        treeRoot.AddChild(fallbackSequence);
+        fallbackSequence.AddChild(new Leaf("Can Shoot?", new Condition(_unit.CanShoot)));
+        fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(_unit.Fallback)));
+        fallbackSequence.AddChild(new Leaf("Do Fall Back", new ActionStrategy(_unit.PerformFallback))); //Also async for moving
+        _treeRoot.AddChild(fallbackSequence);
 
         // 2. SHOOT
         var shootSequence = new Sequence("Shoot Sequence", priority: 30);
-        shootSequence.AddChild(new Leaf("Can Shoot?", new Condition(unit.CanShoot)));
-        shootSequence.AddChild(new Leaf("Do Shoot", new ActionStrategy(unit.PerformShoot)));
-        treeRoot.AddChild(shootSequence);
+        shootSequence.AddChild(new Leaf("Can Shoot?", new Condition(_unit.CanShoot)));
+        shootSequence.AddChild(new Leaf("Do Shoot", new ActionStrategy(_unit.PerformShoot))); //Also async for combat coroutines
+        _treeRoot.AddChild(shootSequence);
 
-        // 3. REPOSITION (Only if hasn't repositioned yet)
+        // 3. REPOSITION
         var repoSequence = new Sequence("Reposition Sequence", priority: 20);
-        repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(unit.CanReposition)));
-        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(unit.PerformReposition, unit.MovementFinished)));
-        treeRoot.AddChild(repoSequence);
+        repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(_unit.CanReposition)));
+        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(_unit.PerformReposition, _unit.MovementFinished)));
+        _treeRoot.AddChild(repoSequence);
 
-        // 4. DASH (Only if hasn't dashed yet)
+        // 4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
-        dashSequence.AddChild(new Leaf("Can Dash?", new Condition(unit.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new ActionStrategy(unit.PerformDash)));
-        treeRoot.AddChild(dashSequence);
+        dashSequence.AddChild(new Leaf("Can Dash?", new Condition(_unit.CanDash)));
+        dashSequence.AddChild(new Leaf("Do Dash", new ActionStrategy(_unit.PerformDash))); //Change this to async with a dash finish checker
+        _treeRoot.AddChild(dashSequence);
     }
 
     public void ExecuteTurn()
     {
-        if (treeRoot != null)
+        if (_treeRoot != null)
         {
             Debug.Log("Executing Turn");
-            treeRoot.Reset();
-            isRunning = true;
+            _treeRoot.Reset();
+            IsRunning = true;
         }
     }
 
     public void TickTurn()
     {
-        if (!isRunning || treeRoot == null) return;
+        if (!IsRunning || _treeRoot == null) return;
 
-        if (unit.acted || unit.currentApl <= 0)
+        if (_unit.acted || _unit.currentApl <= 0)
         {
-            isRunning = false;
-            Debug.Log($"{unit.name} turn ended (No APL or already acted).");
+            IsRunning = false;
+            Debug.Log($"{_unit.name} turn ended (No APL or already acted).");
             return;
         }
         
-        Node.Status status = treeRoot.Process();
+        Node.Status status = _treeRoot.Process();
 
         if (status == Node.Status.Running)
         {
@@ -164,22 +166,22 @@ public class NPOBehaviour : MonoBehaviour
         
         if (status == Node.Status.Success)
         {
-            Debug.Log($"{unit.name} action completed. Re-evaluate priority action");
+            Debug.Log($"{_unit.name} action completed. Re-evaluate priority action");
 
-            if (unit.currentApl > 0 && !unit.acted)
+            if (_unit.currentApl > 0 && !_unit.acted)
             {
-                treeRoot.Reset();
+                _treeRoot.Reset();
             }
             else
             {
-                isRunning = false;
-                Debug.Log($"{unit.name} Turn ended since APL depleted");
+                IsRunning = false;
+                Debug.Log($"{_unit.name} Turn ended since APL depleted");
             }
         }
         else if (status == Node.Status.Failure)
         {
-            isRunning = false;
-            Debug.Log($"{unit.name} Turn ended since Tree returned failure: no valid actions found");
+            IsRunning = false;
+            Debug.Log($"{_unit.name} Turn ended since Tree returned failure: no valid actions found");
         }
     }
 }

@@ -1,10 +1,9 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Collections;
 
-
+//-----DiceHandler Class-----
 public class DiceHandler : MonoBehaviour
 {
     //Determines which dice are allowed to be selected for rerolls
@@ -52,7 +51,7 @@ public class DiceHandler : MonoBehaviour
     public DiceSelectionMode currentSelectionMode = DiceSelectionMode.Attack; // Default to only select attack dice
     
     //Access to information package
-    private InformationPackage context;
+    private InformationPackage _context;
     
     [SerializeField]
     private GameObject rerollButton;
@@ -63,7 +62,7 @@ public class DiceHandler : MonoBehaviour
         rerollButton.SetActive(false);    
     }
 
-    public void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
+    private void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
     {
         GameObject holder = isAttack ? attackDiceHolder : defenseDiceHolder; //Null check for if we have attackDiceHolder or defenceDiceHolder
         List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice; //Null check for the lists
@@ -103,17 +102,17 @@ public class DiceHandler : MonoBehaviour
     {
         //clear tempPhysAttackDice to keep track of attack dice. this is used to populate the dice roll menu in throwDefenseDice coroutine
         activePhysAttackDice.Clear();
-        this.context = context;
+        _context = context;
         
         List<DiceRoll> thrownDice= new List<DiceRoll>();
 
         //Assign prefab based on whether the attacker is an enemy or ally 
-        GameObject AtkDiceObj = isAlly? allyDicePhysical : enemyDicePhysical;
+        GameObject atkDiceObj = isAlly? allyDicePhysical : enemyDicePhysical;
 
         //Instantiate/throw the attack dice
         for (int i = 0; i < numDice; i++)
         {
-            GameObject physAtkDie = Instantiate(AtkDiceObj, diceThrowPoint.position, Random.rotation);
+            GameObject physAtkDie = Instantiate(atkDiceObj, diceThrowPoint.position, Random.rotation);
             DiceRoll dieScript = physAtkDie.GetComponent<DiceRoll>();
             thrownDice.Add(dieScript);
             activePhysAttackDice.Add(dieScript);
@@ -143,7 +142,7 @@ public class DiceHandler : MonoBehaviour
         foreach (DiceRoll die in thrownDice)
         {
             int face = die.GetUpwardFace();
-            context.attackRolls.Add(face);
+            _context.AttackRolls.Add(face);
         }
 
         //Populate UI panel with roll results
@@ -162,21 +161,21 @@ public class DiceHandler : MonoBehaviour
     
     //==================[End throw attack coroutine]=======================
     
-    //======================[Throws DEF Dice Physically]==========================================
+    //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
         activePhysDefenseDice.Clear();
-        this.context = context;
+        _context = context;
         
         //List<DiceRoll> thrownDefDice = new List<DiceRoll>();
 
         //Assign prefab based on whether the attacker is an enemy or ally 
-        GameObject DefDiceObj = !isAlly ? allyDicePhysical : enemyDicePhysical;
+        GameObject defDiceObj = !isAlly ? allyDicePhysical : enemyDicePhysical;
 
         //Instantiate/throw the defense dice
         for (int i = 0; i < numDice; i++)
         {
-            GameObject physDefDie = Instantiate(DefDiceObj, diceThrowPoint.position, Random.rotation);
+            GameObject physDefDie = Instantiate(defDiceObj, diceThrowPoint.position, Random.rotation);
             DiceRoll dieScript = physDefDie.GetComponent<DiceRoll>();
             activePhysDefenseDice.Add(dieScript);
             yield return new WaitForSeconds(0.1f);
@@ -205,7 +204,7 @@ public class DiceHandler : MonoBehaviour
         foreach (DiceRoll die in activePhysDefenseDice)
         {
             int face = die.GetUpwardFace();
-            context.defenseRolls.Add(face);
+            _context.DefenseRolls.Add(face);
         }
 
         //Populate UI panel with roll results
@@ -219,7 +218,7 @@ public class DiceHandler : MonoBehaviour
     //==================[End throw defense coroutine]=======================
 
     //======================[Standard Dice reroll]==========================================
-    public IEnumerator Reroll(bool isAlly)
+    private IEnumerator Reroll(bool isAlly)
     {
         //determines which prefabs and dice pool are used based on the current selection state
         bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack);
@@ -228,7 +227,7 @@ public class DiceHandler : MonoBehaviour
 
         List<CombatRoll> activeUIList = isAttackMode ? activeAttackDice : activeDefenseDice;
         List<DiceRoll> activePhysList = isAttackMode ? activePhysAttackDice : activePhysDefenseDice;
-        List<int> activeContextList = isAttackMode ? context.attackRolls : context.defenseRolls;
+        List<int> activeContextList = isAttackMode ? _context.AttackRolls : _context.DefenseRolls;
 
         GameObject diceObjPrefab = isAttackMode? (isAlly ? allyDicePhysical : enemyDicePhysical): (!isAlly ? allyDicePhysical : enemyDicePhysical);
 
@@ -287,7 +286,7 @@ public class DiceHandler : MonoBehaviour
             yield return null;
         }
 
-        //Replace updated indices in tracking lists and context
+        //Replace updated indices in tracking lists and _context
         for (int i = 0; i < selectedDice.Count; i++)
         {
             int slotIndex = selectedDice[i];
@@ -335,8 +334,8 @@ public class DiceHandler : MonoBehaviour
     public void ClearDiceRolls()
     {
         currentSelectionMode = DiceSelectionMode.None;
-        context.attackRolls.Clear();
-        context.defenseRolls.Clear();
+        _context.AttackRolls.Clear();
+        _context.DefenseRolls.Clear();
         foreach(DiceRoll die in activePhysAttackDice)
         {
             Destroy(die.gameObject);
@@ -373,17 +372,4 @@ public class DiceHandler : MonoBehaviour
     {
         StartCoroutine(Reroll(isAlly));
     }
-
-    //=========================================================temp stuff
-    /*private IEnumerator tempCoroutine()
-    {
-        yield return StartCoroutine(ThrowAttackDice(3,true,context));
-        yield return new WaitForSeconds(1f);
-        yield return StartCoroutine(ThrowDefenseDice(2, true, context));
-    }
-    public void TempRollFunction()
-    {
-        StartCoroutine(tempCoroutine());
-    }*/
-
 }

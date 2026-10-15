@@ -1,22 +1,19 @@
 using UnityEngine;
 
+//-----NPOActionSelect Class (Where NPO executes its turn after being selected)-----
 public class NPOActionSelect : BaseState
 {
-    private NPOManager _npoManager;
     private NPOBehaviour _currentBehaviour;
     
-    public NPOActionSelect(InformationPackage context, NPOManager npoManager) : base(context)
-    {
-        _npoManager = npoManager;
-    }
+    public NPOActionSelect(InformationPackage context) : base(context) {}
 
     public override void OnEnter()
     {
         Debug.Log("NPOActionSelect OnEnter");
 
-        if (Context.currentlyActivatedNPO != null)
+        if (Context.CurrentlyActivatedNpo != null)
         {
-            _currentBehaviour = Context.currentlyActivatedNPO.GetComponent<NPOBehaviour>();
+            _currentBehaviour = Context.CurrentlyActivatedNpo.GetComponent<NPOBehaviour>();
             if (_currentBehaviour != null)
             {
                 Debug.Log("Execute the behaviour");
@@ -27,7 +24,7 @@ public class NPOActionSelect : BaseState
 
     public override void Update()
     {
-        if (_currentBehaviour != null && _currentBehaviour.isRunning)
+        if (_currentBehaviour != null && _currentBehaviour.IsRunning)
         {
             _currentBehaviour.TickTurn();
         }

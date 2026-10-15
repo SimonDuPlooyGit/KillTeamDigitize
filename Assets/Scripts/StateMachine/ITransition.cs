@@ -1,5 +1,4 @@
-using UnityEngine;
-
+//-----ITransition Interface (Each ITransition child needs to have get method for their IState and a get method for their condition to trigger)-----
 public interface ITransition
 {
     //Interface for transitions

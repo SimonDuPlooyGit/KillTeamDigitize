@@ -1,26 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 public enum UnitArchetype {Brawler, Marksman}
 
+//-----PrototypeNPO (Inherits from BaseOperativeClass. Has NPO specific functionality)-----
 public class PrototypeNPO : BaseOperativeClass
 {
     [Header("Cover and Navmesh")] 
     public NPOCoverNodes currentCoverSpot;
     public NavMeshAgent npoAgent;
     public NPOCoverNodes[] allCoverNodes;
-    
-    [Header("Tracking for actions")]
-    public bool hasRepositioned = false;
-    public bool hasDashed = false;
-    public bool hasFought = false;
-    public bool hasCharged = false;
-    public bool hasFallenBack = false;
-    public int shootCount = 0;
-    public bool canShootTwice = false;
+
+    [Header("Tracking for actions")] public bool hasRepositioned;
+
+    public bool hasDashed;
+    public bool hasFought;
+    public bool hasCharged;
+    public bool hasFallenBack;
+    public int shootCount;
+    public bool canShootTwice;
     
     //Initializing
     [Header("Reference to the NPO manager")]
@@ -33,28 +33,23 @@ public class PrototypeNPO : BaseOperativeClass
     public bool CanShoot() => currentOrder == OrderState.Engage && HasValidShootTarget(npoManager.playerUnits) && (shootCount < (canShootTwice ? 2 : 1));
     public bool CanReposition() => !hasRepositioned && currentApl > 0;
     public bool CanDash() => !hasDashed && currentApl > 0;
-    public bool CanFight() => !hasFought && inControlRange();
-    public bool CanCharge() => !hasCharged && possibleChargeTarget();
-    public bool Fallback() => !hasFallenBack && inDanger() && !coverNear();
+    public bool CanFight() => !hasFought && InControlRange();
+    public bool CanCharge() => !hasCharged && PossibleChargeTarget();
+    public bool Fallback() => !hasFallenBack && InDanger() && !CoverNear();
 
-    public OperativeTemplate npoData
+    public OperativeTemplate NpoData
     {
         get => operativeData;
         set => operativeData = value;
     }
     
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
-        allCoverNodes = FindObjectsOfType<NPOCoverNodes>();
+        allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
         acted = false;
-    }
-    
-    private void Update()
-    {
-       base.Update();
     }
 
     //Action implementations
@@ -93,9 +88,9 @@ public class PrototypeNPO : BaseOperativeClass
         {
             if (weapon.rules.OfType<WeaponRules.Melee>().Any()) continue;
             
-            if (weapon.DMGnorm > highestDamage)
+            if (weapon.dmgNorm > highestDamage)
             {
-                highestDamage = weapon.DMGnorm;
+                highestDamage = weapon.dmgNorm;
                 chosenWeapon = weapon;
             }
         }
@@ -178,7 +173,7 @@ public class PrototypeNPO : BaseOperativeClass
             return;
         }
         
-        targetCover = FindBestCoverNode(requireShootLOS: false, meterMovement);
+        targetCover = FindBestCoverNode(requireShootLos: false, meterMovement);
         
         if (targetCover != null)
         {
@@ -321,7 +316,6 @@ public class PrototypeNPO : BaseOperativeClass
 
     public bool IsValidTarget(BaseOperativeClass target)
     {
-        bool validTargetFound = false;
         Debug.Log("IsValidTarget called");
         if (target == null || target.dead || !target.gameObject.activeInHierarchy)
         {
@@ -335,7 +329,7 @@ public class PrototypeNPO : BaseOperativeClass
             return false;
         }
 
-        if (target.concealed && target.closeToCover)
+        if (target.Concealed && target.closeToCover)
         {
             Debug.Log("The checked target is concealed in cover");
             Debug.Log($"The targeting line rule returned: {CheckTargetingLines(target)}");
@@ -366,22 +360,22 @@ public class PrototypeNPO : BaseOperativeClass
         return true;
     }
     
-    private bool inControlRange()
+    private bool InControlRange()
     {
         Debug.Log($"{name} checks if in control range of enemy");
         return false;
     }
 
-    private bool possibleChargeTarget()
+    private bool PossibleChargeTarget()
     {
         Debug.Log($"{name} checks if it has a charge target");
         return false;
     }
 
-    private bool inDanger()
+    private bool InDanger()
     {
         Debug.Log($"{name} inDanger called");
-        if (currentWounds < operativeData.WOUNDS && closeToCover == false)
+        if (currentWounds < operativeData.wounds && closeToCover == false)
         {
             Debug.Log($"{name} has lost health and in open, returning true");
             return true;
@@ -390,7 +384,7 @@ public class PrototypeNPO : BaseOperativeClass
         return false;
     }
 
-    private bool coverNear()
+    private bool CoverNear()
     {
         Debug.Log($"{name} calling a check to see if cover is near");
         return CheckDistanceToTerrain();
@@ -415,9 +409,9 @@ public class PrototypeNPO : BaseOperativeClass
         shootCount = 0;
     }
 
-    public NPOCoverNodes FindBestCoverNode(bool requireShootLOS, float maxMovement)
+    public NPOCoverNodes FindBestCoverNode(bool requireShootLos, float maxMovement)
 {
-    Debug.Log($"FindBestCoverNode called with requireShootLOS: {requireShootLOS}");
+    Debug.Log($"FindBestCoverNode called with requireShootLOS: {requireShootLos}");
     NPOCoverNodes bestCoverNode = null;
     float shortestDistance = float.MaxValue;
 
@@ -429,9 +423,9 @@ public class PrototypeNPO : BaseOperativeClass
             continue;
         }
 
-        if (node.deepCover != !requireShootLOS) 
+        if (node.deepCover != !requireShootLos) 
         {
-            Debug.Log($"{node.name} cover type does not match requirement (node.deepCover={node.deepCover}, requireShootLOS={requireShootLOS})");
+            Debug.Log($"{node.name} cover type does not match requirement (node.deepCover={node.deepCover}, requireShootLOS={requireShootLos})");
             continue;
         }
         
@@ -443,7 +437,7 @@ public class PrototypeNPO : BaseOperativeClass
         }
 
         // If we require Shoot LOS, validate that standing there opens a shooting angle
-        if (requireShootLOS)
+        if (requireShootLos)
         {
             bool hasValidShotFromNode = false;
 
@@ -451,14 +445,14 @@ public class PrototypeNPO : BaseOperativeClass
             {
                 if (player.dead || player == null) continue;
                 
-                Vector3 simulatedLOSStartPos = node.spotToStand.position + (losStart.position - transform.position);
+                Vector3 simulatedLosStartPos = node.spotToStand.position + (losStart.position - transform.position);
                 Vector3 targetPos = player.losStart != null ? player.losStart.position : player.transform.position;
                 
-                float distance = Vector3.Distance(simulatedLOSStartPos, targetPos);
-                Vector3 direction = (targetPos - simulatedLOSStartPos).normalized;
+                float distance = Vector3.Distance(simulatedLosStartPos, targetPos);
+                Vector3 direction = (targetPos - simulatedLosStartPos).normalized;
 
-                bool directLOSClear = true;
-                RaycastHit[] hits = Physics.RaycastAll(simulatedLOSStartPos, direction, distance);
+                bool directLosClear = true;
+                RaycastHit[] hits = Physics.RaycastAll(simulatedLosStartPos, direction, distance);
 
                 foreach (var hit in hits)
                 {
@@ -467,16 +461,16 @@ public class PrototypeNPO : BaseOperativeClass
                     
                     if (hit.collider.CompareTag("Terrain"))
                     {
-                        directLOSClear = false;
+                        directLosClear = false;
                         break;
                     }
                 }
                 
-                if (!directLOSClear) continue;
+                if (!directLosClear) continue;
                 
                 bool targetingLinesValid = CheckTargetingLinesFromPosition(node.spotToStand.position, player);
 
-                if (player.concealed && player.closeToCover)
+                if (player.Concealed && player.closeToCover)
                 {
                     if (targetingLinesValid)
                     {
@@ -533,17 +527,17 @@ public class PrototypeNPO : BaseOperativeClass
 
         for (int i = 0; i < samplingPoints.Count; i++)
         {
-            Vector3 simulatedNpoSP = samplingPoints[i].transform.position + offset;
+            Vector3 simulatedNpoSp = samplingPoints[i].transform.position + offset;
             for (int j = 0; j < player.samplingPoints.Count; j++)
             {
-                Vector3 playerSP1 = player.samplingPoints[j].transform.position;
+                Vector3 playerSp1 = player.samplingPoints[j].transform.position;
 
-                if (CheckLineObstruction(simulatedNpoSP, playerSP1))
+                if (CheckLineObstruction(simulatedNpoSp, playerSp1))
                 {
                     int oppositeIndex = (j + (player.samplingPoints.Count / 2)) % player.samplingPoints.Count;
-                    Vector3 playerSP2 = player.samplingPoints[oppositeIndex].transform.position;
+                    Vector3 playerSp2 = player.samplingPoints[oppositeIndex].transform.position;
 
-                    if (CheckLineObstruction(simulatedNpoSP, playerSP2))
+                    if (CheckLineObstruction(simulatedNpoSp, playerSp2))
                     {
                         return true;
                     }

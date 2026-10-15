@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public interface IPassive
 {
     AttackTimings Step { get; }
