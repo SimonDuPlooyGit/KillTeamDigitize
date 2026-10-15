@@ -33884,7 +33884,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
     - target: {fileID: -1500337136428297482, guid: f9293d93659dbb24aa1d095df4a6af90, type: 3}
       propertyPath: currentOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -1500337136428297482, guid: f9293d93659dbb24aa1d095df4a6af90, type: 3}
       propertyPath: damagePopOut

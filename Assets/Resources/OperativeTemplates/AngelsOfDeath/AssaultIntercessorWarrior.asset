@@ -12,11 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: AssaultIntercessorWarrior
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 3
-  MOVE: 6
-  SAVE: 3
-  WOUNDS: 14
+  apl: 3
+  move: 6
+  save: 0
+  wounds: 0
   keywords: 563
+  aabilities: []
+  pabilities: []
   weapons:
   - {fileID: 11400000, guid: b481a979e6e197e4891aba00e96f2122, type: 2}
   - {fileID: 11400000, guid: 23f919534043b5042960c7c70259fcab, type: 2}
+  references:
+    version: 2
+    RefIds: []

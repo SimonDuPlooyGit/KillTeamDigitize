@@ -12,16 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: EliminatorSniper
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 3
-  MOVE: 7
-  SAVE: 3
-  WOUNDS: 12
+  apl: 3
+  move: 6
+  save: 0
+  wounds: 0
   keywords: 12307
-  Aabilities:
-  - rid: 7072804673756069963
-  Pabilities:
-  - rid: 7072804673756069961
-  - rid: 7072804673756069962
+  aabilities: []
+  pabilities: []
   weapons:
   - {fileID: 11400000, guid: e7255d14bc33ac640b5229f43e959259, type: 2}
   - {fileID: 11400000, guid: b944a79690feafa46ac394eac6b1cbd1, type: 2}
@@ -30,13 +27,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b248a4367012d5f41b5cd6ab9da36140, type: 2}
   references:
     version: 2
-    RefIds:
-    - rid: 7072804673756069961
-      type: {class: CamoCloak, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7072804673756069962
-      type: {class: CTStealthy, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7072804673756069963
-      type: {class: Optics, ns: , asm: Assembly-CSharp}
-      data: 
+    RefIds: []

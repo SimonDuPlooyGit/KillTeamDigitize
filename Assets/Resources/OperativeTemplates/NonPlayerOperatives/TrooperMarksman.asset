@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: TrooperMarksman
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 2
-  MOVE: 6
-  SAVE: 5
-  WOUNDS: 7
+  apl: 2
+  move: 6
+  save: 5
+  wounds: 7
   keywords: 0
-  Aabilities: []
-  Pabilities: []
+  aabilities: []
+  pabilities: []
   weapons:
   - {fileID: 11400000, guid: b524f3b6be1f17c4c9286118608b5c0f, type: 2}
   - {fileID: 11400000, guid: 362d31208b8420449b1e17b556285632, type: 2}

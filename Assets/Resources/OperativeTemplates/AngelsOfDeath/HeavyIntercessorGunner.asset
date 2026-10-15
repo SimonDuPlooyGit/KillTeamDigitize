@@ -12,13 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: HeavyIntercessorGunner
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 3
-  MOVE: 5
-  SAVE: 3
-  WOUNDS: 18
+  apl: 3
+  move: 6
+  save: 0
+  wounds: 0
   keywords: 3091
+  aabilities: []
+  pabilities: []
   weapons:
   - {fileID: 11400000, guid: e7255d14bc33ac640b5229f43e959259, type: 2}
   - {fileID: 11400000, guid: 6294f4fb2bc6545418ceb11c9b215f16, type: 2}
   - {fileID: 11400000, guid: 5bc60703d09847648b9b9d95a86a39d1, type: 2}
   - {fileID: 11400000, guid: b248a4367012d5f41b5cd6ab9da36140, type: 2}
+  references:
+    version: 2
+    RefIds: []

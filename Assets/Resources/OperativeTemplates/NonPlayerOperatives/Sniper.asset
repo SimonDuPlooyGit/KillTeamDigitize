@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: Sniper
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 0
-  MOVE: 0
-  SAVE: 3
-  WOUNDS: 12
+  apl: 0
+  move: 0
+  save: 3
+  wounds: 12
   keywords: 0
-  Aabilities: []
-  Pabilities: []
+  aabilities: []
+  pabilities: []
   weapons:
   - {fileID: 11400000, guid: 507b6b0658b4d1e4fa76385c7b33d25b, type: 2}
   - {fileID: 11400000, guid: bfd3f0a4922fbf44ea1e4955b001851c, type: 2}

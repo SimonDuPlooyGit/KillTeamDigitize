@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc51b57e354aff4d998bb8a9f7f0a2b, type: 3}
   m_Name: ThunderHammer
   m_EditorClassIdentifier: Assembly-CSharp::WeaponTemplate
-  ATK: 5
-  HIT: 4
-  DMGnorm: 5
-  DMGcrit: 6
+  atk: 5
+  hit: 4
+  dmgNorm: 5
+  dmgCrit: 6
   rules:
   - rid: 7430619796180566082
   - rid: 7430619796180566083

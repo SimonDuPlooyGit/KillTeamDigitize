@@ -12,15 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54a6c7ce819b0ba49a3fd2d56eb92313, type: 3}
   m_Name: AssaultIntercessorSergeant
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
-  APL: 3
-  MOVE: 6
-  SAVE: 3
-  WOUNDS: 15
+  apl: 3
+  move: 6
+  save: 0
+  wounds: 0
   keywords: 119
-  Aabilities: []
-  Pabilities:
-  - rid: 7072804673756069956
-  - rid: 7072804673756069957
+  aabilities: []
+  pabilities: []
   weapons:
   - {fileID: 11400000, guid: 4bd2403a79e085b4ba9316108bd9d0b7, type: 2}
   - {fileID: 11400000, guid: 23f919534043b5042960c7c70259fcab, type: 2}
@@ -32,10 +30,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e810533caf57a4d4d897a66a8fb1bd30, type: 2}
   references:
     version: 2
-    RefIds:
-    - rid: 7072804673756069956
-      type: {class: DoctrineWarfare, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 7072804673756069957
-      type: {class: ChapterVeteran, ns: , asm: Assembly-CSharp}
-      data: 
+    RefIds: []
