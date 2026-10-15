@@ -121,11 +121,17 @@ public class NPOBehaviour : MonoBehaviour
         shootSequence.AddChild(new Leaf("Do Shoot", new ActionStrategy(unit.PerformShoot)));
         treeRoot.AddChild(shootSequence);
 
-        // 3. REPOSITION
-        treeRoot.AddChild(new Leaf("Reposition", new ActionStrategy(unit.PerformReposition), priority: 20));
+        // 3. REPOSITION (Only if hasn't repositioned yet)
+        var repoSequence = new Sequence("Reposition Sequence", priority: 20);
+        repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(unit.CanReposition)));
+        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(unit.PerformReposition, unit.MovementFinished)));
+        treeRoot.AddChild(repoSequence);
 
-        // 4. DASH
-        treeRoot.AddChild(new Leaf("Dash", new ActionStrategy(unit.PerformDash), priority: 10));
+        // 4. DASH (Only if hasn't dashed yet)
+        var dashSequence = new Sequence("Dash Sequence", priority: 10);
+        dashSequence.AddChild(new Leaf("Can Dash?", new Condition(unit.CanDash)));
+        dashSequence.AddChild(new Leaf("Do Dash", new ActionStrategy(unit.PerformDash)));
+        treeRoot.AddChild(dashSequence);
     }
 
     public void ExecuteTurn()
@@ -142,12 +148,38 @@ public class NPOBehaviour : MonoBehaviour
     {
         if (!isRunning || treeRoot == null) return;
 
-        Node.Status status = treeRoot.Process();
-
-        if (status == Node.Status.Success || status == Node.Status.Failure)
+        if (unit.acted || unit.currentApl <= 0)
         {
             isRunning = false;
-            Debug.Log("Turn Ended");
+            Debug.Log($"{unit.name} turn ended (No APL or already acted).");
+            return;
+        }
+        
+        Node.Status status = treeRoot.Process();
+
+        if (status == Node.Status.Running)
+        {
+            return;
+        }
+        
+        if (status == Node.Status.Success)
+        {
+            Debug.Log($"{unit.name} action completed. Re-evaluate priority action");
+
+            if (unit.currentApl > 0 && !unit.acted)
+            {
+                treeRoot.Reset();
+            }
+            else
+            {
+                isRunning = false;
+                Debug.Log($"{unit.name} Turn ended since APL depleted");
+            }
+        }
+        else if (status == Node.Status.Failure)
+        {
+            isRunning = false;
+            Debug.Log($"{unit.name} Turn ended since Tree returned failure: no valid actions found");
         }
     }
 }

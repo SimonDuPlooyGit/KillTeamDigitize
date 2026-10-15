@@ -39,5 +39,40 @@ namespace BehaviourTrees
             return Node.Status.Success;
         }
     }
+
+    public class AsyncActionStrategy : IStrategy
+    {
+        readonly Action startAction;
+        readonly Func<bool> isCompleted;
+        private bool hasStarted = false;
+
+        public AsyncActionStrategy(Action startAction, Func<bool> isCompleted)
+        {
+            this.startAction = startAction;
+            this.isCompleted = isCompleted;
+        }
+
+        public Node.Status Process()
+        {
+            if (!hasStarted)
+            {
+                startAction?.Invoke();
+                hasStarted = true;
+            }
+
+            if (isCompleted())
+            {
+                hasStarted = false;
+                return Node.Status.Success;
+            }
+            
+            return Node.Status.Running;
+        }
+
+        public void Reset()
+        {
+            hasStarted = false;
+        }
+    }
 }
 

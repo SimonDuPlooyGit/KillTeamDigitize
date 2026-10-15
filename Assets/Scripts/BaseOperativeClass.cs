@@ -19,6 +19,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool closeToCover;
     public bool acted;
     public OrderState currentOrder = OrderState.Engage;
+    public float dashDistanceScaled = (3f / 39.37f) * 10;
     public bool concealed => currentOrder == OrderState.Conceal;
     
     [Header("Sampling and LOS")]
@@ -156,7 +157,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
     public bool CheckTargetingLines(BaseOperativeClass attacker, BaseOperativeClass target)
     {
-        Debug.Log("CheckTargetingLines called");
+        //Debug.Log("CheckTargetingLines called");
         if (attacker.samplingPoints.Count == 0 || target.samplingPoints.Count == 0) return false;
 
         for (int i = 0; i < attacker.samplingPoints.Count; i++)
@@ -186,7 +187,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Check for terrain blockers in the targeting lines rule
     public bool CheckLineObstruction(Vector3 start, Vector3 end)
     {
-        Debug.Log("CheckLineObstruction called");
+        //Debug.Log("CheckLineObstruction called");
         Vector3 direction = (end - start).normalized;
         float distance = Vector3.Distance(start, end);
         RaycastHit[] hits = Physics.RaycastAll(start, direction, distance);
