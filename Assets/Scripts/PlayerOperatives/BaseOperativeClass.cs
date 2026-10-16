@@ -48,6 +48,11 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [SerializeField]
     private ParticleSystem deathParticles;
     private Animator _animator;
+    [SerializeField]
+    private Transform firePoint;
+    [SerializeField]
+    private GameObject smokeTrailPrefab;
+    private float coneAngle = 15f;
     
 
     protected virtual void Awake()
@@ -76,6 +81,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 samplingPoints.Add(pt.gameObject);
             }
         }
+
     }
 
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
@@ -94,6 +100,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         closeToCover = CheckDistanceToTerrain();
         FogEffectAndCoverToggle();
     }
+
 
     //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this)
     public float DetermineLosAndDistance(Transform losEnd)
@@ -233,6 +240,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
             dead = true;
             HandleDeath();
         }
+
+        
     }
     
     //Set the health and healthbar
@@ -311,5 +320,46 @@ public abstract class BaseOperativeClass : MonoBehaviour
         deathParticles.Play();
         yield return null;
         gameObject.SetActive(false);
+    }
+
+    //Spawns a set number of smoke trails with a slightly random ration
+    public IEnumerator spawnSmokeTrails(int numSpawned)
+    {
+        //list of all smoke trails spawned to be able to remove them at the end
+        List<GameObject> trailList = new List<GameObject>(); 
+
+        for(int i = 0; i < numSpawned; i++)
+        {
+            //random offset for rotation
+            Vector2 randomPoint = Random.insideUnitCircle * coneAngle;
+            Quaternion localConeOffset = Quaternion.Euler(randomPoint.x, randomPoint.y, 0f);
+
+            //instantiate trals
+            GameObject trail = Instantiate(smokeTrailPrefab, firePoint);
+
+            //ensure position is correct
+            trail.transform.localPosition = new Vector3(0, 0, 0);
+
+            //apply rotation
+            trail.transform.localRotation = localConeOffset;
+
+            trailList.Add(trail);
+
+            //play particle effect
+            ParticleSystem particles = trail.GetComponentInChildren<ParticleSystem>();
+            if (particles != null)
+            {
+                particles.Play();
+            }
+
+        }
+
+        //waiting and then deleting all trails
+        yield return new WaitForSeconds(1);
+        foreach(GameObject trail in trailList)
+        {
+            Destroy(trail);
+        }
+
     }
 }
