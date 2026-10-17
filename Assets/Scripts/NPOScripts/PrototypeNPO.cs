@@ -226,6 +226,7 @@ public class PrototypeNPO : BaseOperativeClass
             SetOrderState(OrderState.Engage);
             ExecuteMoveToCover(targetCover, meterMovement);
             Debug.Log($"{name} repositioned into {targetCover.name} and changed to ENGAGE");
+            targetCover.occupied = true;
             hasRepositioned = true;
             currentApl -= 1;
             CheckTurnEnd();
@@ -242,26 +243,27 @@ public class PrototypeNPO : BaseOperativeClass
             {
                 ExecuteMoveToCover(targetCover, meterMovement);
                 Debug.Log($"{name} repositioned into {targetCover.name} and changed to CONCEAL");
+                targetCover.occupied = true;
                 Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
                 hasRepositioned = true;
                 currentApl = 0; //End turn early cause it can't shoot at all and we got to cover
                 CheckTurnEnd(); ;
                 return;
             }
+        }
+        
+        NPOCoverNodes partialCover = FindBestCoverNode(false, meterMovement+dashDistanceScaled);
             
-            NPOCoverNodes partialCover = FindClosestCoverNode();
-            
-            if (partialCover != null)
-                {
-                    ExecuteMoveToCover(partialCover, meterMovement);
-                    Debug.Log($"{name} could not fully reach cover, repositioning closer to ${partialCover.name}");
-                }
-                else
-                {
-                    MoveTowardSafePosition();
-                    Debug.Log($"{name} found no cover nodes, stepping closer to safety.");
-                }
-            
+        if (partialCover != null)
+        {
+            ExecuteMoveToCover(partialCover, meterMovement);
+            Debug.Log($"{name} could not fully reach cover, repositioning closer to ${partialCover.name}");
+            PerformDash();
+        }
+        else
+        {
+            MoveTowardSafePosition();
+            Debug.Log($"{name} found no cover nodes, stepping closer to safety.");
         }
         
         hasRepositioned = true;
@@ -279,6 +281,7 @@ public class PrototypeNPO : BaseOperativeClass
         {
             ExecuteMoveToCover(dashCover, dashDistanceScaled);
             Debug.Log($"{name} dashed into {dashCover.name}");
+            dashCover.occupied = true;
         }
         else
         {
@@ -323,7 +326,7 @@ public class PrototypeNPO : BaseOperativeClass
     private void ExecuteMoveToCover(NPOCoverNodes coverNode, float maxDistance)
     {
         currentCoverSpot = coverNode;
-        coverNode.occupied = true;
+        //coverNode.occupied = true;
         Vector3 limitedSpot = LimitDestination(coverNode.spotToStand.position, maxDistance);
         npoAgent.SetDestination(limitedSpot);
     }
@@ -335,6 +338,7 @@ public class PrototypeNPO : BaseOperativeClass
 
     private NPOCoverNodes FindClosestCoverNode()
     {
+        Debug.Log("FindClosestCoverCalled cause no cover in reposition range");
         NPOCoverNodes closest = null;
         float minDist = float.MaxValue;
 
@@ -471,7 +475,7 @@ public class PrototypeNPO : BaseOperativeClass
 
     public NPOCoverNodes FindBestCoverNode(bool requireShootLos, float maxMovement)
 {
-    Debug.Log($"FindBestCoverNode called with requireShootLOS: {requireShootLos}");
+    Debug.Log($"FindBestCoverNode called with requireShootLOS: {requireShootLos} and maxMovement: {maxMovement}");
     NPOCoverNodes bestCoverNode = null;
     float shortestDistance = float.MaxValue;
 
