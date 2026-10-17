@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
   apl: 3
   move: 6
-  save: 0
-  wounds: 0
+  save: 3
+  wounds: 12
   keywords: 12307
-  aabilities: []
+  aabilities:
+  - rid: 7509494386069078077
   pabilities: []
   weapons:
   - {fileID: 11400000, guid: e7255d14bc33ac640b5229f43e959259, type: 2}
@@ -27,4 +28,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b248a4367012d5f41b5cd6ab9da36140, type: 2}
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7509494386069078077
+      type: {class: Optics, ns: , asm: Assembly-CSharp}
+      data: 

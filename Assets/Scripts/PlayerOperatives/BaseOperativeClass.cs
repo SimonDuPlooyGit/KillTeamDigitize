@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 
 public enum OrderState {Engage, Conceal}
 
@@ -39,6 +41,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject injuredSymbol;
     public GameObject concealInCoverSymbol;
     public GameObject damagePopOut;
+    public TextMeshProUGUI nameText;
 
     [Header("Materials To Apply")]
     public GameObject fogEffect;
@@ -53,10 +56,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
     protected virtual void Awake()
     {
         _animator = GetComponent<Animator>();
-        
         fogEffect.SetActive(false);
-        
         SetHealth();
+        string brokenUpName = string.Concat(name.Select(c => char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(); //Space out the name from pascal case
+        nameText.text = brokenUpName;
         
         //Null check and initialization
         if (operativeData != null)
