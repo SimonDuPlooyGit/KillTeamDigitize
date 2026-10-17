@@ -20,6 +20,9 @@ public class PrototypeUnit : BaseOperativeClass
     List<Vector3> _limitedPoints = new List<Vector3>();
     private float _currentPathDistance;
 
+    public bool hasMovedThisActivation = false;
+    public bool hasShotThisActivation = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -200,6 +203,8 @@ public class PrototypeUnit : BaseOperativeClass
     public void Reset()
     {
         RemoveGlow();
+        hasMovedThisActivation = false;
+        hasShotThisActivation = false;
         moveMarker.transform.position = transform.position;
         lineRenderer.enabled = false;
         moveMarker.SetActive(false);

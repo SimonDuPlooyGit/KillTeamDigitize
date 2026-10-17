@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
-using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
+using Unity.Mathematics.Geometry;
 
 public enum OrderState {Engage, Conceal}
 
@@ -214,11 +214,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
     {
         currentWounds -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage. Current health: {currentWounds}");
-
         
-
         if(_animator != null && damage>0)
         {
+            if (currentWounds <= (int)Mathf.Ceil((float)operativeData.wounds / 2))
+            {
+                injuredSymbol.SetActive(true);
+            }
             _animator.SetTrigger("TakeDamage");
 
             damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
