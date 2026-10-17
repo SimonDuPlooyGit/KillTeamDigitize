@@ -64,7 +64,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         //Null check and initialization
         if (operativeData != null)
         {
-            Debug.Log($"{name} (Instance ID: {gameObject.GetInstanceID()}) has been assigned {operativeData.name} operative data");
+            //Debug.Log($"{name} (Instance ID: {gameObject.GetInstanceID()}) has been assigned {operativeData.name} operative data");
             currentWounds = operativeData.wounds;
             currentApl = operativeData.apl;
             SetApl(operativeData.apl);

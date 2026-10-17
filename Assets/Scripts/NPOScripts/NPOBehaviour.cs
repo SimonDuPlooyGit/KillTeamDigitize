@@ -49,7 +49,7 @@ public class NPOBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("NPOBehaviour Awake called");
+        //Debug.Log("NPOBehaviour Awake called");
         IsRunning = false;
         itsOwnNpoScript = GetComponent<PrototypeNPO>();
         gameManagerReference = FindFirstObjectByType<GameManager>();
@@ -57,24 +57,24 @@ public class NPOBehaviour : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("BuildTree called in Start() of NPOBehaviour");
+        //Debug.Log("BuildTree called in Start() of NPOBehaviour");
         BuildTree();
     }
 
     private void BuildTree()
     {
-        Debug.Log("BuildTree called in NPOBehaviour");
+        //Debug.Log("BuildTree called in NPOBehaviour");
         _treeRoot = new PrioritySelector($"{itsOwnNpoScript.name}_Brain");
-        Debug.Log($"Built _treeRoot with name {itsOwnNpoScript.name}_Brain");
+        //Debug.Log($"Built _treeRoot with name {itsOwnNpoScript.name}_Brain");
 
         if (itsOwnNpoScript.archetype == UnitArchetype.Marksman)
         {
             BuildMarksmanTree();
-            Debug.Log($"Building marksman tree for {itsOwnNpoScript.name}_Brain");
+            //Debug.Log($"Building marksman tree for {itsOwnNpoScript.name}_Brain");
         } else if (itsOwnNpoScript.archetype == UnitArchetype.Brawler)
         {
             BuildBrawlerTree();
-            Debug.Log($"Building brawler tree for {itsOwnNpoScript.name}_Brain");
+            //Debug.Log($"Building brawler tree for {itsOwnNpoScript.name}_Brain");
         }
     }
     
@@ -198,7 +198,6 @@ public class NPOBehaviour : MonoBehaviour
             {
                 IsRunning = false;
                 Debug.Log($"{itsOwnNpoScript.name} Turn ended since APL depleted");
-                gameManagerReference.CheckTurningPointEnd();
             }
         }
         else if (status == Node.Status.Failure)

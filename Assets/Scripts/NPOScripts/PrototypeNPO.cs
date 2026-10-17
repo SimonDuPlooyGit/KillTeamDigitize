@@ -52,7 +52,7 @@ public class PrototypeNPO : BaseOperativeClass
     protected override void Awake()
     {
         base.Awake();
-        Debug.Log($"Double checking that in PrototypeNPO that {name} is assigned to {NpoData.name}");
+        //Debug.Log($"Double checking that in PrototypeNPO that {name} is assigned to {NpoData.name}");
         GameManager gm = FindFirstObjectByType<GameManager>();
         _context = gm.SharedContext;
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
@@ -421,7 +421,7 @@ public class PrototypeNPO : BaseOperativeClass
     
     private bool InControlRange()
     {
-        Debug.Log($"{name} checks if in control range of enemy");
+        //Debug.Log($"{name} checks if in control range of enemy");
         return false;
     }
 

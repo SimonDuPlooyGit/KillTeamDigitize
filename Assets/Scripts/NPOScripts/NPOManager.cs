@@ -49,8 +49,9 @@ public class NPOManager : MonoBehaviour
             if (npo == null || npo.dead || npo.acted) continue;
 
             bool canShoot = npo.CanShoot();
-            Debug.Log($"canShoot: {canShoot}");
+            Debug.Log($"{npo.name} canShoot is: {canShoot}");
             bool canFight = npo.CanFight();
+            Debug.Log($"{npo.name} canFight is: {canFight}");
 
             if (!canShoot && !canFight) continue;
 
