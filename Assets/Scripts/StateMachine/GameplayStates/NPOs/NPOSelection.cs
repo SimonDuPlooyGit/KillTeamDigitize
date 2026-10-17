@@ -18,6 +18,10 @@ public class NPOSelection : BaseState
         {
             Context.CurrentlyActivatedNpo.ResetActionFlags();
         }
+        else
+        {
+            Debug.Log("No remaining NPO units to activate");
+        }
     }
 
     public override void Update()

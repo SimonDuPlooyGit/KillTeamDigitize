@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
         _stateMachine = new StateMachine();
         SharedContext = new InformationPackage();
         SharedContext.MainCameraScript = mainCamera;
+        SharedContext.AllPlayerUnits = new List<PrototypeUnit>(FindObjectsByType<PrototypeUnit>(FindObjectsSortMode.None));
+        SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states
         unitActivationState = new UnitActivationState(SharedContext, _input, menu);
@@ -55,8 +58,10 @@ public class GameManager : MonoBehaviour
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => SharedContext.ValidTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => SharedContext.IsShootingConfirmed));
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
-        AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null));
+        //AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
+        AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
+        AddT(npoSelectState, unitActivationState, new FuncPredicate(() => _stateMachine.CurrentState == npoSelectState && SharedContext.CurrentlyActivatedNpo == null)); //Go back to player if no npo activated
+        
         
         //AddT for pressing a pass turn button
         _stateMachine.SetState(unitActivationState);
@@ -162,6 +167,64 @@ public class GameManager : MonoBehaviour
 
     public void OnEndTurnPressed()
     {
-        SharedContext.CurrentlySelectedUnitScript.acted = true;
+        if (SharedContext.CurrentlySelectedUnitScript != null)
+        {
+            SharedContext.CurrentlySelectedUnitScript.acted = true;
+            SharedContext.CurrentlySelectedUnitScript.selected = false;
+            SharedContext.CurrentlySelectedUnitScript.Reset();
+        }
+        
+        SharedContext.Reset();
+        SharedContext.PlayerTurn = false;
+        CheckTurningPointEnd();
+    }
+
+    public void CheckTurningPointEnd()
+    {
+        bool playerUnitsLeft = SharedContext.AllPlayerUnits.Exists(u => !u.dead && !u.acted);
+        bool nposLeft = SharedContext.AllNpoUnits.Exists(n => !n.dead && !n.acted);
+
+        if (!playerUnitsLeft && !nposLeft)
+        {
+            SharedContext.CurrentTurningPoint++;
+            if (SharedContext.CurrentTurningPoint > InformationPackage.LastTurningPoint)
+            {
+                Debug.Log("Last turning point ended");
+                return;
+            }
+            
+            Debug.Log($"Starting turning point {SharedContext.CurrentTurningPoint}");
+
+            foreach (var unit in SharedContext.AllPlayerUnits)
+            {
+                unit.acted = false;
+                unit.currentApl = unit.operativeData.apl;
+                unit.selected = false;
+            }
+
+            foreach (var npo in SharedContext.AllNpoUnits)
+            {
+                npo.acted = false;
+                npo.currentApl = npo.operativeData.apl;
+                npo.selected = false;
+            }
+        }
+
+        if (SharedContext.PlayerTurn && !playerUnitsLeft)
+        {
+            SharedContext.PlayerTurn = false;
+        } else if (!SharedContext.PlayerTurn && !nposLeft)
+        {
+            SharedContext.PlayerTurn = true;
+        }
+
+        if (SharedContext.PlayerTurn)
+        {
+            _stateMachine.ChangeState(unitActivationState);
+        }
+        else
+        {
+            _stateMachine.ChangeState(npoSelectState);
+        }
     }
 }

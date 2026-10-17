@@ -43,7 +43,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject damagePopOut;
     public TextMeshProUGUI nameText;
 
-    [Header("Materials To Apply")]
+    [Header("Effects To Apply")]
     public GameObject fogEffect;
     public Material glow;
 
@@ -66,6 +66,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             currentWounds = operativeData.wounds;
             currentApl = operativeData.apl;
+            SetApl(operativeData.apl);
             movementStat = operativeData.move;
             meterMovement = (movementStat / 39.37f) * 10;
         }
@@ -270,9 +271,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Set apl in the UI for the move marker
     public void SetApl(int apl)
     {
+        //Debug.Log("SetApl called");
         if (aplCount == null) return;
         var textComponent = aplCount.GetComponent<TextMeshProUGUI>();
-        if (textComponent != null) textComponent.text = currentApl.ToString();
+        if (textComponent != null) textComponent.text = apl.ToString();
     }
 
     //Update the APL on the movemarker
@@ -294,9 +296,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealInCoverSymbol.SetActive(true);
             fogEffect.SetActive(true);
         }
+        else
+        {
+            fogEffect.SetActive(false);
+        }
     }
 
-    public virtual void CheckTurnEnd()
+    public void CheckTurnEnd()
     {
         if (currentApl == 0)
         {
@@ -314,5 +320,31 @@ public abstract class BaseOperativeClass : MonoBehaviour
         deathParticles.Play();
         yield return null;
         gameObject.SetActive(false);
+    }
+
+    public void AddGlow()
+    {
+        //Debug.Log($"{gameObject.name} has added glow.");
+        MeshRenderer bodyMeshRender = gameObject.GetComponentInChildren<MeshRenderer>();
+        if (bodyMeshRender != null && glow != null)
+        {
+            Material[] mats = bodyMeshRender.materials;
+            System.Array.Resize(ref mats, mats.Length + 1);
+            mats[mats.Length - 1] = glow;
+            bodyMeshRender.materials = mats;
+        }
+    }
+
+    public void RemoveGlow()
+    {
+        //Debug.Log($"{gameObject.name} has removed glow.");
+        MeshRenderer bodyMeshRender = gameObject.GetComponentInChildren<MeshRenderer>();
+        
+        Material[] mats = bodyMeshRender.materials;
+        if (mats.Length > 1)
+        {
+            System.Array.Resize(ref mats, mats.Length - 1);
+            bodyMeshRender.materials = mats;
+        }
     }
 }

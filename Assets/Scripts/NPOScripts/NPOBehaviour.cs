@@ -42,12 +42,16 @@ public class NPOBehaviour : MonoBehaviour
 
     private PrototypeNPO _unit;
     private PrioritySelector _treeRoot;
+
+    public GameManager gameManagerReference;
+    
     public bool IsRunning { get; private set; }
 
     private void Awake()
     {
         _unit = GetComponent<PrototypeNPO>();
         IsRunning = false;
+        gameManagerReference = GameObject.FindFirstObjectByType<GameManager>();
     }
 
     private void Start()
@@ -153,6 +157,8 @@ public class NPOBehaviour : MonoBehaviour
         if (_unit.acted || _unit.currentApl <= 0)
         {
             IsRunning = false;
+            _unit.RemoveGlow();
+            _unit.selected = false;
             Debug.Log($"{_unit.name} turn ended (No APL or already acted).");
             return;
         }
@@ -176,6 +182,7 @@ public class NPOBehaviour : MonoBehaviour
             {
                 IsRunning = false;
                 Debug.Log($"{_unit.name} Turn ended since APL depleted");
+                gameManagerReference.CheckTurningPointEnd();
             }
         }
         else if (status == Node.Status.Failure)

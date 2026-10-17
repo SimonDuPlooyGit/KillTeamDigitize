@@ -199,6 +199,7 @@ public class PrototypeUnit : BaseOperativeClass
 
     public void Reset()
     {
+        RemoveGlow();
         moveMarker.transform.position = transform.position;
         lineRenderer.enabled = false;
         moveMarker.SetActive(false);

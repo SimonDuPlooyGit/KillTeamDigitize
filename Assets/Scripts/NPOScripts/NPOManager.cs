@@ -20,6 +20,7 @@ public class NPOManager : MonoBehaviour
         PrototypeNPO candidate = FindBestCandidate(npoUnits);
         if (candidate != null)
         {
+            candidate.AddGlow();
             candidate.selected = true;
             return candidate;
         }
@@ -27,6 +28,7 @@ public class NPOManager : MonoBehaviour
         candidate = FindNotInCover();
         if (candidate != null)
         {
+            candidate.AddGlow();
             candidate.selected = true;
             return candidate;
         }
@@ -127,6 +129,7 @@ public class NPOManager : MonoBehaviour
             }
         }
         if (closestNpo != null) Debug.Log("FindClosestNPO found: " + closestNpo.name);
+        closestNpo.AddGlow();
         closestNpo.selected = true;
         return closestNpo;
     }

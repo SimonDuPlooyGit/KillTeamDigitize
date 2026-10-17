@@ -890,7 +890,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5076892515542776484
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6347,6 +6347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90912b886352d1249b8c7437b8f48c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPOBehaviour
+  gameManagerReference: {fileID: 0}
 --- !u!114 &4437521795677365091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6377,7 +6378,7 @@ MonoBehaviour:
   invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
   unitUI: {fileID: 2598318228105086832}
   healthFill: {fileID: 864329973792977482}
-  aplCount: {fileID: 4479914694584371389}
+  aplCount: {fileID: 6236903750796841253}
   concealSymbol: {fileID: 2015722719575890863}
   engageSymbol: {fileID: 6102584820753464424}
   injuredSymbol: {fileID: 6129740112626608296}
@@ -7158,8 +7159,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

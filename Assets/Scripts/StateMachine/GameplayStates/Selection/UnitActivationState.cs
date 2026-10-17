@@ -64,36 +64,30 @@ public class UnitActivationState : BaseState
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
     {
+        if (!Context.PlayerTurn) return; //Stop selection if it isn't the player's turn Popup not your turn here
+        
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
         {
             if (hit.collider.gameObject.CompareTag("AllyUnit"))
             {
+                var unitScript = hit.collider.gameObject.GetComponent<PrototypeUnit>();
+                if (unitScript != null && unitScript.acted)
+                {
+                    Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
+                    return;
+                }
+                
                 Context.CurrentlySelectedUnit = hit.collider.gameObject;
                 Context.CurrentlySelectedUnitScript = Context.CurrentlySelectedUnit.GetComponent<PrototypeUnit>();
                 Context.ActivatedUnitSo = Context.CurrentlySelectedUnitScript.operativeData;
                 Debug.Log("Selected Operative: " + Context.ActivatedUnitSo.name);
+                Context.CurrentlySelectedUnitScript.AddGlow();
                 Context.CurrentlySelectedUnitScript.selected = true;
-                AddGlow(Context.CurrentlySelectedUnitScript.glow);
                 _menu.OpenAction();
                 Context.IsPlayerActivationRequested = true;
             }
         }
-    }
-
-    private void AddGlow(Material glow)
-    {
-        Material[] currentMatArray = Context.CurrentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials;
-        Material[] newMatArray = new Material[currentMatArray.Length + 1];
-
-        for (int i = 0; i < currentMatArray.Length; i++)
-        {
-            newMatArray[i] = currentMatArray[i];
-        }
-        
-        newMatArray[newMatArray.Length - 1] = glow;
-        
-        Context.CurrentlySelectedUnit.GetComponentInChildren<MeshRenderer>().materials = newMatArray;
     }
     
     private void OnDeselectPerformed(InputAction.CallbackContext ctx) //Deselect the unit that was clicked with right-click
