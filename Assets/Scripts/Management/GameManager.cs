@@ -63,13 +63,13 @@ public class GameManager : MonoBehaviour
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => SharedContext.ValidTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => SharedContext.IsShootingConfirmed));
-        //AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
         AddT(npoSelectState, npoActionSelectState,
             new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
-        AddT(npoSelectState, unitActivationState,
+        AddT(npoActionSelectState, unitActivationState,
             new FuncPredicate(() =>
-                _stateMachine.CurrentState == npoSelectState &&
-                SharedContext.CurrentlyActivatedNpo == null)); //Go back to player if no npo activated
+                _stateMachine.CurrentState == npoActionSelectState &&
+                SharedContext.CurrentlyActivatedNpo.acted));
 
 
         //AddT for pressing a pass turn button

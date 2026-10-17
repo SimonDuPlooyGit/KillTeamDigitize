@@ -175,6 +175,7 @@ public class NPOBehaviour : MonoBehaviour
             itsOwnNpoScript.RemoveGlow();
             itsOwnNpoScript.selected = false;
             Debug.Log($"{itsOwnNpoScript.name} turn ended (No APL or already acted).");
+            itsOwnNpoScript.acted = true;
             return;
         }
         
