@@ -6347,6 +6347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90912b886352d1249b8c7437b8f48c76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPOBehaviour
+  itsOwnNpoScript: {fileID: 4437521795677365091}
   gameManagerReference: {fileID: 0}
 --- !u!114 &4437521795677365091
 MonoBehaviour:

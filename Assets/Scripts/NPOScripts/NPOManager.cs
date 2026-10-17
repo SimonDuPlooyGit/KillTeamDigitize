@@ -46,7 +46,7 @@ public class NPOManager : MonoBehaviour
 
         foreach (var npo in npos)
         {
-            if (npo == null || npo.dead) continue;
+            if (npo == null || npo.dead || npo.acted) continue;
 
             bool canShoot = npo.CanShoot();
             Debug.Log($"canShoot: {canShoot}");

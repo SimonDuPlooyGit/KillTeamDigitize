@@ -40,7 +40,7 @@ public class NPOBehaviour : MonoBehaviour
     // IF CAN'T SHOOT: CONCEAL
     // Start at step 3
 
-    private PrototypeNPO _unit;
+    [SerializeField] public PrototypeNPO itsOwnNpoScript;
     private PrioritySelector _treeRoot;
 
     public GameManager gameManagerReference;
@@ -49,8 +49,8 @@ public class NPOBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        _unit = GetComponent<PrototypeNPO>();
         IsRunning = false;
+        itsOwnNpoScript = GetComponent<PrototypeNPO>();
         gameManagerReference = GameObject.FindFirstObjectByType<GameManager>();
     }
 
@@ -61,16 +61,16 @@ public class NPOBehaviour : MonoBehaviour
 
     private void BuildTree()
     {
-        _treeRoot = new PrioritySelector($"{_unit.name}_Brain");
+        _treeRoot = new PrioritySelector($"{itsOwnNpoScript.name}_Brain");
 
-        if (_unit.archetype == UnitArchetype.Marksman)
+        if (itsOwnNpoScript.archetype == UnitArchetype.Marksman)
         {
             BuildMarksmanTree();
-            Debug.Log("Building marksman tree");
-        } else if (_unit.archetype == UnitArchetype.Brawler)
+            //Debug.Log("Building marksman tree");
+        } else if (itsOwnNpoScript.archetype == UnitArchetype.Brawler)
         {
             BuildBrawlerTree();
-            Debug.Log("Building brawler tree");
+            //Debug.Log("Building brawler tree");
         }
     }
     
@@ -84,22 +84,22 @@ public class NPOBehaviour : MonoBehaviour
     {
         //1. FIGHT
         var fightSequence = new Sequence("Fight Sequence", priority: 40);
-        fightSequence.AddChild(new Leaf("Can Fight?", new Condition(_unit.CanFight)));
-        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(_unit.PerformFight)));
+        fightSequence.AddChild(new Leaf("Can Fight?", new Condition(itsOwnNpoScript.CanFight)));
+        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFight)));
         
         //2. CHARGE
         var chargeSequence = new Sequence("Charge Sequence", priority: 30);
-        chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(_unit.CanCharge)));
-        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(_unit.PerformCharge)));
+        chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(itsOwnNpoScript.CanCharge)));
+        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformCharge)));
         
         // 3. CONCEAL & REPOSITION
         var concealRepositionSequence = new Sequence("Conceal & Reposition", priority: 20);
-        concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => _unit.SetOrderState(OrderState.Conceal))));
-        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new ActionStrategy(_unit.PerformReposition)));
+        concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => itsOwnNpoScript.SetOrderState(OrderState.Conceal))));
+        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new ActionStrategy(itsOwnNpoScript.PerformReposition)));
         _treeRoot.AddChild(concealRepositionSequence);
 
         // 4. DASH
-        _treeRoot.AddChild(new Leaf("Dash", new ActionStrategy(_unit.PerformDash), priority: 10));
+        _treeRoot.AddChild(new Leaf("Dash", new ActionStrategy(itsOwnNpoScript.PerformDash), priority: 10));
     }
     
     //MARKSMAN ARCHETYPE PRIORITY
@@ -116,37 +116,48 @@ public class NPOBehaviour : MonoBehaviour
     {
         // 1. FALL BACK (Only if can shoot and needs fallback)
         var fallbackSequence = new Sequence("Fall Back Sequence", priority: 40);
-        fallbackSequence.AddChild(new Leaf("Can Shoot?", new Condition(_unit.CanShoot)));
-        fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(_unit.Fallback)));
-        fallbackSequence.AddChild(new Leaf("Do Fall Back", new ActionStrategy(_unit.PerformFallback))); //Also async for moving
+        fallbackSequence.AddChild(new Leaf("Can Shoot?", new Condition(itsOwnNpoScript.CanShoot)));
+        fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(itsOwnNpoScript.Fallback)));
+        fallbackSequence.AddChild(new Leaf("Do Fall Back", new ActionStrategy(itsOwnNpoScript.PerformFallback))); //Also async for moving
         _treeRoot.AddChild(fallbackSequence);
 
         // 2. SHOOT
         var shootSequence = new Sequence("Shoot Sequence", priority: 30);
-        shootSequence.AddChild(new Leaf("Can Shoot?", new Condition(_unit.CanShoot)));
-        shootSequence.AddChild(new Leaf("Do Shoot", new AsyncActionStrategy(_unit.PerformShoot, _unit.IsShootingFinished)));
+        shootSequence.AddChild(new Leaf("Can Shoot?", new Condition(itsOwnNpoScript.CanShoot)));
+        shootSequence.AddChild(new Leaf("Do Shoot", new AsyncActionStrategy(itsOwnNpoScript.PerformShoot, itsOwnNpoScript.IsShootingFinished)));
         _treeRoot.AddChild(shootSequence);
 
         // 3. REPOSITION
         var repoSequence = new Sequence("Reposition Sequence", priority: 20);
-        repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(_unit.CanReposition)));
-        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(_unit.PerformReposition, _unit.MovementFinished)));
+        repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(itsOwnNpoScript.CanReposition)));
+        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformReposition, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(repoSequence);
 
         // 4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
-        dashSequence.AddChild(new Leaf("Can Dash?", new Condition(_unit.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new ActionStrategy(_unit.PerformDash))); //Change this to async with a dash finish checker
+        dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
+        dashSequence.AddChild(new Leaf("Do Dash", new ActionStrategy(itsOwnNpoScript.PerformDash))); //Change this to async with a dash finish checker
         _treeRoot.AddChild(dashSequence);
     }
 
     public void ExecuteTurn()
     {
+        Debug.Log("ExecuteTurn called");
+
+        if (_treeRoot == null)
+        {
+            BuildTree();
+        }
+        
         if (_treeRoot != null)
         {
             Debug.Log("Executing Turn");
             _treeRoot.Reset();
             IsRunning = true;
+        }
+        else
+        {
+            Debug.Log("No Tree");
         }
     }
 
@@ -154,12 +165,13 @@ public class NPOBehaviour : MonoBehaviour
     {
         if (!IsRunning || _treeRoot == null) return;
 
-        if (_unit.acted || _unit.currentApl <= 0)
+        if (itsOwnNpoScript.acted || itsOwnNpoScript.currentApl <= 0)
         {
+            Debug.LogError($"[TURN END TRIGGERED] {itsOwnNpoScript.name} -> acted: {itsOwnNpoScript.acted}, currentApl: {itsOwnNpoScript.currentApl}");
             IsRunning = false;
-            _unit.RemoveGlow();
-            _unit.selected = false;
-            Debug.Log($"{_unit.name} turn ended (No APL or already acted).");
+            itsOwnNpoScript.RemoveGlow();
+            itsOwnNpoScript.selected = false;
+            Debug.Log($"{itsOwnNpoScript.name} turn ended (No APL or already acted).");
             return;
         }
         
@@ -172,23 +184,23 @@ public class NPOBehaviour : MonoBehaviour
         
         if (status == Node.Status.Success)
         {
-            Debug.Log($"{_unit.name} action completed. Re-evaluate priority action");
+            Debug.Log($"{itsOwnNpoScript.name} action completed. Re-evaluate priority action");
 
-            if (_unit.currentApl > 0 && !_unit.acted)
+            if (itsOwnNpoScript.currentApl > 0 && !itsOwnNpoScript.acted)
             {
                 _treeRoot.Reset();
             }
             else
             {
                 IsRunning = false;
-                Debug.Log($"{_unit.name} Turn ended since APL depleted");
+                Debug.Log($"{itsOwnNpoScript.name} Turn ended since APL depleted");
                 gameManagerReference.CheckTurningPointEnd();
             }
         }
         else if (status == Node.Status.Failure)
         {
             IsRunning = false;
-            Debug.Log($"{_unit.name} Turn ended since Tree returned failure: no valid actions found");
+            Debug.Log($"{itsOwnNpoScript.name} Turn ended since Tree returned failure: no valid actions found");
         }
     }
 }

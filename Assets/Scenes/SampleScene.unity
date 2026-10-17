@@ -18817,6 +18817,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ToughBrawler
       objectReference: {fileID: 0}
+    - target: {fileID: 5441767575177394898, guid: 05d66a91976dc4543bbc07466f7afb99, type: 3}
+      propertyPath: archetype
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5997329631169909147, guid: 05d66a91976dc4543bbc07466f7afb99, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.46
@@ -24743,6 +24747,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrooperBrawler
       objectReference: {fileID: 0}
+    - target: {fileID: 5165379594985212908, guid: edcd1594bdf691d4d900d8cf814a825b, type: 3}
+      propertyPath: archetype
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6850217058115018917, guid: edcd1594bdf691d4d900d8cf814a825b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.686
@@ -27202,6 +27210,10 @@ PrefabInstance:
     - target: {fileID: 1280585225340077960, guid: ffa30cdf795e4e342986a0369eebb0eb, type: 3}
       propertyPath: m_Name
       value: HeavyBrawler
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585477235343873622, guid: ffa30cdf795e4e342986a0369eebb0eb, type: 3}
+      propertyPath: archetype
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8213094686476909855, guid: ffa30cdf795e4e342986a0369eebb0eb, type: 3}
       propertyPath: m_LocalPosition.x

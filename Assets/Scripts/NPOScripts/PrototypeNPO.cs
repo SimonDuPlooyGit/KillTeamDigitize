@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -39,9 +40,9 @@ public class PrototypeNPO : BaseOperativeClass
     public bool CanShoot() => currentOrder == OrderState.Engage && HasValidShootTarget(npoManager.playerUnits) && (shootCount < (canShootTwice ? 2 : 1));
     public bool CanReposition() => !hasRepositioned && currentApl > 0;
     public bool CanDash() => !hasDashed && currentApl > 0;
-    public bool CanFight() => !hasFought && InControlRange();
-    public bool CanCharge() => !hasCharged && PossibleChargeTarget();
-    public bool Fallback() => !hasFallenBack && InDanger() && !CoverNear();
+    public bool CanFight() => !hasFought && InControlRange() && currentApl > 0;
+    public bool CanCharge() => !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    public bool Fallback() => InControlRange() && archetype == UnitArchetype.Marksman;
 
     public OperativeTemplate NpoData
     {
@@ -64,6 +65,7 @@ public class PrototypeNPO : BaseOperativeClass
     public void PerformFight()
     {
         Debug.Log($"{name} performs Fight");
+        Debug.Log($"Need to still implement fighting");
         hasFought = true;
         currentApl -= 1;
         CheckTurnEnd();
@@ -72,6 +74,7 @@ public class PrototypeNPO : BaseOperativeClass
     public void PerformCharge()
     {
         Debug.Log($"{name} performs Charge");
+        Debug.Log("Need to still implement charge");
         hasCharged = true;
         currentApl -= 1;
         CheckTurnEnd();
@@ -79,6 +82,7 @@ public class PrototypeNPO : BaseOperativeClass
 
     public void PerformShoot()
     {
+        Debug.Log($"{name} performs Shoot");
         IsShootingComplete = false;
         StartCoroutine(ExecuteNpoShoot());
     }
@@ -193,89 +197,11 @@ public class PrototypeNPO : BaseOperativeClass
     {
         return IsShootingComplete;
     }
-    
-    /*public void PerformShoot()
-    {
-        Debug.Log($"{name} performs Shoot");
-        
-        //Null check
-        if (operativeData == null || operativeData.weapons == null || operativeData.weapons.Count == 0)
-        {
-            Debug.Log($"{name} has no weapons");
-            acted = true;
-            return;
-        }
-
-        WeaponTemplate chosenWeapon = null;
-        int highestDamage = -1;
-        
-        foreach (var weapon in operativeData.weapons)
-        {
-            if (weapon.rules.OfType<WeaponRules.Melee>().Any()) continue;
-            
-            if (weapon.dmgNorm > highestDamage)
-            {
-                highestDamage = weapon.dmgNorm;
-                chosenWeapon = weapon;
-            }
-        }
-
-        if (chosenWeapon == null)
-        {
-            acted = true;
-            return;
-        }
-
-        PrototypeUnit targetPlayer = null;
-        bool prioritizeWeakest = true;
-        
-        int bestHealthMetric = prioritizeWeakest ? int.MaxValue : int.MinValue;
-
-        if (npoManager != null && npoManager.playerUnits != null)
-        {
-            foreach (var player in npoManager.playerUnits)
-            {
-                if (IsValidTarget(player))
-                {
-                    int playerHealth = player.currentWounds;
-
-                    if (prioritizeWeakest)
-                    {
-                        if (playerHealth < bestHealthMetric)
-                        {
-                            bestHealthMetric = playerHealth;
-                            targetPlayer = player;
-                        }
-                    }
-                    else
-                    {
-                        if (playerHealth > bestHealthMetric)
-                        {
-                            bestHealthMetric = playerHealth;
-                            targetPlayer = player;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (targetPlayer != null)
-        {
-            Debug.Log($"{name} is going to shoot {targetPlayer.name} (Wounds: {bestHealthMetric}) using {chosenWeapon.name} for {highestDamage} normal damage!");
-        }
-        else
-        {
-            Debug.Log($"{name} attempted to shoot, but no valid target was in line of sight.");
-        }
-
-        shootCount++;
-        currentApl -= 1;
-        CheckTurnEnd();
-    }*/
 
     public void PerformFallback()
     {
         Debug.Log($"{name} performs Fallback");
+        Debug.Log("Still need to implement fallback");
         currentApl -= 2;
         hasFallenBack = true;
         CheckTurnEnd();
@@ -311,7 +237,7 @@ public class PrototypeNPO : BaseOperativeClass
                 Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
                 hasRepositioned = true;
                 currentApl = 0; //End turn early cause it can't shoot at all and we got to cover
-                CheckTurnEnd();
+                CheckTurnEnd(); ;
                 return;
             }
             
@@ -523,6 +449,16 @@ public class PrototypeNPO : BaseOperativeClass
         hasCharged = false;
         hasFallenBack = false;
         shootCount = 0;
+
+        if (operativeData != null)
+        {
+            currentApl = operativeData.apl;
+            SetApl(currentApl);
+        }
+        else
+        {
+            Debug.LogError("Operative data is null");
+        }
     }
 
     public NPOCoverNodes FindBestCoverNode(bool requireShootLos, float maxMovement)

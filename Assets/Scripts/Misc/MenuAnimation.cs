@@ -15,7 +15,7 @@ public class MenuAnimation : MonoBehaviour
     {
         // Capture exact scale after all Awake initializations finish
         previousScale = transform.localScale;
-        Debug.Log(previousScale);
+        //Debug.Log(previousScale);
     }
 
     private void Update()
@@ -25,7 +25,7 @@ public class MenuAnimation : MonoBehaviour
         // Detect when scale transitions from 0 to 1
         if (previousScale == Vector3.zero && currentScale != Vector3.zero)
         {
-            Debug.Log(currentScale);
+            //Debug.Log(currentScale);
             PlayMenuAnimation();
         }
 
