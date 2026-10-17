@@ -47,8 +47,6 @@ public class MovementState : BaseState
         if (Context.CurrentlySelectedUnitScript != null &&
             Context.CurrentlySelectedUnitScript.remainingMovement < 0.05f)
         {
-            _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
-            _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
             Context.IsPlayerActivationRequested = true;
             MovementFinished = true;
         }
@@ -63,8 +61,6 @@ public class MovementState : BaseState
         if (Context.CurrentlySelectedUnitScript.remainingMovement < Context.CurrentlySelectedUnitScript.meterMovement)
         {
             Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
-            _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("MoveButton").gameObject.SetActive(false);
-            _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("MoveAPL").gameObject.SetActive(false);
         }
         Context.CurrentlySelectedUnitScript.Reset();
     }

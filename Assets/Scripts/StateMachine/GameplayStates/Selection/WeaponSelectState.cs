@@ -11,7 +11,6 @@ public class WeaponSelectState : BaseState
     public WeaponSelectState(InformationPackage context, MenuPanel menu) : base(context)
     {
         _menu = menu;
-        
     }
     
     public override void OnEnter()
