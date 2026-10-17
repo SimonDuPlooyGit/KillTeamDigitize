@@ -187,6 +187,7 @@ public class PrototypeUnit : BaseOperativeClass
 
     public void MoveOperativeToMarker()
     {
+        hasMovedThisActivation = true;
         _operativeAgent.destination = moveMarker.transform.position;
         remainingMovement -= _currentPathDistance;
         _currentPathDistance = 0f;
@@ -203,8 +204,6 @@ public class PrototypeUnit : BaseOperativeClass
     public void Reset()
     {
         RemoveGlow();
-        hasMovedThisActivation = false;
-        hasShotThisActivation = false;
         moveMarker.transform.position = transform.position;
         lineRenderer.enabled = false;
         moveMarker.SetActive(false);

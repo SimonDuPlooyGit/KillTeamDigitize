@@ -48,6 +48,7 @@ public class CombatState : BaseState
 
     private IEnumerator ResolveCombat()
     {
+        Context.CurrentlySelectedUnitScript.hasShotThisActivation = true;
         Debug.Log("ResolveCombat");
         
         //Pre-Roll
