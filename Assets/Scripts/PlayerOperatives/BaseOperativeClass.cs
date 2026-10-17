@@ -64,6 +64,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         //Null check and initialization
         if (operativeData != null)
         {
+            Debug.Log($"{name} (Instance ID: {gameObject.GetInstanceID()}) has been assigned {operativeData.name} operative data");
             currentWounds = operativeData.wounds;
             currentApl = operativeData.apl;
             SetApl(operativeData.apl);
@@ -80,6 +81,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 samplingPoints.Add(pt.gameObject);
             }
         }
+        
     }
 
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)

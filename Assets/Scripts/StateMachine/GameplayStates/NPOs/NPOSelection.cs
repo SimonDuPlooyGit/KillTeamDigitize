@@ -13,6 +13,23 @@ public class NPOSelection : BaseState
     {
         Debug.Log("NPOSelection OnEnter");
         Context.CurrentlyActivatedNpo = _npoManager.GetNpoUnitToActivate();
+        if (Context.CurrentlyActivatedNpo != null)
+        {
+            Debug.Log($"Selected NPO: {Context.CurrentlyActivatedNpo.name} (Instance ID: {Context.CurrentlyActivatedNpo.gameObject.GetInstanceID()}), operativeData is: {(Context.CurrentlyActivatedNpo.operativeData == null ? "NULL" : Context.CurrentlyActivatedNpo.operativeData.name)}");
+        }
+        
+
+        if (Context.CurrentlyActivatedNpo == null)
+        {
+            Debug.Log("GetNpoUnitToActivate returned null");
+            return;
+        }
+        
+        if (Context.CurrentlyActivatedNpo.operativeData == null)
+        {
+            Debug.LogError($"Found NPO {Context.CurrentlyActivatedNpo.name}, but its operativeData slot is actually null at runtime!");
+            return;
+        }
         
         if (Context.CurrentlyActivatedNpo != null)
         {

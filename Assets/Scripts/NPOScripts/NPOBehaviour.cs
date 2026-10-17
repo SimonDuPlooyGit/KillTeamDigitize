@@ -49,28 +49,32 @@ public class NPOBehaviour : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("NPOBehaviour Awake called");
         IsRunning = false;
         itsOwnNpoScript = GetComponent<PrototypeNPO>();
-        gameManagerReference = GameObject.FindFirstObjectByType<GameManager>();
+        gameManagerReference = FindFirstObjectByType<GameManager>();
     }
 
     private void Start()
     {
+        Debug.Log("BuildTree called in Start() of NPOBehaviour");
         BuildTree();
     }
 
     private void BuildTree()
     {
+        Debug.Log("BuildTree called in NPOBehaviour");
         _treeRoot = new PrioritySelector($"{itsOwnNpoScript.name}_Brain");
+        Debug.Log($"Built _treeRoot with name {itsOwnNpoScript.name}_Brain");
 
         if (itsOwnNpoScript.archetype == UnitArchetype.Marksman)
         {
             BuildMarksmanTree();
-            //Debug.Log("Building marksman tree");
+            Debug.Log($"Building marksman tree for {itsOwnNpoScript.name}_Brain");
         } else if (itsOwnNpoScript.archetype == UnitArchetype.Brawler)
         {
             BuildBrawlerTree();
-            //Debug.Log("Building brawler tree");
+            Debug.Log($"Building brawler tree for {itsOwnNpoScript.name}_Brain");
         }
     }
     
@@ -167,7 +171,6 @@ public class NPOBehaviour : MonoBehaviour
 
         if (itsOwnNpoScript.acted || itsOwnNpoScript.currentApl <= 0)
         {
-            Debug.LogError($"[TURN END TRIGGERED] {itsOwnNpoScript.name} -> acted: {itsOwnNpoScript.acted}, currentApl: {itsOwnNpoScript.currentApl}");
             IsRunning = false;
             itsOwnNpoScript.RemoveGlow();
             itsOwnNpoScript.selected = false;

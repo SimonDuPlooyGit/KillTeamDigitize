@@ -42,23 +42,31 @@ public class PrototypeNPO : BaseOperativeClass
     public bool CanDash() => !hasDashed && currentApl > 0;
     public bool CanFight() => !hasFought && InControlRange() && currentApl > 0;
     public bool CanCharge() => !hasCharged && PossibleChargeTarget() && currentApl > 0;
-    public bool Fallback() => InControlRange() && archetype == UnitArchetype.Marksman;
+    public bool Fallback() => !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
 
     public OperativeTemplate NpoData
     {
         get => operativeData;
-        set => operativeData = value;
     }
     
     protected override void Awake()
     {
         base.Awake();
+        Debug.Log($"Double checking that in PrototypeNPO that {name} is assigned to {NpoData.name}");
         GameManager gm = FindFirstObjectByType<GameManager>();
         _context = gm.SharedContext;
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
         acted = false;
+    }
+
+    protected override void Update()
+    {
+        if (operativeData == null)
+        {
+            Debug.LogError($"{name}'s operativeData just turned null!!!!");
+        }
     }
 
     //Action implementations
