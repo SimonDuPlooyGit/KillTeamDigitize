@@ -74,8 +74,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294912768
+  m_fontColor: {r: 0, g: 0.16973758, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -431,7 +431,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8504839400090337144
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5758,7 +5758,7 @@ GameObject:
   - component: {fileID: 2883298747548813340}
   m_Layer: 0
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: AllyUnit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5811,7 +5811,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 2d47671ea46f33f48835ce76e6259c20, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5852,12 +5852,12 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
+  m_Radius: 0.6372331
+  m_Height: 2.5809522
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Center: {x: 0.00000006102611, y: 0.034476034, z: 0.024559965}
 --- !u!1 &3720882771788012080
 GameObject:
   m_ObjectHideFlags: 0
@@ -7047,10 +7047,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.15106763
-  m_Height: 0.35835114
+  m_Radius: 0.16871205
+  m_Height: 0.39593777
   m_Direction: 1
-  m_Center: {x: 0.01894562, y: 0.17783715, z: -0.005891189}
+  m_Center: {x: 0.0054528266, y: 0.22205074, z: -0.0017395616}
 --- !u!95 &5577114448655613819
 Animator:
   serializedVersion: 7
