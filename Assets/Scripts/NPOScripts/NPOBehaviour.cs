@@ -176,6 +176,7 @@ public class NPOBehaviour : MonoBehaviour
             itsOwnNpoScript.selected = false;
             Debug.Log($"{itsOwnNpoScript.name} turn ended (No APL or already acted).");
             itsOwnNpoScript.acted = true;
+            gameManagerReference.SharedContext.PlayerTurn = true;
             return;
         }
         
@@ -198,6 +199,7 @@ public class NPOBehaviour : MonoBehaviour
             {
                 IsRunning = false;
                 Debug.Log($"{itsOwnNpoScript.name} Turn ended since APL depleted");
+                gameManagerReference.SharedContext.PlayerTurn = true;
             }
         }
         else if (status == Node.Status.Failure)

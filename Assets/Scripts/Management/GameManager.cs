@@ -63,13 +63,10 @@ public class GameManager : MonoBehaviour
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => SharedContext.ValidTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => SharedContext.IsShootingConfirmed));
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => !SharedContext.PlayerTurn));
         AddT(npoSelectState, npoActionSelectState,
             new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
-        AddT(npoActionSelectState, unitActivationState,
-            new FuncPredicate(() =>
-                _stateMachine.CurrentState == npoActionSelectState &&
-                SharedContext.CurrentlyActivatedNpo.acted));
+        AddT(npoActionSelectState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
 
 
         //AddT for pressing a pass turn button
@@ -246,15 +243,6 @@ public class GameManager : MonoBehaviour
         } else if (!SharedContext.PlayerTurn && !nposLeft)
         {
             SharedContext.PlayerTurn = true;
-        }
-
-        if (SharedContext.PlayerTurn)
-        {
-            _stateMachine.ChangeState(unitActivationState);
-        }
-        else
-        {
-            _stateMachine.ChangeState(npoSelectState);
         }
     }
 }
