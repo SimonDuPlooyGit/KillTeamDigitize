@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEditor;
 
 //-----TargetingState Class (When you have picked a weapon on your unit and you want to click an NPO to shoot)-----
 public class TargetingState : BaseState
@@ -70,14 +71,18 @@ public class TargetingState : BaseState
     //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     private void OnSelectPerformed(InputAction.CallbackContext ctx) 
     {
+        Debug.Log("OnSelectPerformed in TargetingState");
         if (Context.CurrentlySelectedUnitScript.selected)
         {
+            Debug.Log($"Shooting a targeting raycast for {Context.CurrentlySelectedUnitScript.name}");
             //LOS checking and line renderer code
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
             {
+                Debug.Log("Ray fired");
                 if (hit.collider.gameObject.CompareTag("EnemyUnit")) //When you hit the enemy check for line of sight and range (called on unit)
                 {
+                    Debug.Log($"Raycast hit: {hit.collider.gameObject.name}");
                     Context.CurrentlySelectedTarget = hit.collider.gameObject;
                     Context.CurrentlySelectedTargetScript = Context.CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
                     Context.TargetUnitSo = Context.CurrentlySelectedTargetScript.operativeData;
@@ -122,7 +127,19 @@ public class TargetingState : BaseState
                     //Targeting Lines Checking
                     Context.CurrentlySelectedUnitScript.CheckTargetingLines(Context.CurrentlySelectedUnitScript, Context.CurrentlySelectedTargetScript);
                 }
+                else
+                {
+                    Debug.Log($"Didn't hit an npo, raycast hit: {hit.collider.gameObject.name}");
+                }
             }
+        }
+        else if (Context.CurrentlySelectedUnitScript == null)
+        {
+            Debug.Log("Somehow currently selected unit is null");
+        }
+        else
+        {
+            Debug.Log("Somehow currently selected unit is not seen as selected in context");
         }
     }
 }

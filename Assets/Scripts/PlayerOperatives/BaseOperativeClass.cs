@@ -341,7 +341,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
     public void RemoveGlow()
     {
-        //Debug.Log($"{gameObject.name} has removed glow.");
+        Debug.Log($"{gameObject.name} has removed glow.");
         MeshRenderer bodyMeshRender = gameObject.GetComponentInChildren<MeshRenderer>();
         
         Material[] mats = bodyMeshRender.materials;
@@ -354,6 +354,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
     public virtual void ResetForNewTurningPoint()
     {
+        Debug.Log("ResetForNewTurningPoint called");
         if (dead) return;
         
         acted = false;

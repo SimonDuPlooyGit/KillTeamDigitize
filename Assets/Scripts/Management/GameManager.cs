@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 
@@ -61,7 +62,19 @@ public class GameManager : MonoBehaviour
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => SharedContext.IsShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => SharedContext.ValidTarget));
-        AddT(combatState, unitActivationState, new FuncPredicate(() => SharedContext.IsShootingConfirmed));
+        AddT(combatState, actionSelectionState, new FuncPredicate(() =>
+        {
+            if (SharedContext.IsShootingConfirmed)
+            {
+                SharedContext.IsShootingRequested = false;
+                SharedContext.IsWeaponSelected = false;
+                SharedContext.ValidTarget = false;
+                SharedContext.IsShootingConfirmed = false;
+                return true;
+            }
+
+            return false;
+        }));
         AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => !SharedContext.PlayerTurn));
         AddT(npoSelectState, npoActionSelectState,
             new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
