@@ -3,7 +3,7 @@ using UnityEngine;
 public class OrbitCamera : MonoBehaviour
 {
     [Header("General Settings")]
-    [SerializeField] private Transform lookAtTarget;
+    [SerializeField] public Transform lookAtTarget;
     [SerializeField] private float sensitivity = 5f;
     [SerializeField] private KeyCode toggleKey = KeyCode.Tab;
 
@@ -16,7 +16,7 @@ public class OrbitCamera : MonoBehaviour
     [SerializeField] private float speed = 10f;
 
     // State Tracking
-    private bool isFreecam = false;
+    public bool isFreecam = false;
     private float mouseX = 0f;
     private float mouseY = 0f;
     public bool switchOffForMenu = false;
@@ -95,5 +95,11 @@ public class OrbitCamera : MonoBehaviour
     public void ToggleCam()
     {
         isFreecam = !isFreecam;
+    }
+
+    public void SetOrbitTarget(Transform target)
+    {
+        lookAtTarget = target;
+        isFreecam = false;
     }
 }

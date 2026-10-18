@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     private StateMachine _stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
     [SerializeField] public DiceHandler diceHandler;
-    [SerializeField] private OrbitCamera mainCamera;
+    [SerializeField] public OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
 
     //Player states
@@ -33,17 +33,18 @@ public class GameManager : MonoBehaviour
         _input = new InputActions();
         _stateMachine = new StateMachine();
         SharedContext.MainCameraScript = mainCamera;
+        mainCamera.isFreecam = true;
         SharedContext.AllPlayerUnits = new List<PrototypeUnit>(FindObjectsByType<PrototypeUnit>(FindObjectsSortMode.None));
         SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states
         unitActivationState = new UnitActivationState(SharedContext, _input, menu, this);
-        actionSelectionState = new ActionSelectionState(SharedContext, menu);
+        actionSelectionState = new ActionSelectionState(SharedContext, menu, this);
         movementState = new MovementState(SharedContext, _input, menu);
         targetingState = new TargetingState(SharedContext, _input, menu);
         combatState = new CombatState(SharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(SharedContext, menu);
-        npoSelectState = new NPOSelection(SharedContext, npoManager);
+        npoSelectState = new NPOSelection(SharedContext, npoManager, this);
         npoActionSelectState = new NPOActionSelect(SharedContext);
         //pauseState = new PauseState(SharedContext, _input, _stateMachine);
 

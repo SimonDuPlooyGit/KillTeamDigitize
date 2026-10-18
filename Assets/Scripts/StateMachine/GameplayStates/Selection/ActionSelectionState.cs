@@ -12,15 +12,18 @@ public class ActionSelectionState : BaseState
     private GameObject repositionCost;
     private GameObject shootButton;
     private GameObject shootCost;
+    private GameManager _gameManager;
 
-    public ActionSelectionState(InformationPackage context, MenuPanel menu) : base(context)
+    public ActionSelectionState(InformationPackage context, MenuPanel menu, GameManager gm) : base(context)
     {
         _menu = menu;
+        _gameManager = gm;
     }
 
 
     public override void OnEnter()
     {
+        _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlySelectedUnit.transform);
         Debug.Log("ActionSelectionState entered");
         _menu.OpenMenu(_menu.actionMenu);
         _menu.OpenMenu(_menu.tpCounter);

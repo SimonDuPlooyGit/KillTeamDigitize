@@ -21,6 +21,7 @@ public class UnitActivationState : BaseState
     public override void OnEnter()
     {
         _gameManager.CheckTurningPointEnd();
+        _gameManager.mainCamera.isFreecam = true;
         Debug.Log("UnitActivationState entered");
         Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;
