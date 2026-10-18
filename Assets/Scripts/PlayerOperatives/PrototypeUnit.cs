@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 using TMPro;
-using UnityEditor.ShaderKeywordFilter;
 
 //-----PrototypeUnit Class (Specific functionality for the player units, inherits BaseOperativeClass)
 public class PrototypeUnit : BaseOperativeClass
