@@ -22,6 +22,7 @@ public class UnitActivationState : BaseState
     {
         _gameManager.CheckTurningPointEnd();
         _gameManager.mainCamera.isFreecam = true;
+        //Cursor.lockState = CursorLockMode.Locked;
         Debug.Log("UnitActivationState entered");
         Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;
@@ -66,7 +67,8 @@ public class UnitActivationState : BaseState
         }
     }
     
-    private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
+    //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
+    private void OnSelectPerformed(InputAction.CallbackContext ctx)
     {
         if (!Context.PlayerTurn) return; //Stop selection if it isn't the player's turn Popup not your turn here
         

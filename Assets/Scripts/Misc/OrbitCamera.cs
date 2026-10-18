@@ -46,6 +46,7 @@ public class OrbitCamera : MonoBehaviour
         }
     }
 
+    //Logic to use in update to handle orbiting movement
     private void HandleOrbitMovement()
     {
         if (!switchOffForMenu)
@@ -69,6 +70,7 @@ public class OrbitCamera : MonoBehaviour
         }
     }
 
+    //Logic to use in update for freecam movement
     private void HandleFreecamMovement()
     {
         if (!switchOffForMenu)
@@ -92,14 +94,18 @@ public class OrbitCamera : MonoBehaviour
         }
     }
 
+    //Taggle between freecam and orbit cam
     public void ToggleCam()
     {
         isFreecam = !isFreecam;
+        //Cursor.lockState = isFreecam ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
+    //Set to orbit cam and set a unit as the lookat target
     public void SetOrbitTarget(Transform target)
     {
         lookAtTarget = target;
         isFreecam = false;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 }
