@@ -88,10 +88,8 @@ public class TargetingState : BaseState
                     Context.CurrentlySelectedTargetScript = Context.CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
                     Context.TargetUnitSo = Context.CurrentlySelectedTargetScript.operativeData;
                     Debug.Log("Enemy targeted: " + Context.TargetUnitSo.name);
-                    
-                    var targetToLookAt = Context.CurrentlySelectedTarget.transform.position;
-                    targetToLookAt.y = Context.CurrentlySelectedUnit.transform.position.y;
-                    Context.CurrentlySelectedTarget.transform.LookAt(targetToLookAt);
+
+                    Context.CurrentlySelectedUnit.transform.LookAt(new Vector3(Context.CurrentlySelectedTarget.transform.position.x, Context.CurrentlySelectedUnit.transform.position.y, Context.CurrentlySelectedTarget.transform.position.z));
                     
                     //Cover and conceal checking
                     if (Context.CurrentlySelectedTargetScript.Concealed &&

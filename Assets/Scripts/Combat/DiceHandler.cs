@@ -152,7 +152,7 @@ public class DiceHandler : MonoBehaviour
 
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
-        xToHit.text = $"{context.Weapon.atk} to hit";
+        xToHit.text = $"{context.Weapon.hit} to hit";
         xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
         menu.OpenMenu(menu.diceRollMenu);
         SpawnDice(thrownDice, true, isAlly);
