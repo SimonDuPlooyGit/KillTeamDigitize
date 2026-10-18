@@ -105,10 +105,19 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws ATK Dice Physically]==========================================
     public IEnumerator ThrowAttackDice(int numDice, bool isAlly, InformationPackage context)
     {
-        //Move dice spawn point to actie unit
-        diceThrowPoint.position = new Vector3(context.CurrentlySelectedUnit.transform.position.x,
-            context.CurrentlySelectedUnit.transform.position.y + 0.4f,
-            context.CurrentlySelectedUnit.transform.position.z);
+        //Move dice spawn point to active unit
+        if (isAlly)
+        {
+            diceThrowPoint.position = new Vector3(context.CurrentlySelectedUnit.transform.position.x,
+                context.CurrentlySelectedUnit.transform.position.y + 0.4f,
+                context.CurrentlySelectedUnit.transform.position.z);
+        }
+        else if (!isAlly)
+        {
+            diceThrowPoint.position = new Vector3(context.CurrentlyActivatedNpo.transform.position.x,
+                context.CurrentlyActivatedNpo.transform.position.y + 0.4f,
+                context.CurrentlyActivatedNpo.transform.position.z);
+        }
         //clear tempPhysAttackDice to keep track of attack dice. this is used to populate the dice roll menu in throwDefenseDice coroutine
         activePhysAttackDice.Clear();
         _context = context;
