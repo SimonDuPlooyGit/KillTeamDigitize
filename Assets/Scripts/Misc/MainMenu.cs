@@ -58,6 +58,7 @@ public class MainMenu : MonoBehaviour
     public void PlayGame()
     {
         StartCoroutine(FadeRoutine(0f,1f));
+        
     }
 
     private IEnumerator FadeRoutine(float startAlpha, float targetAlpha)
@@ -84,11 +85,5 @@ public class MainMenu : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         SceneManager.LoadScene("SampleScene");
-
-
-
     }
-
-
-
 }
