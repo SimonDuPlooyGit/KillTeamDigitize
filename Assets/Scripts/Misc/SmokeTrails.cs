@@ -2,24 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TempParticles : MonoBehaviour
+public class SmokeTrails : MonoBehaviour
 {
     [SerializeField]
     private Transform firePoint;
     [SerializeField]
     private GameObject smokeTrailPrefab;
-    private float coneAngle = 15f;
+    private float coneAngle = 6f;
     private int emitNumber = 0;
     private float scaleFactor = 5.3f;
 
-    public void SpawnSmoke()
+    public void SpawnSmoke(int numSpawned, Transform startPoint, Transform endPoint)
     {
-        StartCoroutine(spawnSmokeTrails(3,2f));
+        StartCoroutine(spawnSmokeTrails(numSpawned,startPoint,endPoint));
     }
 
     //Spawns a set number of smoke trails with a slightly random ration
-    public IEnumerator spawnSmokeTrails(int numSpawned,float targetLength)
+    public IEnumerator spawnSmokeTrails(int numSpawned,Transform startPoint, Transform endPoint)
     {
+        
+        //Make target length equal to distance between units
+        float targetLength = Vector3.Distance(startPoint.position, endPoint.position);
+        Debug.Log("Target length: " + targetLength);
         //list of all smoke trails spawned to be able to remove them at the end
         List<GameObject> trailList = new List<GameObject>();
 

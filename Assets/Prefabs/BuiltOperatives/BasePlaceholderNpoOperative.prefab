@@ -6153,6 +6153,7 @@ GameObject:
   - component: {fileID: 9220949735064376634}
   - component: {fileID: 4437521795677365091}
   - component: {fileID: 3347268323279254911}
+  - component: {fileID: 3347179771149726701}
   m_Layer: 0
   m_Name: BasePlaceholderNpoOperative
   m_TagString: EnemyUnit
@@ -6424,6 +6425,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3347179771149726701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4978083624946414269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1048e3077299c484680ab48ac780295a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SmokeTrails
+  firePoint: {fileID: 1309909487491554290}
+  smokeTrailPrefab: {fileID: 4685490017653075817, guid: ee3fbe4ce98b8214ca340f7697b7f464, type: 3}
 --- !u!1 &5400613444721974654
 GameObject:
   m_ObjectHideFlags: 0

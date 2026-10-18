@@ -134,7 +134,10 @@ public class CombatState : BaseState
         {
             Context.RetainedNormals = 0;
         }
-        
+
+        Context.CurrentlySelectedUnitScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedNormals,Context.CurrentlySelectedUnit.transform, Context.CurrentlySelectedTarget.transform);
+        Context.CurrentlySelectedUnitScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedCrits, Context.CurrentlySelectedUnit.transform, Context.CurrentlySelectedTarget.transform);
+
         Debug.Log("Remaining crit attacks: " + Context.RetainedCrits.ToString());
         Debug.Log("Remaining normal attacks: " + Context.RetainedNormals.ToString());
     }
