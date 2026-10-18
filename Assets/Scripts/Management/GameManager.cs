@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
 
 //-----GameManager Class-----
 public class GameManager : MonoBehaviour
@@ -14,14 +13,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] public DiceHandler diceHandler;
     [SerializeField] public OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
+    [SerializeField] public GameSetup setup;
 
     //Player states
-    private UnitActivationState unitActivationState ;
+    private UnitActivationState unitActivationState;
     private ActionSelectionState actionSelectionState;
     private MovementState movementState;
     private TargetingState targetingState;
     private CombatState combatState;
     private WeaponSelectState weaponSelectState;
+    private IntroductionState introductionState;
 
     //NPO states
     private NPOSelection npoSelectState;
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
         SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states
+        introductionState = new IntroductionState(SharedContext, this);
         unitActivationState = new UnitActivationState(SharedContext, _input, menu, this);
         actionSelectionState = new ActionSelectionState(SharedContext, menu, this);
         movementState = new MovementState(SharedContext, _input, menu);
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour
         //Define transitions
 
         //Forward transitions
+        AddT(introductionState, unitActivationState, new FuncPredicate(() => introductionState.MoveToFirstTurn));
         AddT(unitActivationState, actionSelectionState,
             new FuncPredicate(() =>
                 SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
@@ -82,7 +85,7 @@ public class GameManager : MonoBehaviour
 
 
         //AddT for pressing a pass turn button
-        _stateMachine.SetState(unitActivationState);
+        _stateMachine.SetState(introductionState);
 
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState,

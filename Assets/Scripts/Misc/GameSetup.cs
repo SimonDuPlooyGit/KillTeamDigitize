@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class GameSetup : MonoBehaviour
 {
+    public bool setupDone;
+    
     // Gameobject references for what will move during setup
     [SerializeField]
     private GameObject board;
@@ -32,6 +34,11 @@ public class GameSetup : MonoBehaviour
     private float staggerDelay = 0.15f;
 
     void Start()
+    {
+        //no op
+    }
+
+    public void InitialiseSetup()
     {
         orbitCamera.ToggleCam();
         terrainData = new PositionData[terrainObjects.Length];
@@ -86,7 +93,7 @@ public class GameSetup : MonoBehaviour
 
         StartCoroutine(SetUpGame());
     }
-
+    
     private IEnumerator SetUpGame()
     {
         yield return new WaitForSeconds(1.5f);
@@ -180,6 +187,8 @@ public class GameSetup : MonoBehaviour
                 }
             }
         }
+
+        setupDone = true;
         orbitCamera.ToggleCam();
     }
 }
