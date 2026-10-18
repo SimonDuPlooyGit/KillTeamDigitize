@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 using TMPro;
+using UnityEditor.ShaderKeywordFilter;
 
 //-----PrototypeUnit Class (Specific functionality for the player units, inherits BaseOperativeClass)
 public class PrototypeUnit : BaseOperativeClass
@@ -19,6 +20,9 @@ public class PrototypeUnit : BaseOperativeClass
     private bool _pathDrawn;
     List<Vector3> _limitedPoints = new List<Vector3>();
     private float _currentPathDistance;
+
+    public bool hasMovedThisActivation = false;
+    public bool hasShotThisActivation = false;
 
     protected override void Awake()
     {
@@ -184,6 +188,7 @@ public class PrototypeUnit : BaseOperativeClass
 
     public void MoveOperativeToMarker()
     {
+        hasMovedThisActivation = true;
         _operativeAgent.destination = moveMarker.transform.position;
         remainingMovement -= _currentPathDistance;
         _currentPathDistance = 0f;
@@ -197,12 +202,40 @@ public class PrototypeUnit : BaseOperativeClass
         }
     }
 
+    public override void ResetForNewTurningPoint()
+    {
+        base.ResetForNewTurningPoint();
+        remainingMovement = meterMovement;
+        hasMovedThisActivation = false;
+        hasShotThisActivation = false;
+        ResetMoveMarker();
+    }
+    
+    public override void ResetForNewActivation()
+    {
+        base.ResetForNewActivation();
+        if (!hasMovedThisActivation)
+        {
+            remainingMovement = meterMovement;
+        }
+        ResetMoveMarker();
+    }
+    
+    private void ResetMoveMarker()
+    {
+        if (moveMarker != null)
+        {
+            moveMarker.transform.position = transform.position;
+            moveMarker.SetActive(false);
+        }
+
+        _limitedPoints.Clear();
+        _currentPathDistance = 0f;
+        _pathDrawn = false;
+    }
+    
     public void Reset()
     {
-        moveMarker.transform.position = transform.position;
-        lineRenderer.enabled = false;
-        moveMarker.SetActive(false);
-        float spentSoFar = meterMovement - remainingMovement;
-        movementInfo.GetComponent<TextMeshProUGUI>().text = $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
+        ResetForNewActivation();
     }
 }

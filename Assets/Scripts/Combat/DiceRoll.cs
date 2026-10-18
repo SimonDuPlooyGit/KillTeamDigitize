@@ -52,7 +52,7 @@ public class DiceRoll : MonoBehaviour
                 topFace = faceValues[i];
             }
         }
-        Debug.Log("Rolled a " + topFace);
+        //Debug.Log("Rolled a " + topFace);
         return topFace;
     }
 }

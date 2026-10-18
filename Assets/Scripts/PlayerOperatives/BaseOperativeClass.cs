@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using Unity.Mathematics.Geometry;
 
 public enum OrderState {Engage, Conceal}
 
@@ -39,8 +41,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject injuredSymbol;
     public GameObject concealInCoverSymbol;
     public GameObject damagePopOut;
+    public TextMeshProUGUI nameText;
 
-    [Header("Materials To Apply")]
+    [Header("Effects To Apply")]
     public GameObject fogEffect;
     public Material glow;
 
@@ -48,26 +51,23 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [SerializeField]
     private ParticleSystem deathParticles;
     private Animator _animator;
-    [SerializeField]
-    private Transform firePoint;
-    [SerializeField]
-    private GameObject smokeTrailPrefab;
-    private float coneAngle = 15f;
     
 
     protected virtual void Awake()
     {
         _animator = GetComponent<Animator>();
-        
         fogEffect.SetActive(false);
-        
         SetHealth();
+        string brokenUpName = string.Concat(name.Select(c => char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(); //Space out the name from pascal case
+        nameText.text = brokenUpName;
         
         //Null check and initialization
         if (operativeData != null)
         {
+            //Debug.Log($"{name} (Instance ID: {gameObject.GetInstanceID()}) has been assigned {operativeData.name} operative data");
             currentWounds = operativeData.wounds;
             currentApl = operativeData.apl;
+            SetApl(operativeData.apl);
             movementStat = operativeData.move;
             meterMovement = (movementStat / 39.37f) * 10;
         }
@@ -81,7 +81,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 samplingPoints.Add(pt.gameObject);
             }
         }
-
+        
     }
 
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
@@ -100,7 +100,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
         closeToCover = CheckDistanceToTerrain();
         FogEffectAndCoverToggle();
     }
-
 
     //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this)
     public float DetermineLosAndDistance(Transform losEnd)
@@ -217,11 +216,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
     {
         currentWounds -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage. Current health: {currentWounds}");
-
         
-
         if(_animator != null && damage>0)
         {
+            if (currentWounds <= (int)Mathf.Ceil((float)operativeData.wounds / 2))
+            {
+                injuredSymbol.SetActive(true);
+            }
             _animator.SetTrigger("TakeDamage");
 
             damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
@@ -240,8 +241,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
             dead = true;
             HandleDeath();
         }
-
-        
     }
     
     //Set the health and healthbar
@@ -276,9 +275,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Set apl in the UI for the move marker
     public void SetApl(int apl)
     {
+        //Debug.Log("SetApl called");
         if (aplCount == null) return;
         var textComponent = aplCount.GetComponent<TextMeshProUGUI>();
-        if (textComponent != null) textComponent.text = currentApl.ToString();
+        if (textComponent != null) textComponent.text = apl.ToString();
     }
 
     //Update the APL on the movemarker
@@ -300,9 +300,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealInCoverSymbol.SetActive(true);
             fogEffect.SetActive(true);
         }
+        else
+        {
+            fogEffect.SetActive(false);
+        }
     }
 
-    public virtual void CheckTurnEnd()
+    public void CheckTurnEnd()
     {
         if (currentApl == 0)
         {
@@ -322,44 +326,53 @@ public abstract class BaseOperativeClass : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    //Spawns a set number of smoke trails with a slightly random ration
-    public IEnumerator spawnSmokeTrails(int numSpawned)
+    public void AddGlow()
     {
-        //list of all smoke trails spawned to be able to remove them at the end
-        List<GameObject> trailList = new List<GameObject>(); 
-
-        for(int i = 0; i < numSpawned; i++)
+        //Debug.Log($"{gameObject.name} has added glow.");
+        MeshRenderer bodyMeshRender = gameObject.GetComponentInChildren<MeshRenderer>();
+        if (bodyMeshRender != null && glow != null)
         {
-            //random offset for rotation
-            Vector2 randomPoint = Random.insideUnitCircle * coneAngle;
-            Quaternion localConeOffset = Quaternion.Euler(randomPoint.x, randomPoint.y, 0f);
-
-            //instantiate trals
-            GameObject trail = Instantiate(smokeTrailPrefab, firePoint);
-
-            //ensure position is correct
-            trail.transform.localPosition = new Vector3(0, 0, 0);
-
-            //apply rotation
-            trail.transform.localRotation = localConeOffset;
-
-            trailList.Add(trail);
-
-            //play particle effect
-            ParticleSystem particles = trail.GetComponentInChildren<ParticleSystem>();
-            if (particles != null)
-            {
-                particles.Play();
-            }
-
+            Material[] mats = bodyMeshRender.materials;
+            System.Array.Resize(ref mats, mats.Length + 1);
+            mats[mats.Length - 1] = glow;
+            bodyMeshRender.materials = mats;
         }
+    }
 
-        //waiting and then deleting all trails
-        yield return new WaitForSeconds(1);
-        foreach(GameObject trail in trailList)
+    public void RemoveGlow()
+    {
+        //Debug.Log($"{gameObject.name} has removed glow.");
+        MeshRenderer bodyMeshRender = gameObject.GetComponentInChildren<MeshRenderer>();
+        
+        Material[] mats = bodyMeshRender.materials;
+        if (mats.Length > 1)
         {
-            Destroy(trail);
+            System.Array.Resize(ref mats, mats.Length - 1);
+            bodyMeshRender.materials = mats;
         }
+    }
 
+    public virtual void ResetForNewTurningPoint()
+    {
+        if (dead) return;
+        
+        acted = false;
+        selected = false;
+
+        if (operativeData != null)
+        {
+            currentApl = operativeData.apl;
+            SetApl(currentApl);
+        }
+        
+        RemoveGlow();
+        if (lineRenderer != null) lineRenderer.enabled = false;
+    }
+
+    public virtual void ResetForNewActivation()
+    {
+        selected = false;
+        RemoveGlow();
+        if (lineRenderer != null) lineRenderer.enabled = false;
     }
 }

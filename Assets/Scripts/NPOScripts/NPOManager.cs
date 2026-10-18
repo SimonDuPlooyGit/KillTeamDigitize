@@ -20,6 +20,7 @@ public class NPOManager : MonoBehaviour
         PrototypeNPO candidate = FindBestCandidate(npoUnits);
         if (candidate != null)
         {
+            candidate.AddGlow();
             candidate.selected = true;
             return candidate;
         }
@@ -27,6 +28,7 @@ public class NPOManager : MonoBehaviour
         candidate = FindNotInCover();
         if (candidate != null)
         {
+            candidate.AddGlow();
             candidate.selected = true;
             return candidate;
         }
@@ -44,11 +46,12 @@ public class NPOManager : MonoBehaviour
 
         foreach (var npo in npos)
         {
-            if (npo == null || npo.dead) continue;
+            if (npo == null || npo.dead || npo.acted) continue;
 
             bool canShoot = npo.CanShoot();
-            Debug.Log($"canShoot: {canShoot}");
+            Debug.Log($"{npo.name} canShoot is: {canShoot}");
             bool canFight = npo.CanFight();
+            Debug.Log($"{npo.name} canFight is: {canFight}");
 
             if (!canShoot && !canFight) continue;
 
@@ -127,6 +130,7 @@ public class NPOManager : MonoBehaviour
             }
         }
         if (closestNpo != null) Debug.Log("FindClosestNPO found: " + closestNpo.name);
+        closestNpo.AddGlow();
         closestNpo.selected = true;
         return closestNpo;
     }

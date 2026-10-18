@@ -15,6 +15,6 @@ public class NPOCoverNodes : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = occupied ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(transform.position, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, 0.20f);
     }
 }

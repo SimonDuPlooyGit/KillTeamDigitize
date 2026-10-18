@@ -42,6 +42,15 @@ public class InformationPackage
     public bool IsWeaponSelected;
     public bool ValidTarget;
     
+    //Keeping track of all units
+    public List<PrototypeUnit> AllPlayerUnits = new();
+    public List<PrototypeNPO> AllNpoUnits = new();
+    
+    //Turning point tracking
+    public int CurrentTurningPoint = 1;
+    public const int LastTurningPoint = 4;
+    public bool PlayerTurn = true;
+    
     public void Reset()
     {
         CurrentlySelectedUnit = null;

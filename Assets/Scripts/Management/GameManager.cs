@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 
@@ -6,11 +7,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private InputActions _input;
-    public InformationPackage SharedContext; //The script holding information to exchange between all scripts and states
+    public InformationPackage SharedContext = new InformationPackage(); //The script holding information to exchange between all scripts and states
     private StateMachine _stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
-    [SerializeField] private DiceHandler diceHandler;
-    [SerializeField] private OrbitCamera mainCamera;
+    [SerializeField] public DiceHandler diceHandler;
+    [SerializeField] public OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
 
     //Player states
@@ -31,57 +32,82 @@ public class GameManager : MonoBehaviour
     {
         _input = new InputActions();
         _stateMachine = new StateMachine();
-        SharedContext = new InformationPackage();
         SharedContext.MainCameraScript = mainCamera;
+        mainCamera.isFreecam = true;
+        SharedContext.AllPlayerUnits = new List<PrototypeUnit>(FindObjectsByType<PrototypeUnit>(FindObjectsSortMode.None));
+        SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states
-        unitActivationState = new UnitActivationState(SharedContext, _input, menu);
-        actionSelectionState = new ActionSelectionState(SharedContext, menu);
+        unitActivationState = new UnitActivationState(SharedContext, _input, menu, this);
+        actionSelectionState = new ActionSelectionState(SharedContext, menu, this);
         movementState = new MovementState(SharedContext, _input, menu);
         targetingState = new TargetingState(SharedContext, _input, menu);
         combatState = new CombatState(SharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(SharedContext, menu);
-        npoSelectState = new NPOSelection(SharedContext, npoManager);
+        npoSelectState = new NPOSelection(SharedContext, npoManager, this);
         npoActionSelectState = new NPOActionSelect(SharedContext);
         //pauseState = new PauseState(SharedContext, _input, _stateMachine);
 
         //Define transitions
 
         //Forward transitions
-        AddT(unitActivationState, actionSelectionState, new FuncPredicate(() => SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
-        AddT(actionSelectionState, movementState, new FuncPredicate(() => !SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
+        AddT(unitActivationState, actionSelectionState,
+            new FuncPredicate(() =>
+                SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
+        AddT(actionSelectionState, movementState,
+            new FuncPredicate(() =>
+                !SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
         AddT(movementState, actionSelectionState, new FuncPredicate(() => movementState.MovementFinished));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => SharedContext.IsShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
         AddT(targetingState, combatState, new FuncPredicate(() => SharedContext.ValidTarget));
         AddT(combatState, unitActivationState, new FuncPredicate(() => SharedContext.IsShootingConfirmed));
-        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => SharedContext.CurrentlySelectedUnitScript.acted));
-        AddT(npoSelectState, npoActionSelectState, new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null));
-        
+        AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => !SharedContext.PlayerTurn));
+        AddT(npoSelectState, npoActionSelectState,
+            new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
+        AddT(npoActionSelectState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
+
+
         //AddT for pressing a pass turn button
         _stateMachine.SetState(unitActivationState);
 
         //Backwards transitions
-        GoBackAState(actionSelectionState, unitActivationState, () =>
-        {
+        GoBackAState(actionSelectionState, unitActivationState,
+            () =>
+            {
+                if (SharedContext.CurrentlySelectedUnitScript.currentApl ==
+                    SharedContext.CurrentlySelectedUnitScript.operativeData.apl)
+                {
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("Can't swap from this unit because it made an action already");
+                    return false;
+                }
+            },
+            () =>
+            {
             SharedContext.CurrentlySelectedUnitScript.selected = false;
             SharedContext.CurrentlySelectedUnitScript.Reset();
             SharedContext.Reset();
-        });
-        GoBackAState(movementState, actionSelectionState, () =>
+            }
+        );
+
+        GoBackAState(movementState, actionSelectionState,()=>true,() =>
         {
             SharedContext.IsPlayerActivationRequested = true;
         });
-        GoBackAState(weaponSelectState, actionSelectionState, () =>
+        GoBackAState(weaponSelectState, actionSelectionState, ()=>true,() =>
         {
             SharedContext.IsShootingRequested = false;
         });
-        GoBackAState(targetingState, weaponSelectState, () =>
+        GoBackAState(targetingState, weaponSelectState,()=>true,() =>
         {
             SharedContext.IsWeaponSelected = false;
             SharedContext.Weapon = null;
         });
-        GoBackAState(combatState, targetingState, () =>
+        GoBackAState(combatState, targetingState,()=>true,() =>
         {
             SharedContext.CurrentlySelectedTarget = null;
         });
@@ -92,12 +118,17 @@ public class GameManager : MonoBehaviour
 
     //Helper function to do backwards transitions with right click as the predicate
     ////The action onBackTransition is logic you want to happen on the transition such as closing menus
-    public void GoBackAState(IState currentState, IState previousState, Action onBackTransition) 
+    public void GoBackAState(IState currentState, IState previousState, Func<bool> canGoBack, Action onBackTransition) 
     {
         AddT(currentState, previousState, new FuncPredicate(() =>
         {
             if (_input.Controls.Deselect.WasPressedThisFrame())
             {
+                if (!canGoBack())
+                {
+                    return false;
+                }
+                
                 onBackTransition?.Invoke();
                 return true;
             }
@@ -162,6 +193,54 @@ public class GameManager : MonoBehaviour
 
     public void OnEndTurnPressed()
     {
-        SharedContext.CurrentlySelectedUnitScript.acted = true;
+        if (SharedContext.CurrentlySelectedUnitScript != null)
+        {
+            SharedContext.CurrentlySelectedUnitScript.acted = true;
+            SharedContext.CurrentlySelectedUnitScript.selected = false;
+            SharedContext.CurrentlySelectedUnitScript.Reset();
+        }
+        
+        SharedContext.Reset();
+        SharedContext.PlayerTurn = false;
+        CheckTurningPointEnd();
+    }
+
+    public void CheckTurningPointEnd()
+    {
+        bool playerUnitsLeft = SharedContext.AllPlayerUnits.Exists(u => !u.dead && !u.acted);
+        bool nposLeft = SharedContext.AllNpoUnits.Exists(n => !n.dead && !n.acted);
+
+        if (!playerUnitsLeft && !nposLeft)
+        {
+            SharedContext.CurrentTurningPoint++;
+            if (SharedContext.CurrentTurningPoint > InformationPackage.LastTurningPoint)
+            {
+                Debug.Log("Last turning point ended");
+                return;
+            }
+            
+            Debug.Log($"Starting turning point {SharedContext.CurrentTurningPoint}");
+
+            foreach (var unit in SharedContext.AllPlayerUnits)
+            {
+                unit.ResetForNewTurningPoint();
+            }
+
+            foreach (var npo in SharedContext.AllNpoUnits)
+            {
+                npo.ResetForNewTurningPoint();
+            }
+            
+            SharedContext.PlayerTurn = true;
+            return;
+        }
+
+        if (SharedContext.PlayerTurn && !playerUnitsLeft)
+        {
+            SharedContext.PlayerTurn = false;
+        } else if (!SharedContext.PlayerTurn && !nposLeft)
+        {
+            SharedContext.PlayerTurn = true;
+        }
     }
 }

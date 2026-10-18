@@ -48,6 +48,7 @@ public class CombatState : BaseState
 
     private IEnumerator ResolveCombat()
     {
+        Context.CurrentlySelectedUnitScript.hasShotThisActivation = true;
         Debug.Log("ResolveCombat");
         
         //Pre-Roll
@@ -169,8 +170,6 @@ public class CombatState : BaseState
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
         Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
-        _menu.actionMenu.gameObject.transform.Find("Buttons").transform.Find("ShootButton").gameObject.SetActive(false);
-        _menu.actionMenu.gameObject.transform.Find("APLCosts").transform.Find("ShootAPL").gameObject.SetActive(false);
         Context.Reset();
     }
     

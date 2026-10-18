@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OperativeTemplate
   apl: 3
   move: 6
-  save: 0
-  wounds: 0
+  save: 3
+  wounds: 14
   keywords: 659
   aabilities: []
   pabilities: []
