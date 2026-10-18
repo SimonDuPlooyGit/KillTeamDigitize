@@ -345,6 +345,8 @@ public class DiceHandler : MonoBehaviour
         {
             Destroy(die.gameObject);
         }
+
+        ClearAllDice();
     }
 
     //Makes the reroll button appear when a panel is selected
