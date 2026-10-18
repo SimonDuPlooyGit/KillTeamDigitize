@@ -70,11 +70,16 @@ public class UnitActivationState : BaseState
     //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
     private void OnSelectPerformed(InputAction.CallbackContext ctx)
     {
-        if (!Context.PlayerTurn) return; //Stop selection if it isn't the player's turn Popup not your turn here
+        if (!Context.PlayerTurn)
+        {
+            Debug.Log("OnSelectPerformed in UnitActivationState but it's not player's turn");
+            return; //Stop selection if it isn't the player's turn Popup not your turn here
+        }
         
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
         {
+            Debug.Log("OnSelectPerformed in UnitActivationState Raycast fired");
             if (hit.collider.gameObject.CompareTag("AllyUnit"))
             {
                 var unitScript = hit.collider.gameObject.GetComponent<PrototypeUnit>();
@@ -92,6 +97,10 @@ public class UnitActivationState : BaseState
                 Context.CurrentlySelectedUnitScript.selected = true;
                 _menu.OpenAction();
                 Context.IsPlayerActivationRequested = true;
+            }
+            else
+            {
+                Debug.Log($"Ray did not hit player it hit {hit.collider.gameObject.name}");
             }
         }
     }

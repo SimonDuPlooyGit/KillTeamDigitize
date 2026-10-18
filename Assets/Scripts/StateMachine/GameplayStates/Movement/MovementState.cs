@@ -63,7 +63,7 @@ public class MovementState : BaseState
         {
             Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
         }
-        Context.CurrentlySelectedUnitScript.Reset();
+        Context.CurrentlySelectedUnitScript.ResetMoveMarker();
     }
 
     private void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move

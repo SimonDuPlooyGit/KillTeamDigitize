@@ -198,7 +198,7 @@ public class PrototypeUnit : BaseOperativeClass
             float spentSoFar = meterMovement - remainingMovement;
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
-            Reset();
+            ResetMoveMarker();
         }
     }
 
@@ -221,7 +221,7 @@ public class PrototypeUnit : BaseOperativeClass
         ResetMoveMarker();
     }
     
-    private void ResetMoveMarker()
+    public void ResetMoveMarker()
     {
         if (moveMarker != null)
         {

@@ -170,7 +170,6 @@ public class CombatState : BaseState
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
         Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
-        Context.Reset();
     }
     
     private void ExecuteRulesInThisStep(AttackTimings currentStep)
