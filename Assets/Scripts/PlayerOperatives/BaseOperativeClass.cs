@@ -303,6 +303,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
         else
         {
+            concealInCoverSymbol.SetActive(false);
             fogEffect.SetActive(false);
         }
     }

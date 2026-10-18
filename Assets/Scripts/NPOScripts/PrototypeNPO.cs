@@ -108,6 +108,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log($"Need to still implement fighting");
         hasFought = true;
         currentApl -= 1;
+        SetApl(currentApl);
         CheckTurnEnd();
     }
 
@@ -118,6 +119,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log("Need to still implement charge");
         hasCharged = true;
         currentApl -= 1;
+        SetApl(currentApl);
         CheckTurnEnd();
     }
 
@@ -173,6 +175,7 @@ public class PrototypeNPO : BaseOperativeClass
 
         shootCount++;
         currentApl -= 1;
+        SetApl(currentApl);
         CheckTurnEnd();
         IsShootingComplete = true;
         isPerformingAnAction = false;
@@ -243,6 +246,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log($"{name} performs Fallback");
         Debug.Log("Still need to implement fallback");
         currentApl -= 2;
+        SetApl(currentApl);
         hasFallenBack = true;
         CheckTurnEnd();
     }
@@ -253,6 +257,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log($"{name} performs Marksman Reposition");
         hasRepositioned = true;
         currentApl -= 1;
+        SetApl(currentApl);
         
         NPOCoverNodes targetCover = FindBestMarksmanCoverNode(true, meterMovement);
 
@@ -276,6 +281,7 @@ public class PrototypeNPO : BaseOperativeClass
             targetCover.occupied = true;
             Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
             currentApl = 0; //End turn early cause it can't shoot at all and we got to cover
+            SetApl(currentApl);
             CheckTurnEnd();
             return;
         }
@@ -302,6 +308,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log($"{name} performs Brawler Reposition");
         hasRepositioned = true;
         currentApl -= 1;
+        SetApl(currentApl);
         SetOrderState(OrderState.Conceal);
         NPOCoverNodes bestBrawlerCover = FindBestBrawlerCover(meterMovement);
 
@@ -334,6 +341,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log($"{name} performs Marksman Dash");
         hasDashed = true;
         currentApl -= 1;
+        SetApl(currentApl);
 
         NPOCoverNodes dashCover = FindAbsoluteClosestCoverNode();
 
@@ -360,6 +368,7 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log($"{name} performs Brawler Dash");
         hasDashed = true;
         currentApl -= 1;
+        SetApl(currentApl);
         
         SetOrderState(OrderState.Conceal);
         
