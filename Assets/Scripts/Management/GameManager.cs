@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -127,7 +128,9 @@ public class GameManager : MonoBehaviour
         {
             SharedContext.CurrentlySelectedTarget = null;
         });
-        
+
+        menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().text = "1";
+
         //Global any transition
         //AnyT(pauseState, new FuncPredicate(() => _input.Controls.Pause.WasPressedThisFrame() && _stateMachine.CurrentState is not PauseState && Time.frameCount > _stateMachine.LastTransitionFrame));
     }
@@ -229,6 +232,7 @@ public class GameManager : MonoBehaviour
         if (!playerUnitsLeft && !nposLeft)
         {
             SharedContext.CurrentTurningPoint++;
+            menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().text = SharedContext.CurrentTurningPoint.ToString();
             if (SharedContext.CurrentTurningPoint > InformationPackage.LastTurningPoint)
             {
                 Debug.Log("Last turning point ended");

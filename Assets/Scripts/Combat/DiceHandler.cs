@@ -105,6 +105,10 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws ATK Dice Physically]==========================================
     public IEnumerator ThrowAttackDice(int numDice, bool isAlly, InformationPackage context)
     {
+        //Move dice spawn point to actie unit
+        diceThrowPoint.position = new Vector3(context.CurrentlySelectedUnit.transform.position.x,
+            context.CurrentlySelectedUnit.transform.position.y + 0.4f,
+            context.CurrentlySelectedUnit.transform.position.z);
         //clear tempPhysAttackDice to keep track of attack dice. this is used to populate the dice roll menu in throwDefenseDice coroutine
         activePhysAttackDice.Clear();
         _context = context;
@@ -171,6 +175,9 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
+        diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
+            context.CurrentlySelectedTarget.transform.position.y + 0.4f,
+            context.CurrentlySelectedTarget.transform.position.z);
         activePhysDefenseDice.Clear();
         _context = context;
         

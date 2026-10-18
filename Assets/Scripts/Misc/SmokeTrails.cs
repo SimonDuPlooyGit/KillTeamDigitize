@@ -8,7 +8,7 @@ public class SmokeTrails : MonoBehaviour
     private Transform firePoint;
     [SerializeField]
     private GameObject smokeTrailPrefab;
-    private float coneAngle = 6f;
+    private float coneAngle = 3f;
     private int emitNumber = 0;
     private float scaleFactor = 5.3f;
 
