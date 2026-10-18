@@ -18,8 +18,10 @@ public class MainMenu : MonoBehaviour
     private float fadeDuration = 1.0f;
     void Start()
     {
+       fadeImage.color = new Color32(0, 0, 0, 255);
        animator = GetComponent<Animator>();
-        CloseBook(); 
+       CloseBook(); 
+       StartCoroutine(IntroFade(1f,0f));
     }
 
     public void CloseBook()
@@ -85,8 +87,29 @@ public class MainMenu : MonoBehaviour
 
         SceneManager.LoadScene("SampleScene");
 
+    }
 
+    private IEnumerator IntroFade(float startAlpha, float targetAlpha)
+    {
+        yield return new WaitForSeconds(0.5f);
+        float elapsedTime = 0f;
+        Color color = fadeImage.color;
+        fadeImage.raycastTarget = true;
 
+        Color startColor = new Color(color.r, color.g, color.b, startAlpha);
+        Color targetColor = new Color(color.r, color.g, color.b, targetAlpha);
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / fadeDuration);
+
+            fadeImage.color = Color.Lerp(startColor, targetColor, t);
+            yield return null;
+        }
+
+        fadeImage.color = targetColor;
+        fadeImage.raycastTarget = false;
     }
 
 
