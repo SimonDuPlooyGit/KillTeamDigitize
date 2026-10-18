@@ -75,6 +75,7 @@ public class TargetingState : BaseState
         if (Context.CurrentlySelectedUnitScript.selected)
         {
             Debug.Log($"Shooting a targeting raycast for {Context.CurrentlySelectedUnitScript.name}");
+            
             //LOS checking and line renderer code
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
@@ -87,6 +88,10 @@ public class TargetingState : BaseState
                     Context.CurrentlySelectedTargetScript = Context.CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
                     Context.TargetUnitSo = Context.CurrentlySelectedTargetScript.operativeData;
                     Debug.Log("Enemy targeted: " + Context.TargetUnitSo.name);
+                    
+                    var targetToLookAt = Context.CurrentlySelectedTarget.transform.position;
+                    targetToLookAt.y = Context.CurrentlySelectedUnit.transform.position.y;
+                    Context.CurrentlySelectedTarget.transform.LookAt(targetToLookAt);
                     
                     //Cover and conceal checking
                     if (Context.CurrentlySelectedTargetScript.Concealed &&

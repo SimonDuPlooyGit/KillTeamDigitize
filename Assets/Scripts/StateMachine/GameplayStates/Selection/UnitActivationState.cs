@@ -79,13 +79,13 @@ public class UnitActivationState : BaseState
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
         {
-            Debug.Log("OnSelectPerformed in UnitActivationState Raycast fired");
+            //Debug.Log("OnSelectPerformed in UnitActivationState Raycast fired");
             if (hit.collider.gameObject.CompareTag("AllyUnit"))
             {
                 var unitScript = hit.collider.gameObject.GetComponent<PrototypeUnit>();
                 if (unitScript != null && unitScript.acted)
                 {
-                    Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
+                    //Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
                     return;
                 }
                 
@@ -100,7 +100,7 @@ public class UnitActivationState : BaseState
             }
             else
             {
-                Debug.Log($"Ray did not hit player it hit {hit.collider.gameObject.name}");
+                //Debug.Log($"Ray did not hit player it hit {hit.collider.gameObject.name}");
             }
         }
     }
