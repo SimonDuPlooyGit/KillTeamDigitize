@@ -89,21 +89,25 @@ public class NPOBehaviour : MonoBehaviour
         //1. FIGHT
         var fightSequence = new Sequence("Fight Sequence", priority: 40);
         fightSequence.AddChild(new Leaf("Can Fight?", new Condition(itsOwnNpoScript.CanFight)));
-        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFight)));
+        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFight))); //Change to async
         
         //2. CHARGE
         var chargeSequence = new Sequence("Charge Sequence", priority: 30);
         chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(itsOwnNpoScript.CanCharge)));
-        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformCharge)));
+        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformCharge))); //Change to async
         
         // 3. CONCEAL & REPOSITION
         var concealRepositionSequence = new Sequence("Conceal & Reposition", priority: 20);
+        concealRepositionSequence.AddChild(new Leaf("Can Reposition?", new Condition(itsOwnNpoScript.CanReposition)));
         concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => itsOwnNpoScript.SetOrderState(OrderState.Conceal))));
-        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new ActionStrategy(itsOwnNpoScript.PerformReposition)));
+        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformReposition, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(concealRepositionSequence);
 
         // 4. DASH
-        _treeRoot.AddChild(new Leaf("Dash", new ActionStrategy(itsOwnNpoScript.PerformDash), priority: 10));
+        var dashSequence = new Sequence("Dash Sequence", priority: 10);
+        dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
+        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDash, itsOwnNpoScript.MovementFinished)));
+        _treeRoot.AddChild(dashSequence);
     }
     
     //MARKSMAN ARCHETYPE PRIORITY
@@ -140,7 +144,7 @@ public class NPOBehaviour : MonoBehaviour
         // 4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
         dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new ActionStrategy(itsOwnNpoScript.PerformDash))); //Change this to async with a dash finish checker
+        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDash, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(dashSequence);
     }
 
@@ -164,8 +168,59 @@ public class NPOBehaviour : MonoBehaviour
             Debug.Log("No Tree");
         }
     }
-
+    
     public void TickTurn()
+    {
+        if (!IsRunning || _treeRoot == null) return;
+
+        if (itsOwnNpoScript.acted || itsOwnNpoScript.currentApl <= 0)
+        {
+            EndNpoTurn("No APL or already acted");
+            return;
+        }
+    
+        Node.Status status = _treeRoot.Process();
+
+        if (status == Node.Status.Running)
+        {
+            return;
+        }
+    
+        if (status == Node.Status.Success)
+        {
+            Debug.Log($"{itsOwnNpoScript.name} action completed. Re-evaluate priority action");
+
+            if (itsOwnNpoScript.currentApl > 0 && !itsOwnNpoScript.acted)
+            {
+                _treeRoot.Reset();
+            }
+            else
+            {
+                EndNpoTurn("APL depleted after action");
+            }
+        }
+        else if (status == Node.Status.Failure)
+        {
+            EndNpoTurn("Tree returned failure: no valid actions found");
+        }
+    }
+
+    private void EndNpoTurn(string reason)
+    {
+        IsRunning = false;
+        itsOwnNpoScript.acted = true;
+        itsOwnNpoScript.RemoveGlow();
+        itsOwnNpoScript.selected = false;
+
+        Debug.Log($"{itsOwnNpoScript.name} turn ended. Reason: {reason}");
+
+        if (gameManagerReference != null && gameManagerReference.SharedContext != null)
+        {
+            gameManagerReference.SharedContext.PlayerTurn = true;
+        }
+    }
+    
+    /*public void TickTurn()
     {
         if (!IsRunning || _treeRoot == null) return;
 
@@ -207,5 +262,5 @@ public class NPOBehaviour : MonoBehaviour
             IsRunning = false;
             Debug.Log($"{itsOwnNpoScript.name} Turn ended since Tree returned failure: no valid actions found");
         }
-    }
+    }*/
 }

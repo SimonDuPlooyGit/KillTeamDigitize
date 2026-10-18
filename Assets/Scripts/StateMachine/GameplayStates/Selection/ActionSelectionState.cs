@@ -25,6 +25,7 @@ public class ActionSelectionState : BaseState
         _menu.OpenMenu(_menu.actionMenu);
         _menu.OpenMenu(_menu.tpCounter);
         _menu.OpenMenu(_menu.objective);
+        Context.IsPlayerActivationRequested = true;
         
         ActivateOrDeactivateActionButtons();
         

@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
         SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states
-        unitActivationState = new UnitActivationState(SharedContext, _input, menu);
+        unitActivationState = new UnitActivationState(SharedContext, _input, menu, this);
         actionSelectionState = new ActionSelectionState(SharedContext, menu);
         movementState = new MovementState(SharedContext, _input, menu);
         targetingState = new TargetingState(SharedContext, _input, menu);
@@ -224,17 +224,16 @@ public class GameManager : MonoBehaviour
 
             foreach (var unit in SharedContext.AllPlayerUnits)
             {
-                unit.acted = false;
-                unit.currentApl = unit.operativeData.apl;
-                unit.selected = false;
+                unit.ResetForNewTurningPoint();
             }
 
             foreach (var npo in SharedContext.AllNpoUnits)
             {
-                npo.acted = false;
-                npo.currentApl = npo.operativeData.apl;
-                npo.selected = false;
+                npo.ResetForNewTurningPoint();
             }
+            
+            SharedContext.PlayerTurn = true;
+            return;
         }
 
         if (SharedContext.PlayerTurn && !playerUnitsLeft)

@@ -9,15 +9,18 @@ public class UnitActivationState : BaseState
     
     private readonly InputActions _input; //Needs access to the input system from GameManager
     private readonly MenuPanel _menu; //Needs access to the menu from GameManager
+    private readonly GameManager _gameManager;
 
-    public UnitActivationState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
+    public UnitActivationState(InformationPackage context, InputActions input, MenuPanel menu, GameManager gm) : base(context)
     {
         _input = input;
         _menu = menu;
+        _gameManager = gm;
     }
     
     public override void OnEnter()
     {
+        _gameManager.CheckTurningPointEnd();
         Debug.Log("UnitActivationState entered");
         Context.Reset();
         _input.Controls.Select.performed += OnSelectPerformed;

@@ -351,4 +351,28 @@ public abstract class BaseOperativeClass : MonoBehaviour
             bodyMeshRender.materials = mats;
         }
     }
+
+    public virtual void ResetForNewTurningPoint()
+    {
+        if (dead) return;
+        
+        acted = false;
+        selected = false;
+
+        if (operativeData != null)
+        {
+            currentApl = operativeData.apl;
+            SetApl(currentApl);
+        }
+        
+        RemoveGlow();
+        if (lineRenderer != null) lineRenderer.enabled = false;
+    }
+
+    public virtual void ResetForNewActivation()
+    {
+        selected = false;
+        RemoveGlow();
+        if (lineRenderer != null) lineRenderer.enabled = false;
+    }
 }

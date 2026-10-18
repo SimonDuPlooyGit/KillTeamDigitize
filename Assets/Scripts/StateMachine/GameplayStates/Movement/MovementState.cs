@@ -23,6 +23,7 @@ public class MovementState : BaseState
         Debug.Log("MovementState entered");
         _input.Controls.Move.performed += OnMoveInputPerformed;
         _menu.moveButton2.SetActive(true);
+        MovementFinished = false;
         //You can activate move button here
 
         //Tutorial panel stuff

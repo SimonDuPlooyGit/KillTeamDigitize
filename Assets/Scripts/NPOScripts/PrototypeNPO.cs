@@ -218,7 +218,9 @@ public class PrototypeNPO : BaseOperativeClass
     public void PerformReposition()
     {
         Debug.Log($"{name} performs Reposition");
-
+        hasRepositioned = true;
+        currentApl -= 1;
+        
         NPOCoverNodes targetCover = FindBestCoverNode(true, meterMovement);
 
         if (targetCover != null)
@@ -227,72 +229,64 @@ public class PrototypeNPO : BaseOperativeClass
             ExecuteMoveToCover(targetCover, meterMovement);
             Debug.Log($"{name} repositioned into {targetCover.name} and changed to ENGAGE");
             targetCover.occupied = true;
-            hasRepositioned = true;
-            currentApl -= 1;
             CheckTurnEnd();
             return;
         }
         
-        targetCover = FindBestCoverNode(requireShootLos: false, meterMovement);
+        targetCover = FindBestCoverNode(false, meterMovement);
         
         if (targetCover != null)
         {
             SetOrderState(OrderState.Conceal);
-
-            if (targetCover != null)
-            {
-                ExecuteMoveToCover(targetCover, meterMovement);
-                Debug.Log($"{name} repositioned into {targetCover.name} and changed to CONCEAL");
-                targetCover.occupied = true;
-                Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
-                hasRepositioned = true;
-                currentApl = 0; //End turn early cause it can't shoot at all and we got to cover
-                CheckTurnEnd(); ;
-                return;
-            }
+            ExecuteMoveToCover(targetCover, meterMovement);
+            Debug.Log($"{name} repositioned into {targetCover.name} and changed to CONCEAL");
+            targetCover.occupied = true;
+            Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
+            currentApl = 0; //End turn early cause it can't shoot at all and we got to cover
+            CheckTurnEnd();
+            return;
         }
         
-        NPOCoverNodes partialCover = FindBestCoverNode(false, meterMovement+dashDistanceScaled);
-            
-        if (partialCover != null)
+        NPOCoverNodes coverToGetTo = FindAbsoluteClosestCoverNode();
+
+        if (coverToGetTo != null)
         {
-            ExecuteMoveToCover(partialCover, meterMovement);
-            Debug.Log($"{name} could not fully reach cover, repositioning closer to ${partialCover.name}");
-            PerformDash();
+            SetOrderState(OrderState.Conceal);
+            ExecuteMoveToCover(coverToGetTo, meterMovement);
+            Debug.Log($"{name} cannot reach cover in 1 turn. Moving {meterMovement}m closer to {coverToGetTo.name}");
         }
         else
         {
-            MoveTowardSafePosition();
-            Debug.Log($"{name} found no cover nodes, stepping closer to safety.");
+            Debug.LogWarning($"{name} found no unoccupied cover");
         }
         
-        hasRepositioned = true;
-        currentApl -= 1;
         CheckTurnEnd();
     }
 
     public void PerformDash()
     {
         Debug.Log($"{name} performs Dash");
-        
-        NPOCoverNodes dashCover = FindBestCoverNode(true, dashDistanceScaled);
+        hasDashed = true;
+        currentApl -= 1;
+
+        NPOCoverNodes dashCover = FindAbsoluteClosestCoverNode();
 
         if (dashCover != null)
         {
             ExecuteMoveToCover(dashCover, dashDistanceScaled);
-            Debug.Log($"{name} dashed into {dashCover.name}");
-            dashCover.occupied = true;
+            Debug.Log($"{name} dashed {dashDistanceScaled}m closer to {dashCover.name}");
+            if (Vector3.Distance(transform.position, dashCover.spotToStand.position) <= 0.1f)
+            {
+                dashCover.occupied = true;
+            }
         }
         else
         {
-            MoveTowardSafePosition();
-            Debug.Log($"{name} dashed into safety");
+            Debug.Log($"{name} found no valid cover node for dash");
         }
         
-        hasDashed = true;
-        currentApl -= 1;
         CheckTurnEnd();
-}
+    }
 
     private Vector3 LimitDestination(Vector3 destination, float maxDistance)
     {
@@ -325,8 +319,14 @@ public class PrototypeNPO : BaseOperativeClass
 
     private void ExecuteMoveToCover(NPOCoverNodes coverNode, float maxDistance)
     {
+        if (currentCoverSpot != null && currentCoverSpot != coverNode)
+        {
+            currentCoverSpot.occupied = false;
+            Debug.Log($"{name} left {currentCoverSpot.name}");
+        }
+        
         currentCoverSpot = coverNode;
-        //coverNode.occupied = true;
+        
         Vector3 limitedSpot = LimitDestination(coverNode.spotToStand.position, maxDistance);
         npoAgent.SetDestination(limitedSpot);
     }
@@ -336,15 +336,34 @@ public class PrototypeNPO : BaseOperativeClass
         Debug.Log("MoveTowardSafePosition called");
     }
 
-    private NPOCoverNodes FindClosestCoverNode()
+    private NPOCoverNodes FindAbsoluteClosestCoverNode()
     {
-        Debug.Log("FindClosestCoverCalled cause no cover in reposition range");
+        NPOCoverNodes closest = null;
+        float shortestDistance = float.MaxValue;
+        
+        foreach (var node in allCoverNodes)
+        {
+            if (node.occupied) continue;
+
+            float pathDistance = GetPathDistance(transform.position, node.spotToStand.position);
+            if (pathDistance < shortestDistance)
+            {
+                shortestDistance = pathDistance;
+                closest = node;
+            }
+        }
+        return closest;
+    }
+    
+    private NPOCoverNodes FindClosestDeepCoverNode()
+    {
+        Debug.Log("FindClosestDeepCoverCalled for dash");
         NPOCoverNodes closest = null;
         float minDist = float.MaxValue;
 
         foreach (var node in allCoverNodes)
         {
-            if (node.occupied) continue;
+            if (node.occupied || !node.deepCover) continue;
             float distance = Vector3.Distance(transform.position, node.spotToStand.position);
             if (distance < minDist)
             {
@@ -352,7 +371,9 @@ public class PrototypeNPO : BaseOperativeClass
                 closest = node;
             }
         }
-
+        
+        Debug.Log($"FindClosestDeepCoverCalled found {closest.name} and it is {minDist} meters away");
+        Debug.Log($"At the time of this cover being found dash distance for NPO is {dashDistanceScaled}");
         return closest;
     }
 
@@ -453,6 +474,25 @@ public class PrototypeNPO : BaseOperativeClass
         return CheckDistanceToTerrain();
     }
 
+    public override void ResetForNewTurningPoint()
+    {
+        base.ResetForNewTurningPoint();
+
+        if (dead && currentCoverSpot != null)
+        {
+            currentCoverSpot.occupied = false;
+            currentCoverSpot = null;
+        }
+        
+        ResetActionFlags();
+    }
+
+    public override void ResetForNewActivation()
+    {
+        base.ResetForNewActivation();
+        ResetActionFlags();
+    }
+    
     public void ResetActionFlags()
     {
         hasRepositioned = false;
@@ -461,16 +501,8 @@ public class PrototypeNPO : BaseOperativeClass
         hasCharged = false;
         hasFallenBack = false;
         shootCount = 0;
-
-        if (operativeData != null)
-        {
-            currentApl = operativeData.apl;
-            SetApl(currentApl);
-        }
-        else
-        {
-            Debug.LogError("Operative data is null");
-        }
+        
+        
     }
 
     public NPOCoverNodes FindBestCoverNode(bool requireShootLos, float maxMovement)
@@ -483,13 +515,13 @@ public class PrototypeNPO : BaseOperativeClass
     {
         if (node.occupied)
         {
-            Debug.Log($"{node.name} is occupied");
+            //Debug.Log($"{node.name} is occupied");
             continue;
         }
 
         if (node.deepCover != !requireShootLos) 
         {
-            Debug.Log($"{node.name} cover type does not match requirement (node.deepCover={node.deepCover}, requireShootLOS={requireShootLos})");
+            //Debug.Log($"{node.name} cover type does not match requirement (node.deepCover={node.deepCover}, requireShootLOS={requireShootLos})");
             continue;
         }
         
@@ -613,7 +645,7 @@ public class PrototypeNPO : BaseOperativeClass
 
     public bool MovementFinished()
     {
-        if (npoAgent == null) return true;
+        //if (npoAgent == null) return true;
 
         if (npoAgent.pathPending) return false;
 
