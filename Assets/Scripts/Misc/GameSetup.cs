@@ -187,6 +187,8 @@ public class GameSetup : MonoBehaviour
                 }
             }
         }
+
+        setupDone = true;
         orbitCamera.ToggleCam();
     }
 }
