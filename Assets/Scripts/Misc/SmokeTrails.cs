@@ -27,6 +27,9 @@ public class SmokeTrails : MonoBehaviour
         //list of all smoke trails spawned to be able to remove them at the end
         List<GameObject> trailList = new List<GameObject>();
 
+        Vector3 localDirection = firePoint.InverseTransformDirection(endPoint.position - startPoint.position);
+        Quaternion baseLocalRotation = Quaternion.LookRotation(localDirection);
+
         //calculate correct Z scale for particle object to achieve desired distance
         targetLength -= 0.08f;
         float scaledLength = targetLength / scaleFactor;
@@ -40,6 +43,8 @@ public class SmokeTrails : MonoBehaviour
             Vector2 randomPoint = Random.insideUnitCircle * coneAngle;
             Quaternion localConeOffset = Quaternion.Euler(randomPoint.x, randomPoint.y, 0f);
 
+            Quaternion finalLocalRotation = baseLocalRotation * localConeOffset;
+
             //instantiate trals
             GameObject trail = Instantiate(smokeTrailPrefab, firePoint);
 
@@ -47,7 +52,7 @@ public class SmokeTrails : MonoBehaviour
             trail.transform.localPosition = new Vector3(0, 0, 0);
 
             //apply rotation
-            trail.transform.localRotation = localConeOffset;
+            trail.transform.localRotation = finalLocalRotation;
 
             //apply scaling
             trail.transform.localScale = new Vector3(
