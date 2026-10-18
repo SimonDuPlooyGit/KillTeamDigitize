@@ -42,6 +42,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject concealInCoverSymbol;
     public GameObject damagePopOut;
     public TextMeshProUGUI nameText;
+    public GameObject unitBase;
 
     [Header("Effects To Apply")]
     public GameObject fogEffect;
@@ -323,6 +324,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
         deathParticles.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
         deathParticles.Play();
         yield return null;
+        unitUI.SetActive(false);
+        unitBase.SetActive(false);
+        yield return new WaitForSeconds(1f);
         gameObject.SetActive(false);
     }
 

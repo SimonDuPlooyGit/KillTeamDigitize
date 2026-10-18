@@ -6388,6 +6388,7 @@ MonoBehaviour:
   concealInCoverSymbol: {fileID: 4513460434168829879}
   damagePopOut: {fileID: 2512070335018532520}
   nameText: {fileID: 7362769743932105703}
+  unitBase: {fileID: 2063543643037542596}
   fogEffect: {fileID: 3681392821243835701}
   glow: {fileID: 2100000, guid: a2ff2e93a79c10f48a1dac3ab7e2288c, type: 2}
   deathParticles: {fileID: 4660242697195336866}
@@ -7395,6 +7396,10 @@ PrefabInstance:
     - target: {fileID: 346839773953518404, guid: 9a823623a5c0b9d4b86470a2a5553ba2, type: 3}
       propertyPath: m_Name
       value: Death Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 481662021974347092, guid: 9a823623a5c0b9d4b86470a2a5553ba2, type: 3}
+      propertyPath: playOnAwake
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5687206680496792262, guid: 9a823623a5c0b9d4b86470a2a5553ba2, type: 3}
       propertyPath: m_LocalPosition.x
