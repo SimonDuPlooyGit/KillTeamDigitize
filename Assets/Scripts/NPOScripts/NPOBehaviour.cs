@@ -89,7 +89,7 @@ public class NPOBehaviour : MonoBehaviour
         //1. FIGHT
         var fightSequence = new Sequence("Fight Sequence", priority: 40);
         fightSequence.AddChild(new Leaf("Can Fight?", new Condition(itsOwnNpoScript.CanFight)));
-        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFight))); //Change to async
+        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFightB))); //Change to async
         
         //2. CHARGE
         var chargeSequence = new Sequence("Charge Sequence", priority: 30);
@@ -100,13 +100,13 @@ public class NPOBehaviour : MonoBehaviour
         var concealRepositionSequence = new Sequence("Conceal & Reposition", priority: 20);
         concealRepositionSequence.AddChild(new Leaf("Can Reposition?", new Condition(itsOwnNpoScript.CanReposition)));
         concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => itsOwnNpoScript.SetOrderState(OrderState.Conceal))));
-        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformReposition, itsOwnNpoScript.MovementFinished)));
+        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformRepositionB, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(concealRepositionSequence);
 
         // 4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
         dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDash, itsOwnNpoScript.MovementFinished)));
+        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDashB, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(dashSequence);
     }
     
@@ -138,13 +138,13 @@ public class NPOBehaviour : MonoBehaviour
         // 3. REPOSITION
         var repoSequence = new Sequence("Reposition Sequence", priority: 20);
         repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(itsOwnNpoScript.CanReposition)));
-        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformReposition, itsOwnNpoScript.MovementFinished)));
+        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformRepositionM, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(repoSequence);
 
         // 4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
         dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDash, itsOwnNpoScript.MovementFinished)));
+        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDashM, itsOwnNpoScript.MovementFinished)));
         _treeRoot.AddChild(dashSequence);
     }
 

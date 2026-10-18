@@ -7,10 +7,10 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private InputActions _input;
-    public InformationPackage SharedContext; //The script holding information to exchange between all scripts and states
+    public InformationPackage SharedContext = new InformationPackage(); //The script holding information to exchange between all scripts and states
     private StateMachine _stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
-    [SerializeField] private DiceHandler diceHandler;
+    [SerializeField] public DiceHandler diceHandler;
     [SerializeField] private OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
 
@@ -32,10 +32,8 @@ public class GameManager : MonoBehaviour
     {
         _input = new InputActions();
         _stateMachine = new StateMachine();
-        SharedContext = new InformationPackage();
         SharedContext.MainCameraScript = mainCamera;
-        SharedContext.AllPlayerUnits =
-            new List<PrototypeUnit>(FindObjectsByType<PrototypeUnit>(FindObjectsSortMode.None));
+        SharedContext.AllPlayerUnits = new List<PrototypeUnit>(FindObjectsByType<PrototypeUnit>(FindObjectsSortMode.None));
         SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states

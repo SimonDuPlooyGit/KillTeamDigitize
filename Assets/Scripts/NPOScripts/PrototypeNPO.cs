@@ -32,17 +32,33 @@ public class PrototypeNPO : BaseOperativeClass
     public UnitArchetype archetype = UnitArchetype.Marksman;
     
     [Header("Combat References")]
-    public DiceHandler diceHandler;
+    public DiceHandler _diceHandler;
     private InformationPackage _context;
     public bool IsShootingComplete { get; private set; }
+    public bool isPerformingAnAction  {get; private set; }
+    private PrototypeUnit currentShootTarget;
     
     //Action conditions (Predicates)
-    public bool CanShoot() => currentOrder == OrderState.Engage && HasValidShootTarget(npoManager.playerUnits) && (shootCount < (canShootTwice ? 2 : 1));
-    public bool CanReposition() => !hasRepositioned && currentApl > 0;
-    public bool CanDash() => !hasDashed && currentApl > 0;
-    public bool CanFight() => !hasFought && InControlRange() && currentApl > 0;
-    public bool CanCharge() => !hasCharged && PossibleChargeTarget() && currentApl > 0;
-    public bool Fallback() => !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
+    public bool CanShoot()
+    {
+        if (isPerformingAnAction) return false;
+        if (currentOrder != OrderState.Engage) return false;
+        if (shootCount >= (canShootTwice ? 2 : 1)) return false;
+        if (!MovementFinished()) return false;
+
+        if (currentShootTarget != null && IsValidTarget(currentShootTarget))
+        {
+            return true;
+        }
+
+        return HasValidShootTarget(npoManager.playerUnits);
+    }
+
+    public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && currentApl > 0;
+    public bool CanDash() => !isPerformingAnAction && !hasDashed && currentApl > 0;
+    public bool CanFight() => !isPerformingAnAction && !hasFought && InControlRange() && currentApl > 0;
+    public bool CanCharge() => !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
 
     public OperativeTemplate NpoData
     {
@@ -51,10 +67,24 @@ public class PrototypeNPO : BaseOperativeClass
     
     protected override void Awake()
     {
+        canShootTwice = false;
         base.Awake();
         //Debug.Log($"Double checking that in PrototypeNPO that {name} is assigned to {NpoData.name}");
         GameManager gm = FindFirstObjectByType<GameManager>();
+        if (gm == null)
+        {
+            Debug.LogWarning($"{name} didn't get gm");
+        }
         _context = gm.SharedContext;
+        if (_context == null)
+        {
+            Debug.LogWarning($"{name} didn't get context from gm");
+        }
+        _diceHandler = gm.diceHandler;
+        if (_diceHandler == null)
+        {
+            Debug.LogWarning($"{name} didn't get diceHandler from gm");
+        }
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
@@ -70,7 +100,9 @@ public class PrototypeNPO : BaseOperativeClass
     }
 
     //Action implementations
-    public void PerformFight()
+    
+    //Fight action for brawler
+    public void PerformFightB()
     {
         Debug.Log($"{name} performs Fight");
         Debug.Log($"Need to still implement fighting");
@@ -79,6 +111,7 @@ public class PrototypeNPO : BaseOperativeClass
         CheckTurnEnd();
     }
 
+    //Brawler charge action
     public void PerformCharge()
     {
         Debug.Log($"{name} performs Charge");
@@ -88,13 +121,16 @@ public class PrototypeNPO : BaseOperativeClass
         CheckTurnEnd();
     }
 
+    //Called in behaviour tree to start ExecuteNpoShoot coroutine
     public void PerformShoot()
     {
         Debug.Log($"{name} performs Shoot");
+        isPerformingAnAction = true;
         IsShootingComplete = false;
         StartCoroutine(ExecuteNpoShoot());
     }
 
+    //Coroutine for Executing an NPOs shoot action calls DiceHandler dice throwing methods
     private IEnumerator ExecuteNpoShoot()
     {
         Debug.Log($"{name} starts shoot coroutine");
@@ -113,44 +149,36 @@ public class PrototypeNPO : BaseOperativeClass
             }
         }
 
-        PrototypeUnit targetPlayer = null;
-        foreach (var player in npoManager.playerUnits)
-        {
-            if (IsValidTarget(player))
-            {
-                targetPlayer = player;
-                break;
-            }
-        }
-
-        if (targetPlayer != null && diceHandler != null)
+        if (currentShootTarget != null && _diceHandler != null)
         {
             _context.ActivatedUnitSo = operativeData;
             _context.Weapon = chosenWeapon;
             _context.CurrentlySelectedUnitScript = null;
-            _context.CurrentlySelectedTargetScript = targetPlayer;
-            _context.TargetUnitSo = targetPlayer.operativeData;
+            _context.CurrentlySelectedTargetScript = currentShootTarget;
+            _context.TargetUnitSo = currentShootTarget.operativeData;
             
             _context.AttackRolls.Clear();
             _context.DefenseRolls.Clear();
             _context.RetainedCrits = 0;
             _context.RetainedNormals = 0;
 
-            yield return StartCoroutine(diceHandler.ThrowAttackDice(chosenWeapon.atk, false, _context));
-            yield return StartCoroutine(diceHandler.ThrowDefenseDice(_context.NumDefenseDiceRoll, false, _context));
-            EvaluateNpoCombatHitsAndSaves(_context, targetPlayer);
+            yield return StartCoroutine(_diceHandler.ThrowAttackDice(chosenWeapon.atk, false, _context));
+            yield return StartCoroutine(_diceHandler.ThrowDefenseDice(_context.NumDefenseDiceRoll, false, _context));
+            EvaluateNpoCombatHitsAndSaves(_context, currentShootTarget);
         }
         else
         {
-            Debug.Log("No LOS");
+            Debug.Log("target player is null or dice handler is null");
         }
 
         shootCount++;
         currentApl -= 1;
         CheckTurnEnd();
         IsShootingComplete = true;
+        isPerformingAnAction = false;
     }
 
+    //Handle hitting player in combat for shooting
     private void EvaluateNpoCombatHitsAndSaves(InformationPackage context, PrototypeUnit target)
     {
         int crit = 0;
@@ -194,18 +222,22 @@ public class PrototypeNPO : BaseOperativeClass
             norm = 0;
         }
 
+        Debug.Log($"{name} is hitting {target.name} for {norm} hits of {context.Weapon.dmgNorm} and {crit} hit of {context.Weapon.dmgCrit}");
         int totalDamage = (crit * context.Weapon.dmgCrit) + (norm * context.Weapon.dmgNorm);
+        Debug.Log($"This totals to {totalDamage} damage");
         target.TakeDamage(totalDamage);
         target.UpdateHealth(target.currentWounds, target.operativeData.wounds);
-        
-        diceHandler.ClearDiceRolls();
+        currentShootTarget = null;
+        _diceHandler.ClearDiceRolls();
     }
 
+    //Query if the shooting logic is all done
     public bool IsShootingFinished()
     {
         return IsShootingComplete;
     }
 
+    //Marksman fallback behaviour
     public void PerformFallback()
     {
         Debug.Log($"{name} performs Fallback");
@@ -215,13 +247,14 @@ public class PrototypeNPO : BaseOperativeClass
         CheckTurnEnd();
     }
 
-    public void PerformReposition()
+    //Marksman reposition behaviour
+    public void PerformRepositionM()
     {
-        Debug.Log($"{name} performs Reposition");
+        Debug.Log($"{name} performs Marksman Reposition");
         hasRepositioned = true;
         currentApl -= 1;
         
-        NPOCoverNodes targetCover = FindBestCoverNode(true, meterMovement);
+        NPOCoverNodes targetCover = FindBestMarksmanCoverNode(true, meterMovement);
 
         if (targetCover != null)
         {
@@ -233,7 +266,7 @@ public class PrototypeNPO : BaseOperativeClass
             return;
         }
         
-        targetCover = FindBestCoverNode(false, meterMovement);
+        targetCover = FindBestMarksmanCoverNode(false, meterMovement);
         
         if (targetCover != null)
         {
@@ -263,9 +296,42 @@ public class PrototypeNPO : BaseOperativeClass
         CheckTurnEnd();
     }
 
-    public void PerformDash()
+    //Brawler reposition logic
+    public void PerformRepositionB()
     {
-        Debug.Log($"{name} performs Dash");
+        Debug.Log($"{name} performs Brawler Reposition");
+        hasRepositioned = true;
+        currentApl -= 1;
+        SetOrderState(OrderState.Conceal);
+        NPOCoverNodes bestBrawlerCover = FindBestBrawlerCover(meterMovement);
+
+        if (bestBrawlerCover != null)
+        {
+            if (currentCoverSpot != null)
+            {
+                currentCoverSpot.occupied = false;
+                Debug.Log($"{name} left {currentCoverSpot.name}");
+            }
+            ExecuteMoveToCover(bestBrawlerCover, meterMovement);
+            Debug.Log($"{name} brawler-repositioned into {bestBrawlerCover.name} under CONCEAL");
+            bestBrawlerCover.occupied = true;
+        }
+        else
+        {
+            if (currentCoverSpot != null)
+            {
+                currentCoverSpot.occupied = false;
+            }
+            MoveToNearestPlayer(meterMovement);
+        }
+        
+        CheckTurnEnd();
+    }
+
+    //Marksman dash logic
+    public void PerformDashM()
+    {
+        Debug.Log($"{name} performs Marksman Dash");
         hasDashed = true;
         currentApl -= 1;
 
@@ -288,6 +354,41 @@ public class PrototypeNPO : BaseOperativeClass
         CheckTurnEnd();
     }
 
+    //Brawler dash logic
+    public void PerformDashB()
+    {
+        Debug.Log($"{name} performs Brawler Dash");
+        hasDashed = true;
+        currentApl -= 1;
+        
+        SetOrderState(OrderState.Conceal);
+        
+        NPOCoverNodes bestBrawlerCover = FindBestBrawlerCover(dashDistanceScaled);
+
+        if (bestBrawlerCover != null)
+        {
+            if (currentCoverSpot != null)
+            {
+                currentCoverSpot.occupied = false;
+            }
+            ExecuteMoveToCover(bestBrawlerCover, dashDistanceScaled);
+            Debug.Log($"{name} brawler-dashed into {bestBrawlerCover.name}");
+            bestBrawlerCover.occupied = true;
+        }
+        else
+        {
+            if (currentCoverSpot != null)
+            {
+                currentCoverSpot.occupied = false;
+                Debug.Log($"{name} left {currentCoverSpot.name}");
+            }
+            MoveToNearestPlayer(dashDistanceScaled);
+        }
+        
+        CheckTurnEnd();
+    }
+
+    //Clamp/limit any navmesh movement according to the NPO's movement budget
     private Vector3 LimitDestination(Vector3 destination, float maxDistance)
     {
         NavMeshPath path = new NavMeshPath();
@@ -317,6 +418,7 @@ public class PrototypeNPO : BaseOperativeClass
         return destination;
     }
 
+    //Execute the navmesh movement to a destination
     private void ExecuteMoveToCover(NPOCoverNodes coverNode, float maxDistance)
     {
         if (currentCoverSpot != null && currentCoverSpot != coverNode)
@@ -331,11 +433,7 @@ public class PrototypeNPO : BaseOperativeClass
         npoAgent.SetDestination(limitedSpot);
     }
 
-    private void MoveTowardSafePosition()
-    {
-        Debug.Log("MoveTowardSafePosition called");
-    }
-
+    //For marksmans to find the absolute closest cover
     private NPOCoverNodes FindAbsoluteClosestCoverNode()
     {
         NPOCoverNodes closest = null;
@@ -355,6 +453,72 @@ public class PrototypeNPO : BaseOperativeClass
         return closest;
     }
     
+    //Find the best cover node for a brawler
+    private NPOCoverNodes FindBestBrawlerCover(float maxDistance)
+    {
+        PrototypeUnit nearestPlayer = GetNearestPlayer();
+        if (nearestPlayer == null)
+        {
+            Debug.LogWarning("No nearest player");
+            return null;
+        }
+        
+        NPOCoverNodes bestNode = null;
+        float shortestDistance = float.MaxValue;
+
+        foreach (var node in allCoverNodes)
+        {
+            if (node.occupied || !node.deepCover) continue;
+            
+            float pathDistance = GetPathDistance(transform.position, node.spotToStand.position);
+            if (pathDistance > maxDistance) continue;
+            
+            float distanceToPlayer = Vector3.Distance(node.spotToStand.position, nearestPlayer.transform.position);
+
+            if (distanceToPlayer < shortestDistance)
+            {
+                shortestDistance = distanceToPlayer;
+                bestNode = node;
+            }
+        }
+        
+        return bestNode;
+    }
+    
+    //Get the nearest player for brawler npo
+    private PrototypeUnit GetNearestPlayer()
+    {
+        PrototypeUnit nearest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var player in npoManager.playerUnits)
+        {
+            if (player == null || player.dead || !player.gameObject.activeInHierarchy) continue;
+
+            float dist = Vector3.Distance(transform.position, player.transform.position);
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                nearest = player;
+            }
+        }
+
+        return nearest;
+    }
+
+    //Move the brawler to the nearest player
+    private void MoveToNearestPlayer(float maxDistance)
+    {
+        PrototypeUnit nearestPlayer = GetNearestPlayer();
+        if (nearestPlayer != null)
+        {
+            Vector3 limitedSpot = LimitDestination(nearestPlayer.transform.position, maxDistance);
+            npoAgent.SetDestination(limitedSpot);
+            Debug.Log($"{name} moving {maxDistance}m directly toward {nearestPlayer.name}");
+        }
+    }
+    
+    //For a marksman if you want them to finest nearest deepCover
     private NPOCoverNodes FindClosestDeepCoverNode()
     {
         Debug.Log("FindClosestDeepCoverCalled for dash");
@@ -377,11 +541,13 @@ public class PrototypeNPO : BaseOperativeClass
         return closest;
     }
 
+    //Sets an npos order state
     public void SetOrderState(OrderState newOrderState)
     {
         currentOrder = newOrderState;
     }
 
+    //Checks for a marksman if they have any valid shooting targets
     private bool HasValidShootTarget(List<PrototypeUnit> playerUnits)
     {
         Debug.Log("HasValidShootTarget called");
@@ -389,18 +555,24 @@ public class PrototypeNPO : BaseOperativeClass
         {
             if (IsValidTarget(player))
             {
-                Debug.Log("Returning true for HasValidShootTarget");
+                currentShootTarget = player;
+                Debug.Log($"{player.name} is valid target for {name}");
                 return true;
             }
+            else
+            {
+                Debug.Log($"{player.name} is not valid target for {name}");
+            }
         }
-
-        Debug.Log("Returning false for HasValidShootTarget");
+        
+        currentShootTarget = null;
         return false;
     }
 
+    //Checks LOS and targeting lines to know if a player is valid target
     public bool IsValidTarget(BaseOperativeClass target)
     {
-        Debug.Log("IsValidTarget called");
+        //Debug.Log("IsValidTarget called");
         if (target == null || target.dead || !target.gameObject.activeInHierarchy)
         {
             Debug.Log("The checked target is dead or doesn't exist");
@@ -409,23 +581,24 @@ public class PrototypeNPO : BaseOperativeClass
 
         if (!HasLineOfSight(target))
         {
-            Debug.Log("The checked target is out of sight");
+            //Debug.Log("The checked target is out of sight");
             return false;
         }
 
         if (target.Concealed && target.closeToCover)
         {
-            Debug.Log("The checked target is concealed in cover");
-            Debug.Log($"The targeting line rule returned: {CheckTargetingLines(target)}");
+            //Debug.Log("The checked target is concealed in cover");
+            //Debug.Log($"The targeting line rule returned: {CheckTargetingLines(target)}");
             return CheckTargetingLines(target);
         }
 
         return true;
     }
 
+    //Check logic of the LOS check
     private bool HasLineOfSight(BaseOperativeClass target)
     {
-        Debug.Log("HasLineOfSight called");
+        //Debug.Log("HasLineOfSight called");
         Vector3 start = losStart != null ? losStart.position : transform.position;
         Vector3 targetPos = target.losStart != null ? target.losStart.position : target.transform.position;
         Vector3 direction = (targetPos - start).normalized;
@@ -435,27 +608,30 @@ public class PrototypeNPO : BaseOperativeClass
         {
             if (hit.collider.CompareTag("Terrain"))
             {
-                Debug.Log($"LOS blocked by: {hit.collider.name}");
-                Debug.Log("HasLineOfSight returning false");
+                //Debug.Log($"LOS blocked by: {hit.collider.name}");
+                //Debug.Log("HasLineOfSight returning false");
                 return false;
             }
         }
-        Debug.Log("HasLineOfSight returning true");
+        //Debug.Log("HasLineOfSight returning true");
         return true;
     }
     
+    //Check if this NPO is in control range of a player unit
     private bool InControlRange()
     {
         //Debug.Log($"{name} checks if in control range of enemy");
         return false;
     }
 
+    //For a brawler to check if a player unit is in range for charging a player unit
     private bool PossibleChargeTarget()
     {
         Debug.Log($"{name} checks if it has a charge target");
         return false;
     }
 
+    //Check for an NPO on whether they have taken damage and are in the open
     private bool InDanger()
     {
         Debug.Log($"{name} inDanger called");
@@ -468,12 +644,14 @@ public class PrototypeNPO : BaseOperativeClass
         return false;
     }
 
+    //Calls CheckDistanceToTerrain
     private bool CoverNear()
     {
         Debug.Log($"{name} calling a check to see if cover is near");
         return CheckDistanceToTerrain();
     }
-
+    
+    //Reset when turning points end
     public override void ResetForNewTurningPoint()
     {
         base.ResetForNewTurningPoint();
@@ -487,12 +665,14 @@ public class PrototypeNPO : BaseOperativeClass
         ResetActionFlags();
     }
 
+    //General Reset
     public override void ResetForNewActivation()
     {
         base.ResetForNewActivation();
         ResetActionFlags();
     }
     
+    //Reset action taken trackers
     public void ResetActionFlags()
     {
         hasRepositioned = false;
@@ -501,13 +681,13 @@ public class PrototypeNPO : BaseOperativeClass
         hasCharged = false;
         hasFallenBack = false;
         shootCount = 0;
-        
-        
+        currentShootTarget = null;
     }
 
-    public NPOCoverNodes FindBestCoverNode(bool requireShootLos, float maxMovement)
+    //Find the best cover for a marksman NPO
+    public NPOCoverNodes FindBestMarksmanCoverNode(bool requireShootLos, float maxMovement)
 {
-    Debug.Log($"FindBestCoverNode called with requireShootLOS: {requireShootLos} and maxMovement: {maxMovement}");
+    Debug.Log($"FindBestMarksmanCoverNode called with requireShootLOS: {requireShootLos} and maxMovement: {maxMovement}");
     NPOCoverNodes bestCoverNode = null;
     float shortestDistance = float.MaxValue;
 
@@ -579,15 +759,14 @@ public class PrototypeNPO : BaseOperativeClass
                 {
                     hasValidShotFromNode = true;
                     Debug.Log($"Can see {player.name} with valid LOS from {node.name} since they are in the open");
+                    currentShootTarget = player;
                     break;
                 }
             }
 
             if (!hasValidShotFromNode) continue; // Skip if this node doesn't provide a valid shot
         }
-
-        // FIX: Moved this outside the `if (requireShootLOS)` block so it evaluates distance and picks the 
-        // closest valid node whether we are looking for Shoot Cover OR Deep Cover!
+        
         if (pathDistance < shortestDistance)
         {
             shortestDistance = pathDistance;
@@ -598,6 +777,7 @@ public class PrototypeNPO : BaseOperativeClass
     return bestCoverNode;
 }
 
+    //Helper function to get distance between two points according to navmesh movement
     private float GetPathDistance(Vector3 start, Vector3 end)
     {
         NavMeshPath path = new NavMeshPath();
@@ -615,6 +795,7 @@ public class PrototypeNPO : BaseOperativeClass
         return float.MaxValue;
     }
 
+    //Check the prospective targeting lines rule ahead of moving from a spot when trying to shoot at a player that is concealed and in cover
     private bool CheckTargetingLinesFromPosition(Vector3 testPosition, PrototypeUnit player)
     {
         if (samplingPoints.Count == 0 || player.samplingPoints.Count == 0) return false;
@@ -643,6 +824,7 @@ public class PrototypeNPO : BaseOperativeClass
         return false;
     }
 
+    //Checker for the behaviour tree to wait for navmesh movement to finish
     public bool MovementFinished()
     {
         //if (npoAgent == null) return true;
