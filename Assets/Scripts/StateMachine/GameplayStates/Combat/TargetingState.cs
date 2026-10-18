@@ -67,7 +67,8 @@ public class TargetingState : BaseState
      
     }
     
-    private void OnSelectPerformed(InputAction.CallbackContext ctx) //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
+    //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
+    private void OnSelectPerformed(InputAction.CallbackContext ctx) 
     {
         if (Context.CurrentlySelectedUnitScript.selected)
         {
