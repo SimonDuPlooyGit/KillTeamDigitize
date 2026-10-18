@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 //-----DiceHandler Class-----
 public class DiceHandler : MonoBehaviour
@@ -55,6 +56,10 @@ public class DiceHandler : MonoBehaviour
     
     [SerializeField]
     private GameObject rerollButton;
+    [SerializeField]
+    private TextMeshProUGUI xToHit;
+    [SerializeField]
+    private TextMeshProUGUI xToSave;
 
     private void Start()
     {
@@ -147,6 +152,8 @@ public class DiceHandler : MonoBehaviour
 
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
+        xToHit.text = $"{context.Weapon.atk} to hit";
+        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
         menu.OpenMenu(menu.diceRollMenu);
         SpawnDice(thrownDice, true, isAlly);
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
@@ -347,6 +354,8 @@ public class DiceHandler : MonoBehaviour
         }
 
         ClearAllDice();
+        xToHit.text = "X to hit";
+        xToSave.text = "X to save";
     }
 
     //Makes the reroll button appear when a panel is selected
