@@ -59,6 +59,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
     protected virtual void Awake()
     {
+        agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         fogEffect.SetActive(false);
         SetHealth();
@@ -121,9 +122,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 return transform.position;
             }
             
-            if (path.corners.Length > 0)
+            for (int i = 0; i < path.corners.Length; i++)
             {
-                limitedPoints.Add(path.corners[0]);
+                limitedPoints.Add(path.corners[i]);
             }
 
             for (int i = 0; i < path.corners.Length - 1; i++)
@@ -135,14 +136,28 @@ public abstract class BaseOperativeClass : MonoBehaviour
                     float remaining = maxDistance - totalPathDistance;
                     Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
                     Vector3 finalPoint = path.corners[i] + direction * remaining;
+                    
+                    limitedPoints.Clear();
+                    for (int j = 0; j <= i; j++)
+                    {
+                        limitedPoints.Add(path.corners[j]);
+                    }
                     limitedPoints.Add(finalPoint);
+                
                     totalPathDistance = maxDistance;
                     return finalPoint;
                 }
-
-                limitedPoints.Add(path.corners[i + 1]);
+                
                 totalPathDistance += segment;
             }
+            return destination;
+        } else if (agent == null)
+        {
+            Debug.Log("The agent is null");
+        }
+        else
+        {
+            Debug.Log("NavMesh.CalculatePath didn't succed");
         }
 
         limitedPoints.Add(transform.position);
