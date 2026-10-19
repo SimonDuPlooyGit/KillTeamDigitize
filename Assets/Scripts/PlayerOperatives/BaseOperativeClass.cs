@@ -115,6 +115,12 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
         if (agent != null && NavMesh.CalculatePath(transform.position, destination, agent.areaMask, path))
         {
+            if (path.status == NavMeshPathStatus.PathInvalid || path.corners.Length == 0)
+            {
+                limitedPoints.Add(transform.position);
+                return transform.position;
+            }
+            
             if (path.corners.Length > 0)
             {
                 limitedPoints.Add(path.corners[0]);
@@ -137,8 +143,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 limitedPoints.Add(path.corners[i + 1]);
                 totalPathDistance += segment;
             }
-
-            return path.corners.Length > 0 ? path.corners[path.corners.Length - 1] : destination;
         }
 
         limitedPoints.Add(transform.position);
