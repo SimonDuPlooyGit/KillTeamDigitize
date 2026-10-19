@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         _stateMachine = new StateMachine();
         SharedContext.MainCameraScript = mainCamera;
         mainCamera.isFreecam = true;
-        SharedContext.AllPlayerUnits = new List<PrototypeUnit>(FindObjectsByType<PrototypeUnit>(FindObjectsSortMode.None));
+        SharedContext.AllPlayerUnits = new List<PlayerOperative>(FindObjectsByType<PlayerOperative>(FindObjectsSortMode.None));
         SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
 
         //Initialize states

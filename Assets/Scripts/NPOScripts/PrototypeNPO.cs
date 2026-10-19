@@ -36,7 +36,7 @@ public class PrototypeNPO : BaseOperativeClass
     private InformationPackage _context;
     public bool IsShootingComplete { get; private set; }
     public bool isPerformingAnAction  {get; private set; }
-    private PrototypeUnit currentShootTarget;
+    private PlayerOperative currentShootTarget;
     
     //Action conditions (Predicates)
     public bool CanShoot()
@@ -183,7 +183,7 @@ public class PrototypeNPO : BaseOperativeClass
     }
 
     //Handle hitting player in combat for shooting
-    private void EvaluateNpoCombatHitsAndSaves(InformationPackage context, PrototypeUnit target)
+    private void EvaluateNpoCombatHitsAndSaves(InformationPackage context, PlayerOperative target)
     {
         int crit = 0;
         int norm = 0;
@@ -466,7 +466,7 @@ public class PrototypeNPO : BaseOperativeClass
     //Find the best cover node for a brawler
     private NPOCoverNodes FindBestBrawlerCover(float maxDistance)
     {
-        PrototypeUnit nearestPlayer = GetNearestPlayer();
+        PlayerOperative nearestPlayer = GetNearestPlayer();
         if (nearestPlayer == null)
         {
             Debug.LogWarning("No nearest player");
@@ -496,9 +496,9 @@ public class PrototypeNPO : BaseOperativeClass
     }
     
     //Get the nearest player for brawler npo
-    private PrototypeUnit GetNearestPlayer()
+    private PlayerOperative GetNearestPlayer()
     {
-        PrototypeUnit nearest = null;
+        PlayerOperative nearest = null;
         float minDistance = float.MaxValue;
 
         foreach (var player in npoManager.playerUnits)
@@ -519,7 +519,7 @@ public class PrototypeNPO : BaseOperativeClass
     //Move the brawler to the nearest player
     private void MoveToNearestPlayer(float maxDistance)
     {
-        PrototypeUnit nearestPlayer = GetNearestPlayer();
+        PlayerOperative nearestPlayer = GetNearestPlayer();
         if (nearestPlayer != null)
         {
             Vector3 limitedSpot = LimitDestination(nearestPlayer.transform.position, maxDistance);
@@ -558,7 +558,7 @@ public class PrototypeNPO : BaseOperativeClass
     }
 
     //Checks for a marksman if they have any valid shooting targets
-    private bool HasValidShootTarget(List<PrototypeUnit> playerUnits)
+    private bool HasValidShootTarget(List<PlayerOperative> playerUnits)
     {
         Debug.Log("HasValidShootTarget called");
         foreach (var player in playerUnits)
@@ -806,7 +806,7 @@ public class PrototypeNPO : BaseOperativeClass
     }
 
     //Check the prospective targeting lines rule ahead of moving from a spot when trying to shoot at a player that is concealed and in cover
-    private bool CheckTargetingLinesFromPosition(Vector3 testPosition, PrototypeUnit player)
+    private bool CheckTargetingLinesFromPosition(Vector3 testPosition, PlayerOperative player)
     {
         if (samplingPoints.Count == 0 || player.samplingPoints.Count == 0) return false;
 

@@ -82,7 +82,7 @@ public class UnitActivationState : BaseState
             //Debug.Log("OnSelectPerformed in UnitActivationState Raycast fired");
             if (hit.collider.gameObject.CompareTag("AllyUnit"))
             {
-                var unitScript = hit.collider.gameObject.GetComponent<PrototypeUnit>();
+                var unitScript = hit.collider.gameObject.GetComponent<PlayerOperative>();
                 if (unitScript != null && unitScript.acted)
                 {
                     //Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
@@ -90,7 +90,7 @@ public class UnitActivationState : BaseState
                 }
                 
                 Context.CurrentlySelectedOperative = hit.collider.gameObject;
-                Context.CurrentlySelectedOperativeScript = Context.CurrentlySelectedOperative.GetComponent<PrototypeUnit>();
+                Context.CurrentlySelectedOperativeScript = Context.CurrentlySelectedOperative.GetComponent<PlayerOperative>();
                 Context.ActivatedUnitSo = Context.CurrentlySelectedOperativeScript.operativeData;
                 Debug.Log("Selected Operative: " + Context.ActivatedUnitSo.name);
                 Context.CurrentlySelectedOperativeScript.AddGlow();

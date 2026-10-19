@@ -6,7 +6,7 @@ public class InformationPackage
 {
     //Game Object references
     public GameObject CurrentlySelectedOperative;
-    public PrototypeUnit CurrentlySelectedOperativeScript; //This needs to get changed to a BaseOperativeClass
+    public PlayerOperative CurrentlySelectedOperativeScript; //This needs to get changed to a BaseOperativeClass
     public OperativeTemplate CurrentlySelectedOperativeSo;
     public GameObject CurrentlySelectedTarget;
     public BaseOperativeClass CurrentlySelectedTargetScript;
@@ -45,7 +45,7 @@ public class InformationPackage
     public bool ValidTarget;
     
     //Keeping track of all units
-    public List<PrototypeUnit> AllPlayerUnits = new();
+    public List<PlayerOperative> AllPlayerUnits = new();
     public List<PrototypeNPO> AllNpoUnits = new();
     
     //Turning point tracking
@@ -57,11 +57,11 @@ public class InformationPackage
     public void SetSelectedOperativesData(GameObject selectedOperative)
     {
         CurrentlySelectedOperative = selectedOperative;
-        CurrentlySelectedOperativeScript = CurrentlySelectedOperative.GetComponent<PrototypeUnit>();
+        CurrentlySelectedOperativeScript = CurrentlySelectedOperative.GetComponent<PlayerOperative>();
         CurrentlySelectedOperativeSo = CurrentlySelectedOperativeScript.operativeData;
     }
 
-    public void SetSelectedOperativesData(PrototypeUnit selectedOperative)
+    public void SetSelectedOperativesData(PlayerOperative selectedOperative)
     {
         CurrentlySelectedOperativeScript = selectedOperative;
         CurrentlySelectedOperative = selectedOperative.gameObject;

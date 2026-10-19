@@ -6,7 +6,7 @@ using UnityEngine.AI;
 using TMPro;
 
 //-----PrototypeUnit Class (Specific functionality for the player units, inherits BaseOperativeClass)
-public class PrototypeUnit : BaseOperativeClass
+public class PlayerOperative : BaseOperativeClass
 {
     [Header("Navmesh and moving info")]
     public GameObject moveMarker;

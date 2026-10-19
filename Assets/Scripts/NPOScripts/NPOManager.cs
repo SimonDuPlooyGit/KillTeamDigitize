@@ -11,7 +11,7 @@ public class NPOManager : MonoBehaviour
 
     //Lists keeping track of the different player units and NPOs
     [SerializeField] public List<PrototypeNPO> npoUnits = new();
-    [SerializeField] public List<PrototypeUnit> playerUnits = new();
+    [SerializeField] public List<PlayerOperative> playerUnits = new();
     
     //Find the NPO to activate according the priority above
     public PrototypeNPO GetNpoUnitToActivate()
