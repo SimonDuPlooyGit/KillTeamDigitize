@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        SharedContext = new InformationPackage();
         _input = new InputActions();
         _stateMachine = new StateMachine();
         SharedContext.MainCameraScript = mainCamera;
