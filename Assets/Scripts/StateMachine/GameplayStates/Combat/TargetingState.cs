@@ -49,8 +49,8 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
-        Context.CurrentlySelectedUnitScript.lineRenderer.material = Context.CurrentlySelectedUnitScript.validLine;
-        Context.CurrentlySelectedUnitScript.lineRenderer.enabled = false;
+        Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.validLine;
+        Context.CurrentlySelectedOperativeScript.lineRenderer.enabled = false;
         _menu.CloseMenu(_menu.tutTarget);
         _menu.CloseMenu(_menu.tutInvalid);
 
@@ -72,9 +72,9 @@ public class TargetingState : BaseState
     private void OnSelectPerformed(InputAction.CallbackContext ctx) 
     {
         Debug.Log("OnSelectPerformed in TargetingState");
-        if (Context.CurrentlySelectedUnitScript.selected)
+        if (Context.CurrentlySelectedOperativeScript.selected)
         {
-            Debug.Log($"Shooting a targeting raycast for {Context.CurrentlySelectedUnitScript.name}");
+            Debug.Log($"Shooting a targeting raycast for {Context.CurrentlySelectedOperativeScript.name}");
             
             //LOS checking and line renderer code
             RaycastHit hit;
@@ -89,7 +89,7 @@ public class TargetingState : BaseState
                     Context.TargetUnitSo = Context.CurrentlySelectedTargetScript.operativeData;
                     Debug.Log("Enemy targeted: " + Context.TargetUnitSo.name);
 
-                    Context.CurrentlySelectedUnit.transform.LookAt(new Vector3(Context.CurrentlySelectedTarget.transform.position.x, Context.CurrentlySelectedUnit.transform.position.y, Context.CurrentlySelectedTarget.transform.position.z));
+                    Context.CurrentlySelectedOperative.transform.LookAt(new Vector3(Context.CurrentlySelectedTarget.transform.position.x, Context.CurrentlySelectedOperative.transform.position.y, Context.CurrentlySelectedTarget.transform.position.z));
                     
                     //Cover and conceal checking
                     if (Context.CurrentlySelectedTargetScript.Concealed &&
@@ -99,7 +99,7 @@ public class TargetingState : BaseState
                         return;
                     }
                     
-                    float distanceToEnemy = Context.CurrentlySelectedUnitScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
+                    float distanceToEnemy = Context.CurrentlySelectedOperativeScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
                 
                     //Assume infinite range first
                     float maxWeaponRange = Mathf.Infinity;
@@ -121,14 +121,14 @@ public class TargetingState : BaseState
                     } else if (distanceToEnemy > maxWeaponRange)
                     {
                         Context.ValidTarget = false;
-                        Context.CurrentlySelectedUnitScript.lineRenderer.material =
-                        Context.CurrentlySelectedUnitScript.invalidLine;
+                        Context.CurrentlySelectedOperativeScript.lineRenderer.material =
+                        Context.CurrentlySelectedOperativeScript.invalidLine;
                         _menu.tutFlag6 = true; //toggle invalid panel
                         Debug.Log($"Target out of range of: {maxWeaponRange}");
                     }
                     
                     //Targeting Lines Checking
-                    Context.CurrentlySelectedUnitScript.CheckTargetingLines(Context.CurrentlySelectedUnitScript, Context.CurrentlySelectedTargetScript);
+                    Context.CurrentlySelectedOperativeScript.CheckTargetingLines(Context.CurrentlySelectedOperativeScript, Context.CurrentlySelectedTargetScript);
                 }
                 else
                 {
@@ -136,7 +136,7 @@ public class TargetingState : BaseState
                 }
             }
         }
-        else if (Context.CurrentlySelectedUnitScript == null)
+        else if (Context.CurrentlySelectedOperativeScript == null)
         {
             Debug.Log("Somehow currently selected unit is null");
         }

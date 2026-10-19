@@ -48,7 +48,7 @@ public class CombatState : BaseState
 
     private IEnumerator ResolveCombat()
     {
-        Context.CurrentlySelectedUnitScript.hasShotThisActivation = true;
+        Context.CurrentlySelectedOperativeScript.hasShotThisActivation = true;
         Debug.Log("ResolveCombat");
         
         //Pre-Roll
@@ -76,7 +76,7 @@ public class CombatState : BaseState
         
         yield return new WaitForSeconds(1.5f);
         _diceHandler.ClearDiceRolls();
-        Context.CurrentlySelectedUnitScript.lineRenderer.enabled = false;
+        Context.CurrentlySelectedOperativeScript.lineRenderer.enabled = false;
         Context.IsShootingConfirmed = true;
     }
     
@@ -135,8 +135,8 @@ public class CombatState : BaseState
             Context.RetainedNormals = 0;
         }
 
-        Context.CurrentlySelectedUnitScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedNormals,Context.CurrentlySelectedUnit.transform, Context.CurrentlySelectedTarget.transform);
-        Context.CurrentlySelectedUnitScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedCrits, Context.CurrentlySelectedUnit.transform, Context.CurrentlySelectedTarget.transform);
+        Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedNormals,Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
+        Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedCrits, Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
 
         Debug.Log("Remaining crit attacks: " + Context.RetainedCrits.ToString());
         Debug.Log("Remaining normal attacks: " + Context.RetainedNormals.ToString());
@@ -172,7 +172,7 @@ public class CombatState : BaseState
         Debug.Log("CombatState Exited");
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
-        Context.CurrentlySelectedUnitScript.UpdateApl(Context.CurrentlySelectedUnitScript.currentApl -= 1);
+        Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
     }
     
     private void ExecuteRulesInThisStep(AttackTimings currentStep)

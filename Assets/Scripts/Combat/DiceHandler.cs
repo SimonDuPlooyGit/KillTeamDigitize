@@ -108,9 +108,9 @@ public class DiceHandler : MonoBehaviour
         //Move dice spawn point to active unit
         if (isAlly)
         {
-            diceThrowPoint.position = new Vector3(context.CurrentlySelectedUnit.transform.position.x,
-                context.CurrentlySelectedUnit.transform.position.y + 0.4f,
-                context.CurrentlySelectedUnit.transform.position.z);
+            diceThrowPoint.position = new Vector3(context.CurrentlySelectedOperative.transform.position.x,
+                context.CurrentlySelectedOperative.transform.position.y + 0.4f,
+                context.CurrentlySelectedOperative.transform.position.z);
         }
         else if (!isAlly)
         {

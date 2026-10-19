@@ -1,3 +1,4 @@
+//-----Interface for a passive ability (similar to a weapon rule)-----
 public interface IPassive
 {
     AttackTimings Step { get; }
@@ -5,7 +6,7 @@ public interface IPassive
 }
 
 [System.Serializable]
-public class HeroicLeader : IPassive
+public class HeroicLeader : IPassive //CUT THIS BECAUSE NO PLOYS
 {
     public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
@@ -18,7 +19,7 @@ public class HeroicLeader : IPassive
 }
 
 [System.Serializable]
-public class IronHalo : IPassive
+public class IronHalo : IPassive //Ignore one instance of normal damage
 {
     public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
@@ -29,7 +30,7 @@ public class IronHalo : IPassive
 }
 
 [System.Serializable]
-public class DoctrineWarfare : IPassive
+public class DoctrineWarfare : IPassive //CUT THIS BECAUSE NO PLOYS
 {
     public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
@@ -42,7 +43,7 @@ public class DoctrineWarfare : IPassive
 }
 
 [System.Serializable]
-public class ChapterVeteran : IPassive
+public class ChapterVeteran : IPassive //CUT THIS BECAUSE NO PLOYS
 {
     public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
@@ -53,7 +54,7 @@ public class ChapterVeteran : IPassive
 }
 
 [System.Serializable]
-public class Grenadier : IPassive
+public class Grenadier : IPassive //CUT THIS NO EQUIPMENT SELECT (And grenadier already has them as weapons)
 {
     public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
@@ -64,7 +65,7 @@ public class Grenadier : IPassive
 }
 
 [System.Serializable]
-public class CamoCloak : IPassive
+public class CamoCloak : IPassive //ONLY IMPLEMENT IGNORING SATURATE
 {
     public AttackTimings Step => AttackTimings.PreRoll; //This timing needs to change
 
@@ -76,6 +77,8 @@ public class CamoCloak : IPassive
     }
 }
 
+
+//-----CUT EVERYTHING HERE WE AREN'T DOING CHAPTER TACTICS
 [System.Serializable]
 public class CTAggressive : IPassive
 {

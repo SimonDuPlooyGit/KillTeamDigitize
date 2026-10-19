@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private InputActions _input;
-    public InformationPackage SharedContext = new InformationPackage(); //The script holding information to exchange between all scripts and states
+    public InformationPackage SharedContext; //The script holding information to exchange between all scripts and states
     private StateMachine _stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
     [SerializeField] public DiceHandler diceHandler;
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     //NPO states
     private NPOSelection npoSelectState;
-    private NPOActionSelect npoActionSelectState;
+    private NPOActionSelect npoTurnPerformState;
     
     //public PauseState pauseState;
 
@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         combatState = new CombatState(SharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(SharedContext, menu);
         npoSelectState = new NPOSelection(SharedContext, npoManager, this);
-        npoActionSelectState = new NPOActionSelect(SharedContext);
+        npoTurnPerformState = new NPOActionSelect(SharedContext);
         //pauseState = new PauseState(SharedContext, _input, _stateMachine);
 
         //Define transitions
@@ -58,10 +58,10 @@ public class GameManager : MonoBehaviour
         AddT(introductionState, unitActivationState, new FuncPredicate(() => introductionState.MoveToFirstTurn));
         AddT(unitActivationState, actionSelectionState,
             new FuncPredicate(() =>
-                SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
+                SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedOperativeScript != null));
         AddT(actionSelectionState, movementState,
             new FuncPredicate(() =>
-                !SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedUnitScript != null));
+                !SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedOperativeScript != null));
         AddT(movementState, actionSelectionState, new FuncPredicate(() => movementState.MovementFinished));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => SharedContext.IsShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
@@ -80,9 +80,9 @@ public class GameManager : MonoBehaviour
             return false;
         }));
         AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => !SharedContext.PlayerTurn));
-        AddT(npoSelectState, npoActionSelectState,
+        AddT(npoSelectState, npoTurnPerformState,
             new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
-        AddT(npoActionSelectState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
+        AddT(npoTurnPerformState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
 
 
         //AddT for pressing a pass turn button
@@ -92,8 +92,8 @@ public class GameManager : MonoBehaviour
         GoBackAState(actionSelectionState, unitActivationState,
             () =>
             {
-                if (SharedContext.CurrentlySelectedUnitScript.currentApl ==
-                    SharedContext.CurrentlySelectedUnitScript.operativeData.apl)
+                if (SharedContext.CurrentlySelectedOperativeScript.currentApl ==
+                    SharedContext.CurrentlySelectedOperativeScript.operativeData.apl)
                 {
                     return true;
                 }
@@ -105,9 +105,9 @@ public class GameManager : MonoBehaviour
             },
             () =>
             {
-            SharedContext.CurrentlySelectedUnitScript.selected = false;
-            SharedContext.CurrentlySelectedUnitScript.Reset();
-            SharedContext.Reset();
+            SharedContext.CurrentlySelectedOperativeScript.selected = false;
+            SharedContext.CurrentlySelectedOperativeScript.Reset();
+            SharedContext.FullReset();
             }
         );
 
@@ -212,14 +212,14 @@ public class GameManager : MonoBehaviour
 
     public void OnEndTurnPressed()
     {
-        if (SharedContext.CurrentlySelectedUnitScript != null)
+        if (SharedContext.CurrentlySelectedOperativeScript != null)
         {
-            SharedContext.CurrentlySelectedUnitScript.acted = true;
-            SharedContext.CurrentlySelectedUnitScript.selected = false;
-            SharedContext.CurrentlySelectedUnitScript.Reset();
+            SharedContext.CurrentlySelectedOperativeScript.acted = true;
+            SharedContext.CurrentlySelectedOperativeScript.selected = false;
+            SharedContext.CurrentlySelectedOperativeScript.Reset();
         }
         
-        SharedContext.Reset();
+        SharedContext.FullReset();
         SharedContext.PlayerTurn = false;
         CheckTurningPointEnd();
     }

@@ -5,20 +5,22 @@ using UnityEngine;
 public class InformationPackage
 {
     //Game Object references
-    public GameObject CurrentlySelectedUnit;
-    public PrototypeUnit CurrentlySelectedUnitScript;
+    public GameObject CurrentlySelectedOperative;
+    public PrototypeUnit CurrentlySelectedOperativeScript; //This needs to get changed to a BaseOperativeClass
+    public OperativeTemplate CurrentlySelectedOperativeSo;
     public GameObject CurrentlySelectedTarget;
     public BaseOperativeClass CurrentlySelectedTargetScript;
+    public OperativeTemplate CurrentlySelectedTargetSo;
 
     //New assignments to differentiate when an NPO is selected and choosing targets
-    public PrototypeNPO CurrentlyActivatedNpo;
+    public PrototypeNPO CurrentlyActivatedNpo; //This needs to go away and become integrated with CurrentlySelectedOperative
     
     public DiceHandler DiceHandler;
     public OrbitCamera MainCameraScript;
     
     //Data for rules
-    public OperativeTemplate ActivatedUnitSo;
-    public OperativeTemplate TargetUnitSo;
+    public OperativeTemplate ActivatedUnitSo; //This needs to integrate into CurrentlySelectedOperativeSo
+    public OperativeTemplate TargetUnitSo; //This needs to integrate into CurrentlySelectedTargetSo
     public WeaponTemplate Weapon;
     
     public List<int> AttackRolls = new();
@@ -50,32 +52,88 @@ public class InformationPackage
     public int CurrentTurningPoint = 1;
     public const int LastTurningPoint = 4;
     public bool PlayerTurn = true;
-    
-    public void Reset()
+
+    //-----Three overloaded methods to be able to set selected operative data no matter which component of it is passed as the argument-----
+    public void SetSelectedOperativesData(GameObject selectedOperative)
     {
-        CurrentlySelectedUnit = null;
-        CurrentlySelectedUnitScript = null;
+        CurrentlySelectedOperative = selectedOperative;
+        CurrentlySelectedOperativeScript = CurrentlySelectedOperative.GetComponent<PrototypeUnit>();
+        CurrentlySelectedOperativeSo = CurrentlySelectedOperativeScript.operativeData;
+    }
+
+    public void SetSelectedOperativesData(PrototypeUnit selectedOperative)
+    {
+        CurrentlySelectedOperativeScript = selectedOperative;
+        CurrentlySelectedOperative = selectedOperative.gameObject;
+        CurrentlySelectedOperativeSo = selectedOperative.operativeData;
+    }
+
+    public void SetSelectedOperativesData(OperativeTemplate selectedOperative)
+    {
+        CurrentlySelectedOperativeSo = selectedOperative;
+    }
+    
+    //-----Three overloaded methods to be able to set selected target data no matter which component of it is passed as the argument-----
+    public void SetSelectedTarget(GameObject selectedTarget)
+    {
+        CurrentlySelectedTarget = selectedTarget;
+        CurrentlySelectedTargetScript = CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
+        CurrentlySelectedTargetSo = CurrentlySelectedTargetScript.operativeData;
+    }
+
+    public void SetSelectedTarget(BaseOperativeClass selectedTarget)
+    {
+        CurrentlySelectedTargetScript = selectedTarget;
+        CurrentlySelectedTarget = selectedTarget.gameObject;
+        CurrentlySelectedTargetSo = CurrentlySelectedTargetScript.operativeData;
+    }
+
+    public void SetSelectedTarget(OperativeTemplate selectedTarget)
+    {
+        CurrentlySelectedTargetSo = selectedTarget;
+    }
+    
+    //Reset both Operatives data and also state flags
+    public void FullReset()
+    {
+        Debug.Log("InformationPackage FullReset");
+        OperativesDataReset();
+        StateFlagsReset();
+    }
+    
+    //Only reset Operatives data
+    public void OperativesDataReset()
+    {
+        Debug.Log("InformationPackage OperativesDataReset");
+        CurrentlySelectedOperative = null;
+        CurrentlySelectedOperativeScript = null;
+        CurrentlySelectedOperativeSo = null;
         CurrentlySelectedTarget = null;
         CurrentlySelectedTargetScript = null;
-        ActivatedUnitSo = null;
-        TargetUnitSo = null;
+        CurrentlySelectedTargetSo = null;
         Weapon = null;
         AttackRolls.Clear();
         DefenseRolls.Clear();
         RetainedNormals = 0;
         RetainedCrits = 0;
-        CanReroll = false;
-        IgnoreCover = false;
+        RetainedCritDefense = 0;
+        RetainedNormalDefense = 0;
+    }
+
+    //Only reset StateFlags
+    public void StateFlagsReset()
+    {
+        Debug.Log("InformationPackage StateFlagsReset");
         IsPlayerActivationRequested = false;
         IsMovementConfirmed = false;
         IsShootingRequested = false;
         IsShootingConfirmed = false;
         IsWeaponSelected = false;
         ValidTarget = false;
-        NumDefenseDiceRoll = 3;
     }
 }
 
+//Enum holding timing states for rules
 public enum AttackTimings
 {
     PreRoll,

@@ -24,7 +24,7 @@ public class UnitActivationState : BaseState
         _gameManager.mainCamera.isFreecam = true;
         //Cursor.lockState = CursorLockMode.Locked;
         Debug.Log("UnitActivationState entered");
-        Context.Reset();
+        Context.FullReset();
         _input.Controls.Select.performed += OnSelectPerformed;
         _input.Controls.Deselect.performed += OnDeselectPerformed;
         _menu.OpenMenu(_menu.tpCounter);
@@ -89,12 +89,12 @@ public class UnitActivationState : BaseState
                     return;
                 }
                 
-                Context.CurrentlySelectedUnit = hit.collider.gameObject;
-                Context.CurrentlySelectedUnitScript = Context.CurrentlySelectedUnit.GetComponent<PrototypeUnit>();
-                Context.ActivatedUnitSo = Context.CurrentlySelectedUnitScript.operativeData;
+                Context.CurrentlySelectedOperative = hit.collider.gameObject;
+                Context.CurrentlySelectedOperativeScript = Context.CurrentlySelectedOperative.GetComponent<PrototypeUnit>();
+                Context.ActivatedUnitSo = Context.CurrentlySelectedOperativeScript.operativeData;
                 Debug.Log("Selected Operative: " + Context.ActivatedUnitSo.name);
-                Context.CurrentlySelectedUnitScript.AddGlow();
-                Context.CurrentlySelectedUnitScript.selected = true;
+                Context.CurrentlySelectedOperativeScript.AddGlow();
+                Context.CurrentlySelectedOperativeScript.selected = true;
                 _menu.OpenAction();
                 Context.IsPlayerActivationRequested = true;
             }
@@ -107,11 +107,11 @@ public class UnitActivationState : BaseState
     
     private void OnDeselectPerformed(InputAction.CallbackContext ctx) //Deselect the unit that was clicked with right-click
     {
-        if (Context.CurrentlySelectedUnitScript != null)
+        if (Context.CurrentlySelectedOperativeScript != null)
         {
-            Context.CurrentlySelectedUnitScript.Reset();
-            Context.CurrentlySelectedUnitScript.selected = false;
+            Context.CurrentlySelectedOperativeScript.Reset();
+            Context.CurrentlySelectedOperativeScript.selected = false;
         }
-        Context.Reset();
+        Context.FullReset();
     }
 }

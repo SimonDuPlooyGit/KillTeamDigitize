@@ -22,7 +22,7 @@ public class ActionSelectionState : BaseState
 
     public override void OnEnter()
     {
-        _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlySelectedUnit.transform);
+        _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
         Debug.Log("ActionSelectionState entered");
         _menu.OpenMenu(_menu.actionMenu);
         _menu.OpenMenu(_menu.tpCounter);
@@ -69,14 +69,14 @@ public class ActionSelectionState : BaseState
         //Activate different action buttons according to what the unit hasn't done yet
         if (repositionButton != null)
         {
-            repositionButton.SetActive(!Context.CurrentlySelectedUnitScript.hasMovedThisActivation && Context.CurrentlySelectedUnitScript.currentApl > 0);
-            repositionCost.SetActive(!Context.CurrentlySelectedUnitScript.hasMovedThisActivation && Context.CurrentlySelectedUnitScript.currentApl > 0);
+            repositionButton.SetActive(!Context.CurrentlySelectedOperativeScript.hasMovedThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
+            repositionCost.SetActive(!Context.CurrentlySelectedOperativeScript.hasMovedThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
         }
 
         if (shootButton != null)
         {
-            shootButton.SetActive(!Context.CurrentlySelectedUnitScript.hasShotThisActivation && Context.CurrentlySelectedUnitScript.currentApl > 0);
-            shootCost.SetActive(!Context.CurrentlySelectedUnitScript.hasShotThisActivation && Context.CurrentlySelectedUnitScript.currentApl > 0);
+            shootButton.SetActive(!Context.CurrentlySelectedOperativeScript.hasShotThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
+            shootCost.SetActive(!Context.CurrentlySelectedOperativeScript.hasShotThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
         }
     }
 }

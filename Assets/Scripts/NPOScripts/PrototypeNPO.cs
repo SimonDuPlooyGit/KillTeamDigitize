@@ -155,7 +155,7 @@ public class PrototypeNPO : BaseOperativeClass
         {
             _context.ActivatedUnitSo = operativeData;
             _context.Weapon = chosenWeapon;
-            _context.CurrentlySelectedUnitScript = null;
+            _context.CurrentlySelectedOperativeScript = null;
             _context.CurrentlySelectedTargetScript = currentShootTarget;
             _context.CurrentlySelectedTarget = currentShootTarget.gameObject;
             _context.TargetUnitSo = currentShootTarget.operativeData;

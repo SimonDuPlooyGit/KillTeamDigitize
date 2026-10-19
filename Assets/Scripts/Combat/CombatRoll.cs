@@ -71,11 +71,4 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
             _handler.UpdateRerollButtonVisibility();
         }
     }
-
-    //might not be needed anymore, may delete later
-    public void RollTo(int finalValue)
-    {
-        _diceAnimator.enabled = false;
-        _dicePanel.GetComponent<Image>().sprite = diceSprites[finalValue - 1];
-    }
 }
