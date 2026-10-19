@@ -40,7 +40,7 @@ public class NPOBehaviour : MonoBehaviour
     // IF CAN'T SHOOT: CONCEAL
     // Start at step 3
 
-    [SerializeField] public PrototypeNPO itsOwnNpoScript;
+    [SerializeField] public NonPlayerOperative itsOwnNpoScript;
     private PrioritySelector _treeRoot;
 
     public GameManager gameManagerReference;
@@ -51,7 +51,7 @@ public class NPOBehaviour : MonoBehaviour
     {
         //Debug.Log("NPOBehaviour Awake called");
         IsRunning = false;
-        itsOwnNpoScript = GetComponent<PrototypeNPO>();
+        itsOwnNpoScript = GetComponent<NonPlayerOperative>();
         gameManagerReference = FindFirstObjectByType<GameManager>();
     }
 

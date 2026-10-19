@@ -40,16 +40,16 @@ public class MovementState : BaseState
 
     public override void Update()
     {
-        if (Context.CurrentlySelectedOperativeScript != null)
+        var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (playerOp != null)
         {
-            Context.CurrentlySelectedOperativeScript.UpdatePathDrawing(); //If there is a unit script update its path drawing
-        }
+            playerOp.UpdatePathDrawing(); 
 
-        if (Context.CurrentlySelectedOperativeScript != null &&
-            Context.CurrentlySelectedOperativeScript.remainingMovement < 0.05f)
-        {
-            Context.IsPlayerActivationRequested = true;
-            MovementFinished = true;
+            if (playerOp.remainingMovement < 0.05f)
+            {
+                Context.IsPlayerActivationRequested = true;
+                MovementFinished = true;
+            }
         }
     }
 
@@ -59,42 +59,33 @@ public class MovementState : BaseState
         Debug.Log("MovementState exited");
         _menu.CloseMenu(_menu.tutReposition);
         _menu.moveButton2?.SetActive(false);
-        if (Context.CurrentlySelectedOperativeScript.remainingMovement < Context.CurrentlySelectedOperativeScript.meterMovement)
+        
+        var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (playerOp != null)
         {
-            Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
+            if (playerOp.remainingMovement < playerOp.meterMovement)
+            {
+                playerOp.UpdateApl(playerOp.currentApl -= 1);
+            }
+            playerOp.ResetMoveMarker();
         }
-        Context.CurrentlySelectedOperativeScript.ResetMoveMarker();
     }
 
     private void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move
     {
-        Debug.Log("OnMoveInputPerformed");
-        if (Context.CurrentlySelectedOperativeScript != null)
-        {
-            Debug.Log("Calling ClickToPathfind");
-            Context.CurrentlySelectedOperativeScript.ClickToPathfind();
-        }
-        else
-        {
-            Debug.Log("Context.CurrentlySelectedOperativeScript == null");
-        }
+        var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (playerOp != null) playerOp.ClickToPathfind();
     }
 
     public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to marker preview
     {
-        if (Context.CurrentlySelectedOperativeScript != null)
+        var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (playerOp != null)
         {
-            Context.CurrentlySelectedOperativeScript.MoveOperativeToMarker();
+            playerOp.MoveOperativeToMarker();
             Context.IsMovementConfirmed = true;
-            //set tutorial flags
-            if(_menu.tutFlag3)
-            {
-                _menu.tutFlag3 = false;
-            }
-            if(_menu.tutFlag4B)
-            {
-                _menu.tutFlag4B = false;
-            }
+            if(_menu.tutFlag3) _menu.tutFlag3 = false;
+            if(_menu.tutFlag4B) _menu.tutFlag4B = false;
         }
     }
 }

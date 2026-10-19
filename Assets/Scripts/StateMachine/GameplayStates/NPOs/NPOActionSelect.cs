@@ -11,9 +11,9 @@ public class NPOActionSelect : BaseState
     {
         Debug.Log("NPOActionSelect OnEnter");
 
-        if (Context.CurrentlyActivatedNpo != null)
+        if (Context.CurrentlySelectedOperativeScript != null && Context.CurrentlySelectedOperativeScript is NonPlayerOperative npo)
         {
-            _currentBehaviour = Context.CurrentlyActivatedNpo.GetComponent<NPOBehaviour>();
+            _currentBehaviour = npo.GetComponent<NPOBehaviour>();
             if (_currentBehaviour != null)
             {
                 Debug.Log("Execute the behaviour");

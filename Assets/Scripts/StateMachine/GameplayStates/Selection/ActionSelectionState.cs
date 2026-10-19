@@ -67,16 +67,19 @@ public class ActionSelectionState : BaseState
     private void ActivateOrDeactivateActionButtons()
     {
         //Activate different action buttons according to what the unit hasn't done yet
+        var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (playerOp == null) return;
+
         if (repositionButton != null)
         {
-            repositionButton.SetActive(!Context.CurrentlySelectedOperativeScript.hasMovedThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
-            repositionCost.SetActive(!Context.CurrentlySelectedOperativeScript.hasMovedThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
+            repositionButton.SetActive(!playerOp.hasMovedThisActivation && playerOp.currentApl > 0);
+            repositionCost.SetActive(!playerOp.hasMovedThisActivation && playerOp.currentApl > 0);
         }
 
         if (shootButton != null)
         {
-            shootButton.SetActive(!Context.CurrentlySelectedOperativeScript.hasShotThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
-            shootCost.SetActive(!Context.CurrentlySelectedOperativeScript.hasShotThisActivation && Context.CurrentlySelectedOperativeScript.currentApl > 0);
+            shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
+            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
         }
     }
 }

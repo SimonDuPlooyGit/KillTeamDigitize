@@ -114,9 +114,9 @@ public class DiceHandler : MonoBehaviour
         }
         else if (!isAlly)
         {
-            diceThrowPoint.position = new Vector3(context.CurrentlyActivatedNpo.transform.position.x,
-                context.CurrentlyActivatedNpo.transform.position.y + 0.4f,
-                context.CurrentlyActivatedNpo.transform.position.z);
+            diceThrowPoint.position = new Vector3(context.CurrentlySelectedOperative.transform.position.x,
+                context.CurrentlySelectedOperative.transform.position.y + 0.4f,
+                context.CurrentlySelectedOperative.transform.position.z);
         }
         //clear tempPhysAttackDice to keep track of attack dice. this is used to populate the dice roll menu in throwDefenseDice coroutine
         activePhysAttackDice.Clear();

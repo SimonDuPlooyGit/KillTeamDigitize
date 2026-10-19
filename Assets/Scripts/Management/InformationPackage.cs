@@ -6,21 +6,18 @@ public class InformationPackage
 {
     //Game Object references
     public GameObject CurrentlySelectedOperative;
-    public PlayerOperative CurrentlySelectedOperativeScript; //This needs to get changed to a BaseOperativeClass
+    public BaseOperativeClass CurrentlySelectedOperativeScript; //This needs to get changed to a BaseOperativeClass
     public OperativeTemplate CurrentlySelectedOperativeSo;
     public GameObject CurrentlySelectedTarget;
     public BaseOperativeClass CurrentlySelectedTargetScript;
     public OperativeTemplate CurrentlySelectedTargetSo;
 
     //New assignments to differentiate when an NPO is selected and choosing targets
-    public PrototypeNPO CurrentlyActivatedNpo; //This needs to go away and become integrated with CurrentlySelectedOperative
     
     public DiceHandler DiceHandler;
     public OrbitCamera MainCameraScript;
     
     //Data for rules
-    public OperativeTemplate ActivatedUnitSo; //This needs to integrate into CurrentlySelectedOperativeSo
-    public OperativeTemplate TargetUnitSo; //This needs to integrate into CurrentlySelectedTargetSo
     public WeaponTemplate Weapon;
     
     public List<int> AttackRolls = new();
@@ -46,7 +43,7 @@ public class InformationPackage
     
     //Keeping track of all units
     public List<PlayerOperative> AllPlayerUnits = new();
-    public List<PrototypeNPO> AllNpoUnits = new();
+    public List<NonPlayerOperative> AllNpoUnits = new();
     
     //Turning point tracking
     public int CurrentTurningPoint = 1;
@@ -62,6 +59,13 @@ public class InformationPackage
     }
 
     public void SetSelectedOperativesData(PlayerOperative selectedOperative)
+    {
+        CurrentlySelectedOperativeScript = selectedOperative;
+        CurrentlySelectedOperative = selectedOperative.gameObject;
+        CurrentlySelectedOperativeSo = selectedOperative.operativeData;
+    }
+    
+    public void SetSelectedOperativesData(NonPlayerOperative selectedOperative)
     {
         CurrentlySelectedOperativeScript = selectedOperative;
         CurrentlySelectedOperative = selectedOperative.gameObject;

@@ -1,14 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
 public enum UnitArchetype {Brawler, Marksman}
 
 //-----PrototypeNPO (Inherits from BaseOperativeClass. Has NPO specific functionality)-----
-public class PrototypeNPO : BaseOperativeClass
+public class NonPlayerOperative : BaseOperativeClass
 {
     [Header("Cover and Navmesh")] 
     public NPOCoverNodes currentCoverSpot;
@@ -60,10 +59,7 @@ public class PrototypeNPO : BaseOperativeClass
     public bool CanCharge() => !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
     public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
 
-    public OperativeTemplate NpoData
-    {
-        get => operativeData;
-    }
+    public OperativeTemplate NpoData => operativeData;
     
     protected override void Awake()
     {
@@ -73,17 +69,17 @@ public class PrototypeNPO : BaseOperativeClass
         GameManager gm = FindFirstObjectByType<GameManager>();
         if (gm == null)
         {
-            Debug.LogWarning($"{name} didn't get gm");
+            //Debug.LogWarning($"{name} didn't get gm");
         }
         _context = gm.SharedContext;
         if (_context == null)
         {
-            Debug.LogWarning($"{name} didn't get context from gm");
+            //Debug.LogWarning($"{name} didn't get context from gm");
         }
         _diceHandler = gm.diceHandler;
         if (_diceHandler == null)
         {
-            Debug.LogWarning($"{name} didn't get diceHandler from gm");
+            //Debug.LogWarning($"{name} didn't get diceHandler from gm");
         }
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
@@ -93,10 +89,7 @@ public class PrototypeNPO : BaseOperativeClass
 
     protected override void Update()
     {
-        if (operativeData == null)
-        {
-            Debug.LogError($"{name}'s operativeData just turned null!!!!");
-        }
+        //no op
     }
 
     //Action implementations
@@ -153,12 +146,9 @@ public class PrototypeNPO : BaseOperativeClass
 
         if (currentShootTarget != null && _diceHandler != null)
         {
-            _context.ActivatedUnitSo = operativeData;
+            _context.SetSelectedOperativesData(this);
+            _context.SetSelectedTarget(currentShootTarget);
             _context.Weapon = chosenWeapon;
-            _context.CurrentlySelectedOperativeScript = null;
-            _context.CurrentlySelectedTargetScript = currentShootTarget;
-            _context.CurrentlySelectedTarget = currentShootTarget.gameObject;
-            _context.TargetUnitSo = currentShootTarget.operativeData;
             
             _context.AttackRolls.Clear();
             _context.DefenseRolls.Clear();
@@ -401,40 +391,18 @@ public class PrototypeNPO : BaseOperativeClass
     //Clamp/limit any navmesh movement according to the NPO's movement budget
     private Vector3 LimitDestination(Vector3 destination, float maxDistance)
     {
-        NavMeshPath path = new NavMeshPath();
-        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path))
-        {
-            float accumulatedDistance = 0f;
-
-            for (int i = 0; i < path.corners.Length - 1; i++)
-            {
-                float segmentDistance = Vector3.Distance(path.corners[i], path.corners[i + 1]);
-
-                if (accumulatedDistance + segmentDistance > maxDistance)
-                {
-                    // We exceeded the limit on this segment; return a point partway along it
-                    float remainingDistance = maxDistance - accumulatedDistance;
-                    Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
-                    return path.corners[i] + direction * remainingDistance;
-                }
-
-                accumulatedDistance += segmentDistance;
-            }
-
-            // If the entire path fits within the limit, return the final target position
-            return path.corners[path.corners.Length - 1];
-        }
-
-        return destination;
+        List<Vector3> dummyPoints;
+        float dummyDistance;
+        return LimitPathDistance(destination, maxDistance, out dummyPoints, out dummyDistance);
     }
-
+    
     //Execute the navmesh movement to a destination
     private void ExecuteMoveToCover(NPOCoverNodes coverNode, float maxDistance)
     {
         if (currentCoverSpot != null && currentCoverSpot != coverNode)
         {
             currentCoverSpot.occupied = false;
-            Debug.Log($"{name} left {currentCoverSpot.name}");
+            //Debug.Log($"{name} left {currentCoverSpot.name}");
         }
         
         currentCoverSpot = coverNode;
@@ -566,12 +534,12 @@ public class PrototypeNPO : BaseOperativeClass
             if (IsValidTarget(player))
             {
                 currentShootTarget = player;
-                Debug.Log($"{player.name} is valid target for {name}");
+                //Debug.Log($"{player.name} is valid target for {name}");
                 return true;
             }
             else
             {
-                Debug.Log($"{player.name} is not valid target for {name}");
+                //Debug.Log($"{player.name} is not valid target for {name}");
             }
         }
         
@@ -595,7 +563,7 @@ public class PrototypeNPO : BaseOperativeClass
             return false;
         }
 
-        if (target.Concealed && target.closeToCover)
+        if (target.currentOrder == OrderState.Conceal && target.closeToCover)
         {
             //Debug.Log("The checked target is concealed in cover");
             //Debug.Log($"The targeting line rule returned: {CheckTargetingLines(target)}");
@@ -624,6 +592,29 @@ public class PrototypeNPO : BaseOperativeClass
             }
         }
         //Debug.Log("HasLineOfSight returning true");
+        return true;
+    }
+    
+    //Overloaded LOS check from a project position
+    public bool HasLineOfSight(Vector3 customLosStart, BaseOperativeClass target)
+    {
+        if (target == null || target.dead || !target.gameObject.activeInHierarchy) return false;
+
+        Vector3 targetPos = target.losStart != null ? target.losStart.position : target.transform.position;
+        float distance = Vector3.Distance(customLosStart, targetPos);
+        Vector3 direction = (targetPos - customLosStart).normalized;
+
+        RaycastHit[] hits = Physics.RaycastAll(customLosStart, direction, distance);
+        foreach (var hit in hits)
+        {
+            if (hit.transform == transform || hit.transform.IsChildOf(transform)) continue;
+            if (hit.transform == target.transform || hit.transform.IsChildOf(target.transform)) continue;
+            
+            if (hit.collider.CompareTag("Terrain"))
+            {
+                return false;
+            }
+        }
         return true;
     }
     
@@ -658,7 +649,7 @@ public class PrototypeNPO : BaseOperativeClass
     private bool CoverNear()
     {
         Debug.Log($"{name} calling a check to see if cover is near");
-        return CheckDistanceToTerrain();
+        return CheckTerrainInControlRange();
     }
     
     //Reset when turning points end
@@ -676,9 +667,9 @@ public class PrototypeNPO : BaseOperativeClass
     }
 
     //General Reset
-    public override void ResetForNewActivation()
+    public override void TurnFinished()
     {
-        base.ResetForNewActivation();
+        base.TurnFinished();
         ResetActionFlags();
     }
     
@@ -731,50 +722,28 @@ public class PrototypeNPO : BaseOperativeClass
             {
                 if (player.dead || player == null) continue;
                 
-                Vector3 simulatedLosStartPos = node.spotToStand.position + (losStart.position - transform.position);
-                Vector3 targetPos = player.losStart != null ? player.losStart.position : player.transform.position;
-                
-                float distance = Vector3.Distance(simulatedLosStartPos, targetPos);
-                Vector3 direction = (targetPos - simulatedLosStartPos).normalized;
-
-                bool directLosClear = true;
-                RaycastHit[] hits = Physics.RaycastAll(simulatedLosStartPos, direction, distance);
-
-                foreach (var hit in hits)
-                {
-                    if (hit.transform == transform || hit.transform.IsChildOf(transform)) continue;
-                    if (hit.transform == player.transform || hit.transform.IsChildOf(player.transform)) continue;
-                    
-                    if (hit.collider.CompareTag("Terrain"))
-                    {
-                        directLosClear = false;
-                        break;
-                    }
-                }
-                
+                Vector3 simulatedLosStartPos = node.spotToStand.position + ((losStart != null ? losStart.position : transform.position) - transform.position);
+                bool directLosClear = HasLineOfSight(simulatedLosStartPos, player);
                 if (!directLosClear) continue;
                 
-                bool targetingLinesValid = CheckTargetingLinesFromPosition(node.spotToStand.position, player);
-
-                if (player.Concealed && player.closeToCover)
+                bool targetingLinesValid = CheckTargetingLines(node.spotToStand.position, player);
+                
+                if (player.currentOrder == OrderState.Conceal && player.closeToCover)
                 {
                     if (targetingLinesValid)
                     {
                         hasValidShotFromNode = true;
-                        Debug.Log($"Can see {player.name} even in concealed cover from {node.name} since LOS and targeting lines valid");
                         break;
                     }
                 }
                 else
                 {
                     hasValidShotFromNode = true;
-                    Debug.Log($"Can see {player.name} with valid LOS from {node.name} since they are in the open");
                     currentShootTarget = player;
                     break;
                 }
             }
-
-            if (!hasValidShotFromNode) continue; // Skip if this node doesn't provide a valid shot
+            if (!hasValidShotFromNode) continue;
         }
         
         if (pathDistance < shortestDistance)

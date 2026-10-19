@@ -77,6 +77,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
+    //Click the board and then calculate a path to that spot limited by movement distance
     public void ClickToPathfind()
     {
         // Do not pathfind if clicking on UI elements/buttons
@@ -107,28 +108,8 @@ public class PlayerOperative : BaseOperativeClass
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                //Debug.Log(hit.transform.name);
-                if (NavMesh.CalculatePath(transform.position, hit.point, _operativeAgent.areaMask, Path))
-                {
-                    for (int i = 0; i < Path.corners.Length - 1; i++)
-                    {
-                        float segment = Vector3.Distance(Path.corners[i], Path.corners[i + 1]);
-                        _currentPathDistance += segment;
-                        //Debug.Log($"Segment {i}: {segment}, Total: {_currentPathDistance}");
-                    }
-                }
-
-                if (_currentPathDistance > remainingMovement)
-                {
-                    _moveMarkerAgent.destination = LimitPath(remainingMovement);
-                    _currentPathDistance = remainingMovement;
-                }
-                else
-                {
-                    _limitedPoints.Add(transform.position);
-                    _limitedPoints.Add(hit.point);
-                    _moveMarkerAgent.destination = hit.point;
-                }
+                Vector3 finalDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
+                _moveMarkerAgent.destination = finalDestination;
             }
 
             float projectedSpentMeters = (meterMovement - remainingMovement) + _currentPathDistance;
@@ -137,6 +118,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
+    //Draw a path to the destination
     private void DrawPath(Vector3[] points)
     {
         if (selected)
@@ -151,40 +133,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
-    Vector3 LimitPath(float maxDistance)
-    {
-        if (selected)
-        {
-            float distance = 0f;
-
-            _limitedPoints.Add(Path.corners[0]);
-
-            for (int i = 0; i < Path.corners.Length - 1; i++)
-            {
-                float segment = Vector3.Distance(Path.corners[i], Path.corners[i + 1]);
-
-                if (distance + segment > maxDistance)
-                {
-                    float remaining = maxDistance - distance;
-
-                    Vector3 direction = (Path.corners[i + 1] - Path.corners[i]).normalized;
-
-                    Vector3 finalPoint = Path.corners[i] + direction * remaining;
-
-                    _limitedPoints.Add(finalPoint);
-
-                    return finalPoint;
-                }
-
-                _limitedPoints.Add(Path.corners[i + 1]);
-
-                distance += segment;
-            }
-        }
-
-        return Path.corners[Path.corners.Length - 1];
-    }
-
+    //Move the player operative the move marker
     public void MoveOperativeToMarker()
     {
         hasMovedThisActivation = true;
@@ -210,9 +159,9 @@ public class PlayerOperative : BaseOperativeClass
         ResetMoveMarker();
     }
     
-    public override void ResetForNewActivation()
+    public override void TurnFinished()
     {
-        base.ResetForNewActivation();
+        base.TurnFinished();
         if (!hasMovedThisActivation)
         {
             remainingMovement = meterMovement;
@@ -220,6 +169,7 @@ public class PlayerOperative : BaseOperativeClass
         ResetMoveMarker();
     }
     
+    //Bring the move marker back to the player and SetActive false
     public void ResetMoveMarker()
     {
         if (moveMarker != null)
@@ -235,6 +185,6 @@ public class PlayerOperative : BaseOperativeClass
     
     public void Reset()
     {
-        ResetForNewActivation();
+        TurnFinished();
     }
 }

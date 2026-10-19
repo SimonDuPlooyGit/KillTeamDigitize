@@ -33,12 +33,13 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        SharedContext = new InformationPackage();
         _input = new InputActions();
         _stateMachine = new StateMachine();
         SharedContext.MainCameraScript = mainCamera;
         mainCamera.isFreecam = true;
         SharedContext.AllPlayerUnits = new List<PlayerOperative>(FindObjectsByType<PlayerOperative>(FindObjectsSortMode.None));
-        SharedContext.AllNpoUnits = new List<PrototypeNPO>(FindObjectsByType<PrototypeNPO>(FindObjectsSortMode.None));
+        SharedContext.AllNpoUnits = new List<NonPlayerOperative>(FindObjectsByType<NonPlayerOperative>(FindObjectsSortMode.None));
 
         //Initialize states
         introductionState = new IntroductionState(SharedContext, this);
@@ -81,7 +82,7 @@ public class GameManager : MonoBehaviour
         }));
         AddT(actionSelectionState, npoSelectState, new FuncPredicate(() => !SharedContext.PlayerTurn));
         AddT(npoSelectState, npoTurnPerformState,
-            new FuncPredicate(() => SharedContext.CurrentlyActivatedNpo != null)); //If NPO is found to activate
+            new FuncPredicate(() => SharedContext.CurrentlySelectedOperativeScript != null && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative)); //If NPO is found to activate
         AddT(npoTurnPerformState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
 
 
@@ -105,8 +106,7 @@ public class GameManager : MonoBehaviour
             },
             () =>
             {
-            SharedContext.CurrentlySelectedOperativeScript.selected = false;
-            SharedContext.CurrentlySelectedOperativeScript.Reset();
+            SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
             SharedContext.FullReset();
             }
         );
@@ -216,7 +216,7 @@ public class GameManager : MonoBehaviour
         {
             SharedContext.CurrentlySelectedOperativeScript.acted = true;
             SharedContext.CurrentlySelectedOperativeScript.selected = false;
-            SharedContext.CurrentlySelectedOperativeScript.Reset();
+            SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
         }
         
         SharedContext.FullReset();

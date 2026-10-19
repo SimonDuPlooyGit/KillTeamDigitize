@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using Unity.Mathematics.Geometry;
+using UnityEngine.AI;
 
 public enum OrderState {Engage, Conceal}
 
@@ -21,12 +22,11 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool selected;
     public bool closeToCover;
     public bool acted;
-    public OrderState currentOrder = OrderState.Engage;
+    public OrderState currentOrder;
     public float dashDistanceScaled = (3f / 39.37f) * 10;
-    public bool Concealed => currentOrder == OrderState.Conceal;
-    
+
     [Header("Sampling and LOS")]
-    public List<GameObject> samplingPoints = new List<GameObject>();
+    public List<GameObject> samplingPoints;
     public Transform losStart;
     public LineRenderer lineRenderer;
     public Material validLine;
@@ -52,6 +52,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [SerializeField]
     private ParticleSystem deathParticles;
     private Animator _animator;
+    
+    [Header("Navmesh and Movement")]
+    public NavMeshAgent agent;
     
 
     protected virtual void Awake()
@@ -82,7 +85,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 samplingPoints.Add(pt.gameObject);
             }
         }
-        
     }
 
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
@@ -98,12 +100,55 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealSymbol.SetActive(true);
         }
         
-        closeToCover = CheckDistanceToTerrain();
+        closeToCover = CheckTerrainInControlRange();
         FogEffectAndCoverToggle();
     }
+    
+    //Calculate a path to destination and clamp the path distance according to max a distance
+    //(Makes use of the out keyword at the limitedPoints and totalPathDistance arguments. This passes them by reference and makes it so we can also get limitedPoints and totalPathDistance from this function)
+    //(Simply put this function can give us 3 outputs)
+    public virtual Vector3 LimitPathDistance(Vector3 destination, float maxDistance, out List<Vector3> limitedPoints, out float totalPathDistance)
+    {
+        limitedPoints = new List<Vector3>();
+        totalPathDistance = 0f;
+        NavMeshPath path = new NavMeshPath();
 
-    //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this)
-    public float DetermineLosAndDistance(Transform losEnd)
+        if (agent != null && NavMesh.CalculatePath(transform.position, destination, agent.areaMask, path))
+        {
+            if (path.corners.Length > 0)
+            {
+                limitedPoints.Add(path.corners[0]);
+            }
+
+            for (int i = 0; i < path.corners.Length - 1; i++)
+            {
+                float segment = Vector3.Distance(path.corners[i], path.corners[i + 1]);
+
+                if (totalPathDistance + segment > maxDistance)
+                {
+                    float remaining = maxDistance - totalPathDistance;
+                    Vector3 direction = (path.corners[i + 1] - path.corners[i]).normalized;
+                    Vector3 finalPoint = path.corners[i] + direction * remaining;
+                    limitedPoints.Add(finalPoint);
+                    totalPathDistance = maxDistance;
+                    return finalPoint;
+                }
+
+                limitedPoints.Add(path.corners[i + 1]);
+                totalPathDistance += segment;
+            }
+
+            return path.corners.Length > 0 ? path.corners[path.corners.Length - 1] : destination;
+        }
+
+        limitedPoints.Add(transform.position);
+        limitedPoints.Add(destination);
+        totalPathDistance = Vector3.Distance(transform.position, destination);
+        return destination;
+    }
+
+    //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this) overloaded for a projected point as well
+    public float DetermineLosAndDistance(Transform losEnd) //Call LOS and distance check on the unit
     {
         float distance = (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
         print(distance + "\"");
@@ -117,13 +162,43 @@ public abstract class BaseOperativeClass : MonoBehaviour
             {
                 lineRenderer.material = validLine;
                 lineRenderer.SetPosition(1, losEnd.position);
-                Debug.Log($"LOS Clear. Total range to target: {distance}");
+                Debug.Log($"LOS Clear. Total range to target: {distance} (From Unit Call)");
             }
             else
             {
                 lineRenderer.material = invalidLine;
                 lineRenderer.SetPosition(1, hit.point);
-                Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
+                Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance} (From Unit Call)");
+                distance = 0;
+            }
+        }
+
+        lineRenderer.enabled = true;
+
+        return distance;
+    }
+
+    public float DetermineLosAndDistance(Transform projectedLosStart, Transform losEnd) //Call LOS and distance check at a projected point
+    {
+        float distance = (Vector3.Distance(projectedLosStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
+        print(distance + "\"");
+        Vector3 direction = (losEnd.position - projectedLosStart.position).normalized;
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, projectedLosStart.position);
+
+        if (Physics.Raycast(projectedLosStart.position, direction, out RaycastHit hit, distance))
+        {
+            if (hit.collider.CompareTag("EnemyUnit"))
+            {
+                lineRenderer.material = validLine;
+                lineRenderer.SetPosition(1, losEnd.position);
+                Debug.Log($"LOS Clear. Total range to target: {distance} (Projected LOS call)");
+            }
+            else
+            {
+                lineRenderer.material = invalidLine;
+                lineRenderer.SetPosition(1, hit.point);
+                Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance} (Projected LOS call)");
                 distance = 0;
             }
         }
@@ -134,7 +209,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Check a 1-inch area around the operative to determine if terrain is within 1 inch
-    public bool CheckDistanceToTerrain()
+    public bool CheckTerrainInControlRange()
     {
         float oneInchScaled = (1f / 39.39f) * 10;
         bool isNearTerrain = false;
@@ -157,13 +232,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
         return isNearTerrain;
     }
 
-    //Check the targeting lines rule two with argument overload based on what you can input
-    public bool CheckTargetingLines(BaseOperativeClass target)
+    //Three overloaded CheckTargetingLines rule checks based on how and where you want to call them
+    public bool CheckTargetingLines(BaseOperativeClass target) //Call it with just giving a target
     {
         return CheckTargetingLines(this, target);
     }
 
-    public bool CheckTargetingLines(BaseOperativeClass attacker, BaseOperativeClass target)
+    public bool CheckTargetingLines(BaseOperativeClass attacker, BaseOperativeClass target) //Call it with giving an attacker and target
     {
         //Debug.Log("CheckTargetingLines called");
         if (attacker.samplingPoints.Count == 0 || target.samplingPoints.Count == 0) return false;
@@ -182,8 +257,36 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
                     if (CheckLineObstruction(startSp, targetSp2))
                     {
-                        Debug.DrawLine(startSp, targetSp1, Color.cyan, 10f);
-                        Debug.DrawLine(startSp, targetSp2, Color.cyan, 10f);
+                        Debug.DrawLine(startSp, targetSp1, Color.cyan, 1f);
+                        Debug.DrawLine(startSp, targetSp2, Color.cyan, 1f);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public bool CheckTargetingLines(Vector3 projectedPosition, BaseOperativeClass target) //Call it from an offset position project from original point (Used in NPO projected movement checks)
+    {
+        if (samplingPoints.Count == 0 || target.samplingPoints.Count == 0) return false;
+
+        Vector3 offset = projectedPosition - transform.position;
+
+        for (int i = 0; i < samplingPoints.Count; i++)
+        {
+            Vector3 simulatedNpoSp = samplingPoints[i].transform.position + offset;
+            for (int j = 0; j < target.samplingPoints.Count; j++)
+            {
+                Vector3 playerSp1 = target.samplingPoints[j].transform.position;
+
+                if (CheckLineObstruction(simulatedNpoSp, playerSp1))
+                {
+                    int oppositeIndex = (j + (target.samplingPoints.Count / 2)) % target.samplingPoints.Count;
+                    Vector3 playerSp2 = target.samplingPoints[oppositeIndex].transform.position;
+
+                    if (CheckLineObstruction(simulatedNpoSp, playerSp2))
+                    {
                         return true;
                     }
                 }
@@ -192,7 +295,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         return false;
     }
     
-    //Check for terrain blockers in the targeting lines rule
+    //Check for terrain blockers a raycast (LOS ray or Targeting line rays)
     public bool CheckLineObstruction(Vector3 start, Vector3 end)
     {
         //Debug.Log("CheckLineObstruction called");
@@ -204,11 +307,12 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             if (hit.collider.CompareTag("Terrain"))
             {
-                Debug.DrawLine(start, hit.point, Color.red, 0.5f);
+                Debug.Log($"Ray hit {hit.collider.name}");
+                Debug.DrawLine(start, hit.point, Color.red, 1f);
                 return false;
             }
         }
-        Debug.DrawLine(start, end, Color.green, 0.5f);
+        Debug.DrawLine(start, end, Color.green, 1f);
         return true;
     }
 
@@ -234,8 +338,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             damagePopOut.GetComponent<TextMeshProUGUI>().text = "Miss";
             damagePopOut.SetActive(true);
         }
-       
-
+        
         if (currentWounds <= 0)
         {
             currentWounds = 0;
@@ -244,7 +347,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
     }
     
-    //Set the health and healthbar
+    //Set up the healthbar
     public void SetHealth()
     {
         if (healthFill == null || operativeData == null) return;
@@ -273,7 +376,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             healthFillImage.color = new Color32(0, 245, 47, 255);
     }
 
-    //Set apl in the UI for the move marker
+    //Set apl in the UI
     public void SetApl(int apl)
     {
         //Debug.Log("SetApl called");
@@ -282,41 +385,19 @@ public abstract class BaseOperativeClass : MonoBehaviour
         if (textComponent != null) textComponent.text = apl.ToString();
     }
 
-    //Update the APL on the movemarker
+    //Update the APL marker on UI
     public void UpdateApl(int currApl)
     {
         SetApl(currApl);
     }
     
-    //Do animations or effects of a unit dying in here
+    //Do animations or effects of a unit dying in here (Calls DeathSequence coroutine)
     public void HandleDeath()
     {
         StartCoroutine(DeathSequence());
     }
     
-    private void FogEffectAndCoverToggle()
-    {
-        if (closeToCover && unitUI != null && currentOrder == OrderState.Conceal)
-        {
-            concealInCoverSymbol.SetActive(true);
-            fogEffect.SetActive(true);
-        }
-        else
-        {
-            concealInCoverSymbol.SetActive(false);
-            fogEffect.SetActive(false);
-        }
-    }
-
-    public void CheckTurnEnd()
-    {
-        if (currentApl == 0)
-        {
-            acted = true;
-            Debug.Log($"{name} ran out of APL and its turn is over");
-        }
-    }
-
+    //Handle effects for when an Operative dies
     private IEnumerator DeathSequence()
     {
         Debug.Log($"{gameObject.name} has died.");
@@ -330,7 +411,32 @@ public abstract class BaseOperativeClass : MonoBehaviour
         yield return new WaitForSeconds(1f);
         gameObject.SetActive(false);
     }
+    
+    //Activates cover symbol and fog effect
+    private void FogEffectAndCoverToggle()
+    {
+        if (closeToCover && unitUI != null && currentOrder == OrderState.Conceal)
+        {
+            concealInCoverSymbol.SetActive(true);
+            fogEffect.SetActive(true);
+        }
+        else
+        {
+            concealInCoverSymbol.SetActive(false);
+            fogEffect.SetActive(false);
+        }
+    }
+    
+    //Finish turn when apl is 0
+    public void CheckTurnEnd()
+    {
+        if (currentApl == 0)
+        {
+            TurnFinished();
+        }
+    }
 
+    //Add the glow material (Works as a layered material array)
     public void AddGlow()
     {
         //Debug.Log($"{gameObject.name} has added glow.");
@@ -344,9 +450,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
     }
 
+    //Remove the glow material (Works as a layered material array)
     public void RemoveGlow()
     {
-        Debug.Log($"{gameObject.name} has removed glow.");
+        //Debug.Log($"{gameObject.name} has removed glow.");
         MeshRenderer bodyMeshRender = gameObject.GetComponentInChildren<MeshRenderer>();
         
         Material[] mats = bodyMeshRender.materials;
@@ -357,9 +464,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
     }
 
+    //Call this for every Operative in the game when a new turning point starts
     public virtual void ResetForNewTurningPoint()
     {
-        Debug.Log("ResetForNewTurningPoint called");
+        Debug.Log($"{gameObject.name} has reset for new turning point");
         if (dead) return;
         
         acted = false;
@@ -375,8 +483,18 @@ public abstract class BaseOperativeClass : MonoBehaviour
         if (lineRenderer != null) lineRenderer.enabled = false;
     }
 
-    public virtual void ResetForNewActivation()
+    //Call this when CurrentlySelectedOperative has finished their turn
+    public virtual void TurnFinished()
     {
+        Debug.Log($"{gameObject.name}'s turn is over");
+        acted = true;
+        Deselect();
+    }
+    
+    //Call this when you unselect a unit by transitioning back to UnitActivationState when you haven't performed any actions on CurrentlySelectedOperative
+    public virtual void Deselect()
+    {
+        Debug.Log($"{gameObject.name} has been deselected");
         selected = false;
         RemoveGlow();
         if (lineRenderer != null) lineRenderer.enabled = false;

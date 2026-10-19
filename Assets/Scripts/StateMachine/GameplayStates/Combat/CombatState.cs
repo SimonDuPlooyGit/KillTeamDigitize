@@ -48,7 +48,8 @@ public class CombatState : BaseState
 
     private IEnumerator ResolveCombat()
     {
-        Context.CurrentlySelectedOperativeScript.hasShotThisActivation = true;
+        var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (playerOp != null) playerOp.hasShotThisActivation = true;
         Debug.Log("ResolveCombat");
         
         //Pre-Roll
@@ -102,7 +103,7 @@ public class CombatState : BaseState
 
         for (int i = 0; i < Context.DefenseRolls.Count; i++)
         {
-            if (Context.DefenseRolls[i] >= Context.TargetUnitSo.save)
+            if (Context.DefenseRolls[i] >= Context.CurrentlySelectedTargetSo.save)
             {
                 if (Context.DefenseRolls[i] == 6)
                 {
@@ -190,30 +191,30 @@ public class CombatState : BaseState
             }
         }
 
-        if (Context.ActivatedUnitSo != null) //Gather all active abilities for this step
+        if (Context.CurrentlySelectedOperativeSo != null) //Gather all active abilities for this step
         {
-            foreach (var rule in Context.ActivatedUnitSo.aabilities)
+            foreach (var rule in Context.CurrentlySelectedOperativeSo.aabilities)
             {
                 if (rule.Step == currentStep)
                 {
                     rulesToExecute.Add(() => rule.Execute(Context));
                 }
             }
-            foreach (var rule in Context.ActivatedUnitSo.pabilities)
+            foreach (var rule in Context.CurrentlySelectedOperativeSo.pabilities)
             {
                 if (rule.Step == currentStep)
                     rulesToExecute.Add(() => rule.Execute(Context));
             }
         }
         
-        if (Context.TargetUnitSo != null) //Gather all passive abilities for this step
+        if (Context.CurrentlySelectedTargetSo != null) //Gather all passive abilities for this step
         {
-            foreach (var rule in Context.TargetUnitSo.aabilities)
+            foreach (var rule in Context.CurrentlySelectedTargetSo.aabilities)
             {
                 if (rule.Step == currentStep)
                     rulesToExecute.Add(() => rule.Execute(Context));
             }
-            foreach (var rule in Context.TargetUnitSo.pabilities)
+            foreach (var rule in Context.CurrentlySelectedTargetSo.pabilities)
             {
                 if (rule.Step == currentStep)
                     rulesToExecute.Add(() => rule.Execute(Context));

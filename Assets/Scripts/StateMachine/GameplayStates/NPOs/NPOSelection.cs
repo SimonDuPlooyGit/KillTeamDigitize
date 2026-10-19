@@ -14,34 +14,10 @@ public class NPOSelection : BaseState
     public override void OnEnter()
     {
         Debug.Log("NPOSelection OnEnter");
-        Context.CurrentlyActivatedNpo = _npoManager.GetNpoUnitToActivate();
-        _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlyActivatedNpo.transform);
-        if (Context.CurrentlyActivatedNpo != null)
-        {
-            Debug.Log($"Selected NPO: {Context.CurrentlyActivatedNpo.name} (Instance ID: {Context.CurrentlyActivatedNpo.gameObject.GetInstanceID()}), operativeData is: {(Context.CurrentlyActivatedNpo.operativeData == null ? "NULL" : Context.CurrentlyActivatedNpo.operativeData.name)}");
-        }
-        
-
-        if (Context.CurrentlyActivatedNpo == null)
-        {
-            Debug.Log("GetNpoUnitToActivate returned null");
-            return;
-        }
-        
-        if (Context.CurrentlyActivatedNpo.operativeData == null)
-        {
-            Debug.LogError($"Found NPO {Context.CurrentlyActivatedNpo.name}, but its operativeData slot is actually null at runtime!");
-            return;
-        }
-        
-        if (Context.CurrentlyActivatedNpo != null)
-        {
-            Context.CurrentlyActivatedNpo.ResetActionFlags();
-        }
-        else
-        {
-            Debug.Log("No remaining NPO units to activate");
-        }
+        NonPlayerOperative npoToActivate = _npoManager.GetNpoUnitToActivate();
+        Context.SetSelectedOperativesData(npoToActivate);
+        _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
+        npoToActivate.ResetActionFlags();
     }
 
     public override void Update()

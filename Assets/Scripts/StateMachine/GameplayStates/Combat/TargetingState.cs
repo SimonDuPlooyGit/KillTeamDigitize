@@ -74,45 +74,28 @@ public class TargetingState : BaseState
         Debug.Log("OnSelectPerformed in TargetingState");
         if (Context.CurrentlySelectedOperativeScript.selected)
         {
-            Debug.Log($"Shooting a targeting raycast for {Context.CurrentlySelectedOperativeScript.name}");
-            
-            //LOS checking and line renderer code
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
             {
-                Debug.Log("Ray fired");
-                if (hit.collider.gameObject.CompareTag("EnemyUnit")) //When you hit the enemy check for line of sight and range (called on unit)
+                if (hit.collider.gameObject.CompareTag("EnemyUnit")) 
                 {
-                    Debug.Log($"Raycast hit: {hit.collider.gameObject.name}");
-                    Context.CurrentlySelectedTarget = hit.collider.gameObject;
-                    Context.CurrentlySelectedTargetScript = Context.CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
-                    Context.TargetUnitSo = Context.CurrentlySelectedTargetScript.operativeData;
-                    Debug.Log("Enemy targeted: " + Context.TargetUnitSo.name);
+                    Context.SetSelectedTarget(hit.collider.gameObject);
+                    Debug.Log("Enemy targeted: " + Context.CurrentlySelectedTargetSo.name);
 
                     Context.CurrentlySelectedOperative.transform.LookAt(new Vector3(Context.CurrentlySelectedTarget.transform.position.x, Context.CurrentlySelectedOperative.transform.position.y, Context.CurrentlySelectedTarget.transform.position.z));
                     
-                    //Cover and conceal checking
-                    if (Context.CurrentlySelectedTargetScript.Concealed &&
-                        Context.CurrentlySelectedTargetScript.closeToCover) //Concealed and close to cover
+                    if (Context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal &&
+                        Context.CurrentlySelectedTargetScript.closeToCover) 
                     {
                         Debug.Log("Not a valid target, concealed in cover");
                         return;
                     }
                     
                     float distanceToEnemy = Context.CurrentlySelectedOperativeScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
-                
-                    //Assume infinite range first
                     float maxWeaponRange = Mathf.Infinity;
-                
-                    //Find if the Weapon has the range rule
                     var rangeRule = Context.Weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
                 
-                    //If the Weapon has the range rule assign maxWeaponRange
-                    if (rangeRule != null)
-                    {
-                        // We multiply by your scale/conversion factor if needed, just like meterMovement
-                        maxWeaponRange = rangeRule.range; 
-                    }
+                    if (rangeRule != null) maxWeaponRange = rangeRule.range; 
 
                     if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
                     {
@@ -121,28 +104,14 @@ public class TargetingState : BaseState
                     } else if (distanceToEnemy > maxWeaponRange)
                     {
                         Context.ValidTarget = false;
-                        Context.CurrentlySelectedOperativeScript.lineRenderer.material =
-                        Context.CurrentlySelectedOperativeScript.invalidLine;
-                        _menu.tutFlag6 = true; //toggle invalid panel
+                        Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
+                        _menu.tutFlag6 = true; 
                         Debug.Log($"Target out of range of: {maxWeaponRange}");
                     }
                     
-                    //Targeting Lines Checking
                     Context.CurrentlySelectedOperativeScript.CheckTargetingLines(Context.CurrentlySelectedOperativeScript, Context.CurrentlySelectedTargetScript);
                 }
-                else
-                {
-                    Debug.Log($"Didn't hit an npo, raycast hit: {hit.collider.gameObject.name}");
-                }
             }
-        }
-        else if (Context.CurrentlySelectedOperativeScript == null)
-        {
-            Debug.Log("Somehow currently selected unit is null");
-        }
-        else
-        {
-            Debug.Log("Somehow currently selected unit is not seen as selected in context");
         }
     }
 }

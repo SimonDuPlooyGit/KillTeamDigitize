@@ -88,19 +88,12 @@ public class UnitActivationState : BaseState
                     //Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
                     return;
                 }
-                
-                Context.CurrentlySelectedOperative = hit.collider.gameObject;
-                Context.CurrentlySelectedOperativeScript = Context.CurrentlySelectedOperative.GetComponent<PlayerOperative>();
-                Context.ActivatedUnitSo = Context.CurrentlySelectedOperativeScript.operativeData;
-                Debug.Log("Selected Operative: " + Context.ActivatedUnitSo.name);
+                Context.SetSelectedOperativesData(hit.collider.gameObject);
+                Debug.Log("Selected Operative: " + Context.CurrentlySelectedOperativeSo.name);
                 Context.CurrentlySelectedOperativeScript.AddGlow();
                 Context.CurrentlySelectedOperativeScript.selected = true;
                 _menu.OpenAction();
                 Context.IsPlayerActivationRequested = true;
-            }
-            else
-            {
-                //Debug.Log($"Ray did not hit player it hit {hit.collider.gameObject.name}");
             }
         }
     }
@@ -109,8 +102,7 @@ public class UnitActivationState : BaseState
     {
         if (Context.CurrentlySelectedOperativeScript != null)
         {
-            Context.CurrentlySelectedOperativeScript.Reset();
-            Context.CurrentlySelectedOperativeScript.selected = false;
+            Context.CurrentlySelectedOperativeScript.Deselect();
         }
         Context.FullReset();
     }

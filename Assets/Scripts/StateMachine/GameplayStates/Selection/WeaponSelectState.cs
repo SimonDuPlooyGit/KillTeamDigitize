@@ -54,9 +54,9 @@ public class WeaponSelectState : BaseState
     {
         _menu.shootMenuActualScript.ClearWeapons(); //Clear previous weapons for fresh slate
         
-        if (Context.ActivatedUnitSo != null && Context.ActivatedUnitSo.weapons != null) //Safety null check
+        if (Context.CurrentlySelectedOperativeSo != null && Context.CurrentlySelectedOperativeSo.weapons != null) //Safety null check
         {
-            foreach (WeaponTemplate weapon in Context.ActivatedUnitSo.weapons) //Loop through the unit's weapons and tell the UI to create a panel for each
+            foreach (WeaponTemplate weapon in Context.CurrentlySelectedOperativeSo.weapons) //Loop through the unit's weapons and tell the UI to create a panel for each
             {
                 _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
                 //^ Call AddWeaponPanel on the shootMenu script with the currently iterated weapon as a parameter

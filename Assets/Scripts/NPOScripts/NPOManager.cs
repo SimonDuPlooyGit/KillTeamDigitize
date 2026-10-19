@@ -10,14 +10,14 @@ public class NPOManager : MonoBehaviour
     //  1.3 Is closer to player
 
     //Lists keeping track of the different player units and NPOs
-    [SerializeField] public List<PrototypeNPO> npoUnits = new();
+    [SerializeField] public List<NonPlayerOperative> npoUnits = new();
     [SerializeField] public List<PlayerOperative> playerUnits = new();
     
     //Find the NPO to activate according the priority above
-    public PrototypeNPO GetNpoUnitToActivate()
+    public NonPlayerOperative GetNpoUnitToActivate()
     {
         Debug.Log("GetNPOUnitToActivate called");
-        PrototypeNPO candidate = FindBestCandidate(npoUnits);
+        NonPlayerOperative candidate = FindBestCandidate(npoUnits);
         if (candidate != null)
         {
             candidate.AddGlow();
@@ -38,10 +38,10 @@ public class NPOManager : MonoBehaviour
     }
     
     //The actual logic to find the best candidate that can shoot
-    private PrototypeNPO FindBestCandidate(List<PrototypeNPO> npos)
+    private NonPlayerOperative FindBestCandidate(List<NonPlayerOperative> npos)
     {
         Debug.Log("FindBestCandidate called");
-        PrototypeNPO bestCandidate = null;
+        NonPlayerOperative bestCandidate = null;
         int maxDamage = -1;
 
         foreach (var npo in npos)
@@ -69,7 +69,7 @@ public class NPOManager : MonoBehaviour
     }
 
     //Find the NPO that can do the most shooting damage
-    private int GetBestDamage(PrototypeNPO npo)
+    private int GetBestDamage(NonPlayerOperative npo)
     {
         if (npo.NpoData == null || npo.NpoData.weapons == null || npo.NpoData.weapons.Count == 0) return 0;
         
@@ -85,9 +85,9 @@ public class NPOManager : MonoBehaviour
     }
 
     //Find the NPO that isn't in cover
-    private PrototypeNPO FindNotInCover()
+    private NonPlayerOperative FindNotInCover()
     {
-        PrototypeNPO lowestOpenNpo = null;
+        NonPlayerOperative lowestOpenNpo = null;
         int lowestWounds = int.MaxValue;
 
         foreach (var npo in npoUnits)
@@ -105,10 +105,10 @@ public class NPOManager : MonoBehaviour
     }
 
     //Find the NPO that is closest to a player unit
-    private PrototypeNPO FindClosestNpo()
+    private NonPlayerOperative FindClosestNpo()
     {
         Debug.Log("FindClosestNPO called");
-        PrototypeNPO closestNpo = null;
+        NonPlayerOperative closestNpo = null;
         float closestDistance = float.MaxValue;
 
         foreach (var npo in npoUnits)
