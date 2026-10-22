@@ -3,20 +3,24 @@ using UnityEngine;
 
 public class MoveMarkerSphereCheck : MonoBehaviour
 {
-    public bool CheckEnemyInControlRange()
+    public bool CheckEnemyInControlRange(string unitTag)
     {
         Collider[] colliders = Physics.OverlapSphere(transform.position, 0.414f);
-        bool enemyInControlRange  = false;
 
         foreach (var col in colliders)
         {
-            if (col.CompareTag("EnemyUnit"))
+            if (col.CompareTag("Terrain")) continue;
+
+            BaseOperativeClass targetOp = col.GetComponentInParent<BaseOperativeClass>();
+            if (targetOp != null && !targetOp.dead)
             {
-                enemyInControlRange = true;
-                continue;
+                //If the detected unit's tag is different, it is an enemy
+                if (!col.CompareTag(unitTag))
+                {
+                    return true;
+                }
             }
         }
-
-        return enemyInControlRange;
+        return false;
     }
 }

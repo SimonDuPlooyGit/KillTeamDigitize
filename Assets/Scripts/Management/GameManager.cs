@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
         introductionState = new IntroductionState(SharedContext, this);
         unitActivationState = new UnitActivationState(SharedContext, _input, menu, this);
         actionSelectionState = new ActionSelectionState(SharedContext, menu, this);
-        movementState = new MovementState(SharedContext, _input, menu);
+        movementState = new MovementState(SharedContext, _input, menu, this);
         targetingState = new TargetingState(SharedContext, _input, menu);
         combatState = new ShootCombatState(SharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(SharedContext, menu);
@@ -62,7 +63,7 @@ public class GameManager : MonoBehaviour
                 SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedOperativeScript != null));
         AddT(actionSelectionState, movementState,
             new FuncPredicate(() =>
-                !SharedContext.IsPlayerActivationRequested && SharedContext.CurrentlySelectedOperativeScript != null));
+                SharedContext.IsMovementRequested && SharedContext.CurrentlySelectedOperativeScript != null));
         AddT(movementState, actionSelectionState, new FuncPredicate(() => movementState.MovementFinished));
         AddT(actionSelectionState, weaponSelectState, new FuncPredicate(() => SharedContext.IsShootingRequested));
         AddT(weaponSelectState, targetingState, new FuncPredicate(() => SharedContext.IsWeaponSelected));
@@ -113,7 +114,13 @@ public class GameManager : MonoBehaviour
 
         GoBackAState(movementState, actionSelectionState,()=>true,() =>
         {
-            SharedContext.IsPlayerActivationRequested = true;
+            SharedContext.IsMovementRequested = false;
+            SharedContext.SelectedMovement = PlayerMovementType.None;
+            var playerOp = SharedContext.CurrentlySelectedOperativeScript as PlayerOperative;
+            if (playerOp != null)
+            {
+                playerOp.ResetMoveMarker();
+            }
         });
         GoBackAState(weaponSelectState, actionSelectionState, ()=>true,() =>
         {
@@ -179,9 +186,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnMoveActionButtonPressed()
+    public void OnRepositionActionButtonPressed()
     {
-        SharedContext.IsPlayerActivationRequested = false;
+        SharedContext.SelectedMovement = PlayerMovementType.Reposition;
+        SharedContext.IsMovementRequested = true;
+    }
+
+    public void OnChargeActionButtonPressed()
+    {
+        SharedContext.SelectedMovement = PlayerMovementType.Charge;
+        SharedContext.IsMovementRequested = true;
+    }
+
+    public void OnDashActionButtonPressed()
+    {
+        SharedContext.SelectedMovement = PlayerMovementType.Dash;
+        SharedContext.IsMovementRequested = true;
     }
     
     public void OnConfirmMovementButtonPressed()

@@ -8,6 +8,8 @@ public class ActionSelectionState : BaseState
     
     private readonly MenuPanel _menu; //Will need to have access to the menu
     private GameObject repositionButton;
+    private GameObject chargeButton;
+    private GameObject dashButton;
     private GameObject repositionCost;
     private GameObject shootButton;
     private GameObject shootCost;
@@ -32,7 +34,9 @@ public class ActionSelectionState : BaseState
         ActivateOrDeactivateActionButtons();
         
         //Get action buttons
-        repositionButton = _menu.actionMenu.transform.Find("Buttons").Find("MoveButton").gameObject;
+        repositionButton = _menu.actionMenu.transform.Find("Buttons").Find("RepositionButton").gameObject;
+        chargeButton = _menu.actionMenu.transform.Find("Buttons").Find("ChargeButton").gameObject;
+        dashButton = _menu.actionMenu.transform.Find("Buttons").Find("DashButton").gameObject;
         shootButton = _menu.actionMenu.transform.Find("Buttons").Find("ShootButton").gameObject;
         repositionCost = _menu.actionMenu.transform.Find("APLCosts").Find("MoveAPL").gameObject;
         shootCost = _menu.actionMenu.transform.Find("APLCosts").Find("ShootAPL").gameObject;

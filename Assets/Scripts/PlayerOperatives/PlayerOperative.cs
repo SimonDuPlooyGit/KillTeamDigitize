@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
@@ -23,6 +24,7 @@ public class PlayerOperative : BaseOperativeClass
 
     public bool hasMovedThisActivation = false;
     public bool hasShotThisActivation = false;
+    public bool validMoveMarkerPosition = true;
 
     protected override void Awake()
     {
@@ -123,8 +125,6 @@ public class PlayerOperative : BaseOperativeClass
     private Coroutine _moveMarker;
     public void ClickToPathfindCharge()
     {
-        float chargeDistance = meterMovement + 2;
-        float remainingChargeDistance = remainingMovement + 2;
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return; 
 
         if (selected)
@@ -137,33 +137,67 @@ public class PlayerOperative : BaseOperativeClass
             moveMarker.SetActive(true);
 
             movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(remainingChargeDistance * 39.37f / 10)}/{movementStat+2}\"";
-
-            if (remainingChargeDistance <= 0.05f) return;
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat + 2}\"";
 
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                Vector3 finalDestination = LimitPathDistance(hit.point, remainingChargeDistance, out _limitedPoints, out _currentPathDistance);
+                Vector3 finalDestination = LimitPathDistance(hit.point, chargeDistanceScaled, out _limitedPoints, out _currentPathDistance);
                 _moveMarkerAgent.destination = finalDestination;
 
-                // Stop any existing marker movement tracker and start tracking arrival
-                if (_moveMarker != null)
-                {
-                    StopCoroutine(_moveMarker);
-                }
-                _moveMarker = StartCoroutine(WaitForMarker());
+                StartMarkerCheckCoroutine(PlayerMovementType.Charge);
             }
-
-            float projectedSpentMeters = (chargeDistance - remainingChargeDistance) + _currentPathDistance;
             movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat + 2}\"";
         }
     }
 
+    //Restricted move to only 3 inches
+    public void ClickToPathfindDash()
+    {
+        // Do not pathfind if clicking on UI elements/buttons
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return; 
+        }
+        
+        if (selected)
+        {
+            Debug.Log("ClickToPathfindReposition is entered and unit is selected");
+            _limitedPoints.Clear();
+            _currentPathDistance = 0f;
+            lineRenderer.enabled = false;
+            _pathDrawn = false;
+            moveMarker.SetActive(true);
+
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{dashDistanceInches}\"";
+
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
+                selected && hit.transform.CompareTag("Board"))
+            {
+                Vector3 finalDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                _moveMarkerAgent.destination = finalDestination;
+            }
+            
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{dashDistanceInches}\"";
+        }
+    }
+
+    private void StartMarkerCheckCoroutine(PlayerMovementType movementType)
+    {
+        if (_moveMarker != null)
+        {
+            StopCoroutine(_moveMarker);
+        }
+        _moveMarker = StartCoroutine(WaitForMarker(movementType));
+    }
+
     //Coroutine to wait for the marker
-    private IEnumerator WaitForMarker()
+    private IEnumerator WaitForMarker(PlayerMovementType movementType)
     {
         yield return new WaitUntil(() => !_moveMarkerAgent.pathPending);
 
@@ -176,8 +210,25 @@ public class PlayerOperative : BaseOperativeClass
         MoveMarkerSphereCheck sphereCheck = moveMarker.GetComponent<MoveMarkerSphereCheck>();
         if (sphereCheck != null)
         {
-            bool enemyNear = sphereCheck.CheckEnemyInControlRange();
+            bool enemyInControlRange = sphereCheck.CheckEnemyInControlRange(gameObject.tag);
             Debug.Log("Enemy near move marker");
+
+            if (movementType == PlayerMovementType.Charge)
+            {
+                validMoveMarkerPosition = enemyInControlRange;
+                if (!validMoveMarkerPosition)
+                {
+                    Debug.Log("Charge here doesn't end within control range of NPO");
+                }
+            }
+            else
+            {
+                validMoveMarkerPosition = !enemyInControlRange;
+                if (!validMoveMarkerPosition)
+                {
+                    Debug.Log("Dash Or Reposition can't end within control range of NPO");
+                }
+            }
         }
     }
 
@@ -197,8 +248,14 @@ public class PlayerOperative : BaseOperativeClass
     }
 
     //Move the player operative the move marker
-    public void MoveOperativeToMarker()
+    public bool MoveOperativeToMarker()
     {
+        if (!validMoveMarkerPosition)
+        {
+            Debug.Log("MoveMarker is invalid");
+            return false;
+        }
+        
         hasMovedThisActivation = true;
         _operativeAgent.destination = moveMarker.transform.position;
         remainingMovement -= _currentPathDistance;
@@ -211,6 +268,8 @@ public class PlayerOperative : BaseOperativeClass
                 $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
             ResetMoveMarker();
         }
+
+        return true;
     }
 
     public override void ResetForNewTurningPoint()
