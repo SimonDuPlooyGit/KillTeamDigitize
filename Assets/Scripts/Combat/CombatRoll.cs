@@ -14,12 +14,18 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
     public bool IsSelected { get; private set; }
     private DiceHandler _handler;
     private bool _isAttackDie;
+    public Transform hitIndicator;
+    public Transform blockIndicator;
     
     private void Awake()
     {
         _dicePanel = transform.Find("Dice").gameObject;
         _diceAnimator = _dicePanel.GetComponent<Animator>();
         _diceImage = _dicePanel.GetComponent<Image>();
+        hitIndicator = transform.Find("Hit");
+        blockIndicator = transform.Find("Block");
+        hitIndicator.gameObject.SetActive(false);
+        blockIndicator.gameObject.SetActive(false);
     }
 
     public void Initialize(DiceRoll physicalDie, DiceHandler diceHandler, bool isAttack)
@@ -70,5 +76,27 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         {
             _handler.UpdateRerollButtonVisibility();
         }
+    }
+
+    public int GetValue()
+    {
+        for(int i =0; i<diceSprites.Length; i++)
+        {
+            if (diceSprites[i] == _diceImage.sprite)
+            {
+                return i+1;
+            }
+        }
+        return 0;
+    }
+
+    public void ToggleHit()
+    {
+        hitIndicator.gameObject.SetActive(true);
+    }
+
+    public void ToggleBlock()
+    {
+        blockIndicator.gameObject.SetActive(true);
     }
 }

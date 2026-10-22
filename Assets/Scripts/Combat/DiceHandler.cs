@@ -169,6 +169,14 @@ public class DiceHandler : MonoBehaviour
         xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
         menu.OpenMenu(menu.diceRollMenu);
         SpawnDice(thrownDice, true, isAlly);
+        //Display whether the dice hit or not by updating the sprite
+        foreach (CombatRoll dieSprite in activeAttackDice)
+        {
+            if (dieSprite.GetValue() >= context.Weapon.hit )
+            {
+                dieSprite.ToggleHit();
+            }
+        }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
 
@@ -234,7 +242,23 @@ public class DiceHandler : MonoBehaviour
         yield return new WaitForSeconds(2f);
         menu.OpenMenu(menu.diceRollMenu);
         SpawnDice(activePhysAttackDice, true, isAlly);
+        //Display whether the dice hit or not by updating the sprite
+        foreach (CombatRoll dieSprite in activeAttackDice)
+        {
+            if (dieSprite.GetValue() >= context.Weapon.hit)
+            {
+                dieSprite.ToggleHit();
+            }
+        }
         SpawnDice(activePhysDefenseDice, false, !isAlly);
+        //Display whether the dice blocked or not by updating the sprite
+        foreach (CombatRoll dieSprite in activeDefenseDice)
+        {
+            if (dieSprite.GetValue() >= context.CurrentlySelectedOperativeScript.operativeData.save)
+            {
+                dieSprite.ToggleBlock();
+            }
+        }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
     }
