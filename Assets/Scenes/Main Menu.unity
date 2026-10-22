@@ -400,6 +400,7 @@ GameObject:
   - component: {fileID: 103577903}
   - component: {fileID: 103577906}
   - component: {fileID: 103577905}
+  - component: {fileID: 103577907}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -465,6 +466,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 103577902}
   m_CullTransparentMesh: 1
+--- !u!114 &103577907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 103577902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6cca065f9e96b439033c6c9b3e1c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LerpButton
+  targetScale: {x: 0.17, y: 0.17, z: 0.17}
+  isParentLerp: 0
 --- !u!1 &119567121
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,16 +957,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 257557198}
-  m_LocalRotation: {x: -0.0530673, y: -0.00026860542, z: 0.99857813, w: 0.005054402}
-  m_LocalPosition: {x: 0, y: 0, z: -1.15}
+  m_LocalRotation: {x: -0.0000000016082137, y: 0.00000002473825, z: 1, w: 0.000000090220944}
+  m_LocalPosition: {x: 0, y: 0, z: 0.016979545}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1319469125}
+  m_Father: {fileID: 1641177066}
   m_LocalEulerAnglesHint: {x: 0, y: -6.084, z: 179.42}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 17.66, y: 27.8}
+  m_AnchoredPosition: {x: 4.9827023, y: 0.041440964}
   m_SizeDelta: {x: 4.5, y: 4.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &257557200
@@ -1917,6 +1932,7 @@ GameObject:
   - component: {fileID: 899679171}
   - component: {fileID: 899679173}
   - component: {fileID: 899679172}
+  - component: {fileID: 899679174}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -1982,6 +1998,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 899679170}
   m_CullTransparentMesh: 1
+--- !u!114 &899679174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899679170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6cca065f9e96b439033c6c9b3e1c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LerpButton
+  targetScale: {x: 0.17, y: 0.17, z: 0.17}
+  isParentLerp: 0
 --- !u!1001 &987746910
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2189,6 +2219,7 @@ GameObject:
   - component: {fileID: 1113481270}
   - component: {fileID: 1113481272}
   - component: {fileID: 1113481271}
+  - component: {fileID: 1113481273}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -2254,6 +2285,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1113481269}
   m_CullTransparentMesh: 1
+--- !u!114 &1113481273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113481269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6cca065f9e96b439033c6c9b3e1c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LerpButton
+  targetScale: {x: 0.17, y: 0.17, z: 0.17}
+  isParentLerp: 0
 --- !u!1 &1148303178
 GameObject:
   m_ObjectHideFlags: 0
@@ -2630,7 +2675,6 @@ RectTransform:
   - {fileID: 2003364943}
   - {fileID: 1822915144}
   - {fileID: 1641177066}
-  - {fileID: 257557199}
   m_Father: {fileID: 2136582215}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2794,6 +2838,7 @@ GameObject:
   - component: {fileID: 1641177069}
   - component: {fileID: 1641177068}
   - component: {fileID: 1641177067}
+  - component: {fileID: 1641177070}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -2814,6 +2859,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1921742283}
+  - {fileID: 257557199}
   m_Father: {fileID: 1319469125}
   m_LocalEulerAnglesHint: {x: 0, y: -6.084, z: -0.58}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2915,6 +2961,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1641177065}
   m_CullTransparentMesh: 1
+--- !u!114 &1641177070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1641177065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6cca065f9e96b439033c6c9b3e1c36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LerpButton
+  targetScale: {x: 1.05, y: 1.05, z: 1.05}
+  isParentLerp: 0
 --- !u!1 &1735892046
 GameObject:
   m_ObjectHideFlags: 0
