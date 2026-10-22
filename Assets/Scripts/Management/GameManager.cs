@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     private ActionSelectionState actionSelectionState;
     private MovementState movementState;
     private TargetingState targetingState;
-    private CombatState combatState;
+    private ShootCombatState combatState;
     private WeaponSelectState weaponSelectState;
     private IntroductionState introductionState;
 
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         actionSelectionState = new ActionSelectionState(SharedContext, menu, this);
         movementState = new MovementState(SharedContext, _input, menu);
         targetingState = new TargetingState(SharedContext, _input, menu);
-        combatState = new CombatState(SharedContext, menu, diceHandler);
+        combatState = new ShootCombatState(SharedContext, menu, diceHandler);
         weaponSelectState = new WeaponSelectState(SharedContext, menu);
         npoSelectState = new NPOSelection(SharedContext, npoManager, this);
         npoTurnPerformState = new NPOActionSelect(SharedContext);

@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
-using Unity.Mathematics.Geometry;
 using UnityEngine.AI;
 
 public enum OrderState {Engage, Conceal}
@@ -31,6 +30,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public LineRenderer lineRenderer;
     public Material validLine;
     public Material invalidLine;
+    public bool AllyInControlRange;
+    public bool EnemyInControlRange;
 
     [Header("UI References")] 
     public GameObject unitUI;
@@ -56,7 +57,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [Header("Navmesh and Movement")]
     public NavMeshAgent agent;
     
-
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -101,7 +101,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealSymbol.SetActive(true);
         }
         
-        closeToCover = CheckTerrainInControlRange();
+        SampleCollidersInControlRange();
         FogEffectAndCoverToggle();
     }
     
@@ -517,5 +517,47 @@ public abstract class BaseOperativeClass : MonoBehaviour
         selected = false;
         RemoveGlow();
         if (lineRenderer != null) lineRenderer.enabled = false;
+    }
+
+    //Using Physics.OverlapSphere to check colliders in control range
+    public void SampleCollidersInControlRange()
+    {
+        Collider[] colliders = Physics.OverlapSphere(unitBase.transform.position, 0.414f);
+        closeToCover = false;
+        AllyInControlRange = false;
+        EnemyInControlRange = false;
+
+        foreach (var col in colliders)
+        {
+            if (col.gameObject == gameObject || col.transform.IsChildOf(transform)) continue;
+
+            if (col.CompareTag("Terrain"))
+            {
+                closeToCover = true;
+                continue;
+            }
+
+            BaseOperativeClass otherOperative = col.GetComponentInParent<BaseOperativeClass>();
+            if (otherOperative != null && !otherOperative.dead)
+            {
+                if (col.CompareTag(gameObject.tag))
+                {
+                    AllyInControlRange = true;
+                }
+                else
+                {
+                    EnemyInControlRange = true;
+                }
+            }
+        }
+    }
+
+    public bool CheckInEachOthersControl(BaseOperativeClass otherOperative)
+    {
+        if (otherOperative == null) return false;
+        
+        float distance = Vector3.Distance(unitBase.transform.position, otherOperative.unitBase.transform.position);
+        float maxEngagementDistance = 0.574f;
+        return distance <= maxEngagementDistance;
     }
 }

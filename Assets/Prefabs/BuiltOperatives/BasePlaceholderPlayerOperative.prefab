@@ -6347,7 +6347,6 @@ GameObject:
   - component: {fileID: 7301379917928092325}
   - component: {fileID: 8707036129199999214}
   - component: {fileID: 4570273081936273685}
-  - component: {fileID: 220443899168040505}
   m_Layer: 0
   m_Name: UnitBase
   m_TagString: Untagged
@@ -6428,29 +6427,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &220443899168040505
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4948545270696065821}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &5001128376997696393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6905,6 +6881,8 @@ MonoBehaviour:
   lineRenderer: {fileID: 3577167626324735336}
   validLine: {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
   invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
+  AllyInControlRange: 0
+  EnemyInControlRange: 0
   unitUI: {fileID: 1420086678442614927}
   healthFill: {fileID: 4349708838005869823}
   aplCount: {fileID: 8215639158211220109}
@@ -6918,6 +6896,7 @@ MonoBehaviour:
   fogEffect: {fileID: 3249404380935832136}
   glow: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
   deathParticles: {fileID: 3381858293456355160}
+  agent: {fileID: 0}
   moveMarker: {fileID: 4081140932053417731}
   remainingMovement: 0
   movementInfo: {fileID: 0}
@@ -7853,7 +7832,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5684875758840081513, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6139037737733330028}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7467935918681723117, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2447500810723843960}
   m_SourcePrefab: {fileID: 100100000, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
 --- !u!4 &1289415199108514695 stripped
 Transform:
@@ -7865,3 +7847,15 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7467935918681723117, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
   m_PrefabInstance: {fileID: 6845559569473482734}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2447500810723843960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4081140932053417731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8422930d4aaa5be45a2997aa5c3a6e47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'

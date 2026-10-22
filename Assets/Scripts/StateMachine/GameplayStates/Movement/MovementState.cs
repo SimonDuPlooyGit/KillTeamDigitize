@@ -74,7 +74,7 @@ public class MovementState : BaseState
     private void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move
     {
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
-        if (playerOp != null) playerOp.ClickToPathfind();
+        if (playerOp != null) playerOp.ClickToPathfindReposition();
     }
 
     public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to marker preview

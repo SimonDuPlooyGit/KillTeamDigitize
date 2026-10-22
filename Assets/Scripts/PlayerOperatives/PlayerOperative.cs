@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -78,7 +79,7 @@ public class PlayerOperative : BaseOperativeClass
     }
 
     //Click the board and then calculate a path to that spot limited by movement distance
-    public void ClickToPathfind()
+    public void ClickToPathfindReposition()
     {
         // Do not pathfind if clicking on UI elements/buttons
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
@@ -88,7 +89,7 @@ public class PlayerOperative : BaseOperativeClass
         
         if (selected)
         {
-            Debug.Log("ClickToPathfind is entered and unit is selected");
+            Debug.Log("ClickToPathfindReposition is entered and unit is selected");
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;
@@ -115,6 +116,68 @@ public class PlayerOperative : BaseOperativeClass
             float projectedSpentMeters = (meterMovement - remainingMovement) + _currentPathDistance;
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
+        }
+    }
+    
+    //Wait for the move marker to reach it's destination to check if an enemy is in control range
+    private Coroutine _moveMarker;
+    public void ClickToPathfindCharge()
+    {
+        float chargeDistance = meterMovement + 2;
+        float remainingChargeDistance = remainingMovement + 2;
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return; 
+
+        if (selected)
+        {
+            Debug.Log("ClickToPathfindCharge is entered and unit is selected");
+            _limitedPoints.Clear();
+            _currentPathDistance = 0f;
+            lineRenderer.enabled = false;
+            _pathDrawn = false;
+            moveMarker.SetActive(true);
+
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(remainingChargeDistance * 39.37f / 10)}/{movementStat+2}\"";
+
+            if (remainingChargeDistance <= 0.05f) return;
+
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
+                selected && hit.transform.CompareTag("Board"))
+            {
+                Vector3 finalDestination = LimitPathDistance(hit.point, remainingChargeDistance, out _limitedPoints, out _currentPathDistance);
+                _moveMarkerAgent.destination = finalDestination;
+
+                // Stop any existing marker movement tracker and start tracking arrival
+                if (_moveMarker != null)
+                {
+                    StopCoroutine(_moveMarker);
+                }
+                _moveMarker = StartCoroutine(WaitForMarker());
+            }
+
+            float projectedSpentMeters = (chargeDistance - remainingChargeDistance) + _currentPathDistance;
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
+        }
+    }
+
+    //Coroutine to wait for the marker
+    private IEnumerator WaitForMarker()
+    {
+        yield return new WaitUntil(() => !_moveMarkerAgent.pathPending);
+
+        while (_moveMarkerAgent.remainingDistance > _moveMarkerAgent.stoppingDistance ||
+               _moveMarkerAgent.velocity.sqrMagnitude < 0.01f)
+        {
+            yield return null;
+        }
+        
+        MoveMarkerSphereCheck sphereCheck = moveMarker.GetComponent<MoveMarkerSphereCheck>();
+        if (sphereCheck != null)
+        {
+            bool enemyNear = sphereCheck.CheckEnemyInControlRange();
+            Debug.Log("Enemy near move marker");
         }
     }
 
