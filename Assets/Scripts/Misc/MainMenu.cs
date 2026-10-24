@@ -84,6 +84,8 @@ public class MainMenu : MonoBehaviour
 
     private IEnumerator FadeRoutine(float startAlpha, float targetAlpha)
     {
+        CloseBook();
+        yield return new WaitForSeconds(0.4f);
         float elapsedTime = 0f;
         Color color = fadeImage.color;
 
