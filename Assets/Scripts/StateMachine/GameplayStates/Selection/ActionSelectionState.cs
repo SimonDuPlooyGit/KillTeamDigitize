@@ -68,6 +68,7 @@ public class ActionSelectionState : BaseState
         Context.IsPlayerActivationRequested = false;
     }
 
+    //This is not working properly
     private void ActivateOrDeactivateActionButtons()
     {
         //Activate different action buttons according to what the unit hasn't done yet
@@ -76,8 +77,8 @@ public class ActionSelectionState : BaseState
 
         if (repositionButton != null)
         {
-            repositionButton.SetActive(!playerOp.hasMovedThisActivation && playerOp.currentApl > 0);
-            repositionCost.SetActive(!playerOp.hasMovedThisActivation && playerOp.currentApl > 0);
+            repositionButton.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
+            repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
         }
 
         if (shootButton != null)

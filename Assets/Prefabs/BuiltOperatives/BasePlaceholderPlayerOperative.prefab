@@ -6349,7 +6349,7 @@ GameObject:
   - component: {fileID: 4570273081936273685}
   m_Layer: 0
   m_Name: UnitBase
-  m_TagString: Untagged
+  m_TagString: AllyUnit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6876,6 +6876,8 @@ MonoBehaviour:
   acted: 0
   currentOrder: 1
   dashDistanceScaled: 0.7620016
+  dashDistanceInches: 3
+  chargeDistanceScaled: 0
   samplingPoints: []
   losStart: {fileID: 368869817293028543}
   lineRenderer: {fileID: 3577167626324735336}
@@ -6900,8 +6902,11 @@ MonoBehaviour:
   moveMarker: {fileID: 4081140932053417731}
   remainingMovement: 0
   movementInfo: {fileID: 0}
-  hasMovedThisActivation: 0
+  hasRepositionedThisActivation: 0
+  hasDashedThisActivation: 0
+  hasChargedThisActivation: 0
   hasShotThisActivation: 0
+  validMoveMarkerPosition: 1
 --- !u!120 &3577167626324735336
 LineRenderer:
   serializedVersion: 3
@@ -7817,6 +7822,10 @@ PrefabInstance:
     - target: {fileID: 7467935918681723117, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7467935918681723117, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
+      propertyPath: m_TagString
+      value: AllyUnit
       objectReference: {fileID: 0}
     - target: {fileID: 8735310591135058305, guid: 30419601e760d464d8d09928b7e26ee7, type: 3}
       propertyPath: m_Radius

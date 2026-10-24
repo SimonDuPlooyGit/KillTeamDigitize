@@ -22,8 +22,10 @@ public class PlayerOperative : BaseOperativeClass
     List<Vector3> _limitedPoints = new List<Vector3>();
     private float _currentPathDistance;
 
-    public bool hasMovedThisActivation = false;
-    public bool hasShotThisActivation = false;
+    public bool hasRepositionedThisActivation = false;
+    public bool hasDashedThisActivation = false;
+    public bool hasChargedThisActivation = false;
+    public bool hasShotThisActivation = false; //This needs to be tweaked because they can all shoot twice but a bolt weapon needed to be used
     public bool validMoveMarkerPosition = true;
 
     protected override void Awake()
@@ -80,7 +82,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
-    //Click the board and then calculate a path to that spot limited by movement distance
+    //Click the board and then calculate a path to that spot limited by movement distance, move the move marker there
     public void ClickToPathfindReposition()
     {
         // Do not pathfind if clicking on UI elements/buttons
@@ -99,7 +101,7 @@ public class PlayerOperative : BaseOperativeClass
             moveMarker.SetActive(true);
 
             movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
+                $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\""; //The display on top of the move marker
 
             if (remainingMovement <= 0.05f)
             {
@@ -121,7 +123,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
     
-    //Wait for the move marker to reach it's destination to check if an enemy is in control range
+    //Wait for the move marker to reach its destination to check if an enemy is in control range
     private Coroutine _moveMarker;
     public void ClickToPathfindCharge()
     {
@@ -129,7 +131,7 @@ public class PlayerOperative : BaseOperativeClass
 
         if (selected)
         {
-            Debug.Log("ClickToPathfindCharge is entered and unit is selected");
+            //Debug.Log("ClickToPathfindCharge is entered and unit is selected");
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;
@@ -153,7 +155,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
-    //Restricted move to only 3 inches
+    //Same as reposition pathfind method but restricted to 3 inches
     public void ClickToPathfindDash()
     {
         // Do not pathfind if clicking on UI elements/buttons
@@ -187,6 +189,7 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
+    //Start the coroutine to wait for the marker to reach its final destination
     private void StartMarkerCheckCoroutine(PlayerMovementType movementType)
     {
         if (_moveMarker != null)
@@ -202,7 +205,7 @@ public class PlayerOperative : BaseOperativeClass
         yield return new WaitUntil(() => !_moveMarkerAgent.pathPending);
 
         while (_moveMarkerAgent.remainingDistance > _moveMarkerAgent.stoppingDistance ||
-               _moveMarkerAgent.velocity.sqrMagnitude < 0.01f)
+               _moveMarkerAgent.velocity.sqrMagnitude > 0.01f)
         {
             yield return null;
         }
@@ -256,7 +259,6 @@ public class PlayerOperative : BaseOperativeClass
             return false;
         }
         
-        hasMovedThisActivation = true;
         _operativeAgent.destination = moveMarker.transform.position;
         remainingMovement -= _currentPathDistance;
         _currentPathDistance = 0f;
@@ -276,7 +278,7 @@ public class PlayerOperative : BaseOperativeClass
     {
         base.ResetForNewTurningPoint();
         remainingMovement = meterMovement;
-        hasMovedThisActivation = false;
+        hasRepositionedThisActivation = false;
         hasShotThisActivation = false;
         ResetMoveMarker();
     }
@@ -284,7 +286,7 @@ public class PlayerOperative : BaseOperativeClass
     public override void TurnFinished()
     {
         base.TurnFinished();
-        if (!hasMovedThisActivation)
+        if (!hasRepositionedThisActivation)
         {
             remainingMovement = meterMovement;
         }
