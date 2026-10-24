@@ -488,7 +488,6 @@ GameObject:
   - component: {fileID: 5481409976204414528}
   - component: {fileID: 7396246507094981018}
   - component: {fileID: 2109646551314281978}
-  - component: {fileID: 3434218745739998663}
   m_Layer: 0
   m_Name: UnitBase
   m_TagString: Untagged
@@ -569,29 +568,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3434218745739998663
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2063543643037542596}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &2155003558028096072
 GameObject:
   m_ObjectHideFlags: 0
@@ -6379,6 +6355,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 1443869018041154187}
   validLine: {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
   invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
+  enemyInControlRange: 0
   unitUI: {fileID: 2598318228105086832}
   healthFill: {fileID: 864329973792977482}
   aplCount: {fileID: 6236903750796841253}

@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
+//Need to know what kind of movement the player wants to make
+public enum PlayerMovementType {None, Dash, Reposition, Charge}
 
 //-----InformationPackage Class (Holds all the information that needs be kept/sent between states)-----
 public class InformationPackage
@@ -11,8 +15,6 @@ public class InformationPackage
     public GameObject CurrentlySelectedTarget;
     public BaseOperativeClass CurrentlySelectedTargetScript;
     public OperativeTemplate CurrentlySelectedTargetSo;
-
-    //New assignments to differentiate when an NPO is selected and choosing targets
     
     public DiceHandler DiceHandler;
     public OrbitCamera MainCameraScript;
@@ -35,11 +37,15 @@ public class InformationPackage
     
     //Flags for state completion
     public bool IsPlayerActivationRequested;
+    public bool IsMovementRequested;
     public bool IsMovementConfirmed;
     public bool IsShootingRequested;
     public bool IsShootingConfirmed;
     public bool IsWeaponSelected;
     public bool ValidTarget;
+    
+    //Player movement types
+    public PlayerMovementType SelectedMovement = PlayerMovementType.None;
     
     //Keeping track of all units
     public List<PlayerOperative> AllPlayerUnits = new();

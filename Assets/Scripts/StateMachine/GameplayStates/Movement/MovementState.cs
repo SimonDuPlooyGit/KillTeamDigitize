@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,12 +10,15 @@ public class MovementState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private readonly MenuPanel _menu;
+    private readonly MonoBehaviour _coroutineRunner;
     public bool MovementFinished;
+    private bool _isExecutingMove;
 
-    public MovementState(InformationPackage context, InputActions input, MenuPanel menu) : base(context) //Needs base(context) for sending context to the BaseState constructor first
+    public MovementState(InformationPackage context, InputActions input, MenuPanel menu, MonoBehaviour coroutineRunner) : base(context) //Needs base(context) for sending context to the BaseState constructor first
     {
         _input = input;
         _menu = menu;
+        _coroutineRunner = coroutineRunner;
         MovementFinished = false;
     }
 
@@ -24,6 +28,7 @@ public class MovementState : BaseState
         _input.Controls.Move.performed += OnMoveInputPerformed;
         _menu.moveButton2.SetActive(true);
         MovementFinished = false;
+        _isExecutingMove = false;
         //You can activate move button here
 
         //Tutorial panel stuff
@@ -43,13 +48,7 @@ public class MovementState : BaseState
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp != null)
         {
-            playerOp.UpdatePathDrawing(); 
-
-            if (playerOp.remainingMovement < 0.05f)
-            {
-                Context.IsPlayerActivationRequested = true;
-                MovementFinished = true;
-            }
+            playerOp.UpdatePathDrawing();
         }
     }
 
@@ -63,29 +62,65 @@ public class MovementState : BaseState
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp != null)
         {
-            if (playerOp.remainingMovement < playerOp.meterMovement)
-            {
-                playerOp.UpdateApl(playerOp.currentApl -= 1);
-            }
             playerOp.ResetMoveMarker();
         }
+        Context.IsMovementRequested = false;
+        Context.SelectedMovement = PlayerMovementType.None;
     }
 
     private void OnMoveInputPerformed(InputAction.CallbackContext ctx) //Move the marker to where you have clicked to move
     {
+        if (_isExecutingMove) return;
+        
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
-        if (playerOp != null) playerOp.ClickToPathfind();
+        if (playerOp == null) return;
+
+        switch (Context.SelectedMovement)
+        {
+            case PlayerMovementType.Reposition:
+                playerOp.ClickToPathfindReposition();
+                break;
+            case PlayerMovementType.Charge:
+                playerOp.ClickToPathfindCharge();
+                break;
+            case PlayerMovementType.Dash:
+                playerOp.ClickToPathfindDash();
+                break;
+        }
     }
 
     public void ConfirmAndExecuteMovement() //Use the confirm move button to confirm moving the unit to marker preview
     {
+        if (_isExecutingMove) return;
+        
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp != null)
         {
-            playerOp.MoveOperativeToMarker();
-            Context.IsMovementConfirmed = true;
-            if(_menu.tutFlag3) _menu.tutFlag3 = false;
-            if(_menu.tutFlag4B) _menu.tutFlag4B = false;
+            if (playerOp.MoveOperativeToMarker())
+            {
+                _coroutineRunner.StartCoroutine(ConfirmAndExecuteMovement(playerOp));
+            }
+            else
+            {
+                Debug.Log("Movement blocked by invalid destination");
+            }
         }
+    }
+
+    private IEnumerator ConfirmAndExecuteMovement(PlayerOperative playerOp)
+    {
+        _isExecutingMove = true;
+        yield return new WaitUntil(() => !playerOp.agent.pathPending);
+
+        while (playerOp.agent.remainingDistance > playerOp.agent.stoppingDistance ||
+               playerOp.agent.velocity.sqrMagnitude > 0.01f)
+        {
+            yield return null;
+        }
+        
+        playerOp.UpdateApl(playerOp.currentApl-1);
+        playerOp.ResetMoveMarker();
+        Context.IsMovementConfirmed = true;
+        MovementFinished = true;
     }
 }
