@@ -14,6 +14,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField]
     private Canvas canvasInside2;
     [SerializeField]
+    private Canvas canvasCredits;
+    [SerializeField]
+    private Canvas canvasCredits2;
+    [SerializeField]
     private Image fadeImage;
     private float fadeDuration = 1.0f;
     void Start()
@@ -34,6 +38,11 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(OpenBookSequence());
     }
 
+    public void OpenBookCredits()
+    {
+        StartCoroutine(OpenBookSequenceCredits());
+    }
+
     public void QuitGame()
     {
         Application.Quit();
@@ -48,11 +57,22 @@ public class MainMenu : MonoBehaviour
         canvasInside2.gameObject.SetActive(true);
     }
 
+    private IEnumerator OpenBookSequenceCredits()
+    {
+        animator.SetBool(IsOpenHash, true);
+        canvasFront.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.4f);
+        canvasCredits.gameObject.SetActive(true);
+        canvasCredits2.gameObject.SetActive(true);
+    }
+
     private IEnumerator CloseBookSequence()
     {
         animator.SetBool(IsOpenHash, false);
         canvasInside.gameObject.SetActive(false);
         canvasInside2.gameObject.SetActive(false);
+        canvasCredits.gameObject.SetActive(false);
+        canvasCredits2.gameObject.SetActive(false);
         yield return new WaitForSeconds(0.4f);
         canvasFront.gameObject.SetActive(true);
     }

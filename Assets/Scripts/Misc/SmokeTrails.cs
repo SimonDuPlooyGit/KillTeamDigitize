@@ -8,6 +8,8 @@ public class SmokeTrails : MonoBehaviour
     private Transform firePoint;
     [SerializeField]
     private GameObject smokeTrailPrefab;
+    [SerializeField]
+    private GameObject plasmaBulletPrefab;
     private float coneAngle = 3f;
     private int emitNumber = 0;
     private float scaleFactor = 5.3f;
@@ -15,6 +17,11 @@ public class SmokeTrails : MonoBehaviour
     public void SpawnSmoke(int numSpawned, Transform startPoint, Transform endPoint)
     {
         StartCoroutine(spawnSmokeTrails(numSpawned,startPoint,endPoint));
+    }
+
+    public void SpawnPlasBullets(int numSpawned)
+    {
+        StartCoroutine(spawnPlasma(numSpawned));
     }
 
     //Spawns a set number of smoke trails with a slightly random ration
@@ -75,6 +82,49 @@ public class SmokeTrails : MonoBehaviour
         //waiting and then deleting all trails
         yield return new WaitForSeconds(1);
         foreach (GameObject trail in trailList)
+        {
+            Destroy(trail);
+        }
+
+    }
+
+    //Alt function that spawns Plasma
+    public IEnumerator spawnPlasma(int numSpawned)
+    {
+        //list of all bullets spawned to be able to remove them at the end
+        List<GameObject> bulletList = new List<GameObject>();
+
+        for (int i = 0; i < numSpawned; i++)
+        {
+            //random offset for rotation
+            Vector2 randomPoint = Random.insideUnitCircle * coneAngle;
+            Quaternion localConeOffset = Quaternion.Euler(randomPoint.x, randomPoint.y, 0f);
+
+            Quaternion finalLocalRotation = localConeOffset;
+
+            //instantiate 
+            GameObject bullet = Instantiate(plasmaBulletPrefab, firePoint);
+
+            //ensure position is correct
+            bullet.transform.localPosition = new Vector3(0, 0, 0);
+
+            //apply rotation
+            bullet.transform.localRotation = finalLocalRotation;
+
+            bulletList.Add(bullet);
+
+            //play particle effect
+            ParticleSystem particles = bullet.GetComponentInChildren<ParticleSystem>();
+            if (particles != null)
+            {
+                particles.Play();
+            }
+
+        }
+
+        //waiting and then deleting all trails
+        yield return new WaitForSeconds(0.5f);
+        foreach (GameObject trail in bulletList)
         {
             Destroy(trail);
         }

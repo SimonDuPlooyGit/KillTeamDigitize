@@ -6392,6 +6392,7 @@ MonoBehaviour:
   fogEffect: {fileID: 3681392821243835701}
   glow: {fileID: 2100000, guid: a2ff2e93a79c10f48a1dac3ab7e2288c, type: 2}
   deathParticles: {fileID: 4660242697195336866}
+  agent: {fileID: 0}
   currentCoverSpot: {fileID: 0}
   npoAgent: {fileID: 0}
   allCoverNodes: []
@@ -6441,6 +6442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SmokeTrails
   firePoint: {fileID: 1309909487491554290}
   smokeTrailPrefab: {fileID: 4685490017653075817, guid: ee3fbe4ce98b8214ca340f7697b7f464, type: 3}
+  plasmaBulletPrefab: {fileID: 6033481235931180987, guid: 2c0a4bd0d34945449b96e0aa724e2ec6, type: 3}
 --- !u!1 &5400613444721974654
 GameObject:
   m_ObjectHideFlags: 0
