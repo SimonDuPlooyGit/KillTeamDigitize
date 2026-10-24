@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
@@ -20,8 +22,11 @@ public class PlayerOperative : BaseOperativeClass
     List<Vector3> _limitedPoints = new List<Vector3>();
     private float _currentPathDistance;
 
-    public bool hasMovedThisActivation = false;
-    public bool hasShotThisActivation = false;
+    public bool hasRepositionedThisActivation = false;
+    public bool hasDashedThisActivation = false;
+    public bool hasChargedThisActivation = false;
+    public bool hasShotThisActivation = false; //This needs to be tweaked because they can all shoot twice but a bolt weapon needed to be used
+    public bool validMoveMarkerPosition = true;
 
     protected override void Awake()
     {
@@ -77,8 +82,8 @@ public class PlayerOperative : BaseOperativeClass
         }
     }
 
-    //Click the board and then calculate a path to that spot limited by movement distance
-    public void ClickToPathfind()
+    //Click the board and then calculate a path to that spot limited by movement distance, move the move marker there
+    public void ClickToPathfindReposition()
     {
         // Do not pathfind if clicking on UI elements/buttons
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
@@ -88,7 +93,7 @@ public class PlayerOperative : BaseOperativeClass
         
         if (selected)
         {
-            Debug.Log("ClickToPathfind is entered and unit is selected");
+            Debug.Log("ClickToPathfindReposition is entered and unit is selected");
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;
@@ -96,7 +101,7 @@ public class PlayerOperative : BaseOperativeClass
             moveMarker.SetActive(true);
 
             movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\"";
+                $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\""; //The display on top of the move marker
 
             if (remainingMovement <= 0.05f)
             {
@@ -117,6 +122,118 @@ public class PlayerOperative : BaseOperativeClass
                 $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
         }
     }
+    
+    //Wait for the move marker to reach its destination to check if an enemy is in control range
+    private Coroutine _moveMarker;
+    public void ClickToPathfindCharge()
+    {
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return; 
+
+        if (selected)
+        {
+            //Debug.Log("ClickToPathfindCharge is entered and unit is selected");
+            _limitedPoints.Clear();
+            _currentPathDistance = 0f;
+            lineRenderer.enabled = false;
+            _pathDrawn = false;
+            moveMarker.SetActive(true);
+
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat + 2}\"";
+
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
+                selected && hit.transform.CompareTag("Board"))
+            {
+                Vector3 finalDestination = LimitPathDistance(hit.point, chargeDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                _moveMarkerAgent.destination = finalDestination;
+
+                StartMarkerCheckCoroutine(PlayerMovementType.Charge);
+            }
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat + 2}\"";
+        }
+    }
+
+    //Same as reposition pathfind method but restricted to 3 inches
+    public void ClickToPathfindDash()
+    {
+        // Do not pathfind if clicking on UI elements/buttons
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return; 
+        }
+        
+        if (selected)
+        {
+            Debug.Log("ClickToPathfindReposition is entered and unit is selected");
+            _limitedPoints.Clear();
+            _currentPathDistance = 0f;
+            lineRenderer.enabled = false;
+            _pathDrawn = false;
+            moveMarker.SetActive(true);
+
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{dashDistanceInches}\"";
+
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
+                selected && hit.transform.CompareTag("Board"))
+            {
+                Vector3 finalDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                _moveMarkerAgent.destination = finalDestination;
+            }
+            
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{dashDistanceInches}\"";
+        }
+    }
+
+    //Start the coroutine to wait for the marker to reach its final destination
+    private void StartMarkerCheckCoroutine(PlayerMovementType movementType)
+    {
+        if (_moveMarker != null)
+        {
+            StopCoroutine(_moveMarker);
+        }
+        _moveMarker = StartCoroutine(WaitForMarker(movementType));
+    }
+
+    //Coroutine to wait for the marker
+    private IEnumerator WaitForMarker(PlayerMovementType movementType)
+    {
+        yield return new WaitUntil(() => !_moveMarkerAgent.pathPending);
+
+        while (_moveMarkerAgent.remainingDistance > _moveMarkerAgent.stoppingDistance ||
+               _moveMarkerAgent.velocity.sqrMagnitude > 0.01f)
+        {
+            yield return null;
+        }
+        
+        MoveMarkerSphereCheck sphereCheck = moveMarker.GetComponent<MoveMarkerSphereCheck>();
+        if (sphereCheck != null)
+        {
+            bool enemyInControlRange = sphereCheck.CheckEnemyInControlRange(gameObject.tag);
+            Debug.Log("Enemy near move marker");
+
+            if (movementType == PlayerMovementType.Charge)
+            {
+                validMoveMarkerPosition = enemyInControlRange;
+                if (!validMoveMarkerPosition)
+                {
+                    Debug.Log("Charge here doesn't end within control range of NPO");
+                }
+            }
+            else
+            {
+                validMoveMarkerPosition = !enemyInControlRange;
+                if (!validMoveMarkerPosition)
+                {
+                    Debug.Log("Dash Or Reposition can't end within control range of NPO");
+                }
+            }
+        }
+    }
 
     //Draw a path to the destination
     private void DrawPath(Vector3[] points)
@@ -134,9 +251,14 @@ public class PlayerOperative : BaseOperativeClass
     }
 
     //Move the player operative the move marker
-    public void MoveOperativeToMarker()
+    public bool MoveOperativeToMarker()
     {
-        hasMovedThisActivation = true;
+        if (!validMoveMarkerPosition)
+        {
+            Debug.Log("MoveMarker is invalid");
+            return false;
+        }
+        
         _operativeAgent.destination = moveMarker.transform.position;
         remainingMovement -= _currentPathDistance;
         _currentPathDistance = 0f;
@@ -148,13 +270,15 @@ public class PlayerOperative : BaseOperativeClass
                 $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
             ResetMoveMarker();
         }
+
+        return true;
     }
 
     public override void ResetForNewTurningPoint()
     {
         base.ResetForNewTurningPoint();
         remainingMovement = meterMovement;
-        hasMovedThisActivation = false;
+        hasRepositionedThisActivation = false;
         hasShotThisActivation = false;
         ResetMoveMarker();
     }
@@ -162,7 +286,7 @@ public class PlayerOperative : BaseOperativeClass
     public override void TurnFinished()
     {
         base.TurnFinished();
-        if (!hasMovedThisActivation)
+        if (!hasRepositionedThisActivation)
         {
             remainingMovement = meterMovement;
         }

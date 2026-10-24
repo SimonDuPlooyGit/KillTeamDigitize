@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //-----CombatState Class (Handles all of combat)-----
-public class CombatState : BaseState
+public class ShootCombatState : BaseState
 {
     //Inherits from BaseState.
     //The combat state that handles rolling and rules
@@ -12,7 +12,7 @@ public class CombatState : BaseState
     private DiceHandler _diceHandler; //Needs reference to the CombatManager script on the CombatManager GameObject
     private MenuPanel _menu;
 
-    public CombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
+    public ShootCombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context) //CombatState constructor ": base(context)" is handing context up to the BaseState constructor
     {
         _diceHandler = diceHandler;
         _menu = menu;
@@ -20,7 +20,7 @@ public class CombatState : BaseState
     
     public override void OnEnter()
     {
-        Debug.Log("CombatState entered");
+        Debug.Log("ShootCombatState OnEnter");
         
         Context.DiceHandler = _diceHandler;
         
@@ -170,7 +170,7 @@ public class CombatState : BaseState
 
     public override void OnExit()
     {
-        Debug.Log("CombatState Exited");
+        Debug.Log("ShootCombatState OnExit");
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
         Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
