@@ -66,6 +66,10 @@ public class DiceHandler : MonoBehaviour
     private bool _isSyncingDuplicates = false;
     //Used externally when rerolling a die to a set value
     public int setTargetValue = 6;
+    //Max value if die that can be selected for rerolling
+    public int maxSelectableDieValue = 6;
+    //same but minimum
+    public int minSelectableDieValue = 1;
 
     private void Start()
     {
@@ -402,6 +406,16 @@ public class DiceHandler : MonoBehaviour
     {
         //Uses current selection state to determine which panels you can select
         if (currentSelectionMode == DiceSelectionMode.None) return false;
+
+        //For when restricting the value of die that can be selected
+        if (clickedDie != null && !clickedDie.IsSelected)
+        {
+            int dieValue = clickedDie.GetValue();
+            if (dieValue < minSelectableDieValue || dieValue > maxSelectableDieValue)
+            {
+                return false;
+            }
+        }
 
         // Mode restrictions (Attack, Defense, and Duplicates all enforce pool targeting)
         if ((currentSelectionMode == DiceSelectionMode.Attack || currentSelectionMode == DiceSelectionMode.Duplicates || currentSelectionMode == DiceSelectionMode.Set) && !isAttack) return false;
