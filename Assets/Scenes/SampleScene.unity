@@ -26111,6 +26111,14 @@ PrefabInstance:
       propertyPath: defenseDiceHolder
       value: 
       objectReference: {fileID: 432106845}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: currentSelectionMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: maxAllowedSelections
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8440737830108607353, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
       propertyPath: m_Name
       value: DiceHandler

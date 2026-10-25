@@ -13,6 +13,8 @@ public class DiceHandler : MonoBehaviour
         Attack,
         Defense,
         Both,
+        Duplicates,
+        Set,
         None
     }
     
@@ -60,10 +62,16 @@ public class DiceHandler : MonoBehaviour
     private TextMeshProUGUI xToHit;
     [SerializeField]
     private TextMeshProUGUI xToSave;
+    // Guard flag to prevent infinite recursion during duplicate state syncing
+    private bool _isSyncingDuplicates = false;
+    //Used externally when rerolling a die to a set value
+    public int setTargetValue = 6;
 
     private void Start()
     {
-        currentSelectionMode = DiceSelectionMode.None;
+        //currentSelectionMode = DiceSelectionMode.None;
+        //currentSelectionMode = DiceSelectionMode.Duplicates; used to test duplicate functionality
+        currentSelectionMode = DiceSelectionMode.Set;
         rerollButton.SetActive(false);    
     }
 
@@ -267,8 +275,22 @@ public class DiceHandler : MonoBehaviour
     //======================[Standard Dice reroll]==========================================
     private IEnumerator Reroll(bool isAlly)
     {
+        //Move dice spawn point to active unit
+        if (isAlly)
+        {
+            diceThrowPoint.position = new Vector3(_context.CurrentlySelectedOperative.transform.position.x,
+                _context.CurrentlySelectedOperative.transform.position.y + 0.4f,
+                _context.CurrentlySelectedOperative.transform.position.z);
+        }
+        else if (!isAlly)
+        {
+            diceThrowPoint.position = new Vector3(_context.CurrentlySelectedOperative.transform.position.x,
+                _context.CurrentlySelectedOperative.transform.position.y + 0.4f,
+                _context.CurrentlySelectedOperative.transform.position.z);
+        }
         //determines which prefabs and dice pool are used based on the current selection state
-        bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack);
+        DiceSelectionMode activeMode = currentSelectionMode;
+        bool isAttackMode = (activeMode == DiceSelectionMode.Attack || activeMode == DiceSelectionMode.Duplicates || activeMode == DiceSelectionMode.Set);
         //Sets selection mode to none to stop continious rerolls
         currentSelectionMode = DiceSelectionMode.None;
 
@@ -333,6 +355,14 @@ public class DiceHandler : MonoBehaviour
             yield return null;
         }
 
+        if (activeMode == DiceSelectionMode.Set)
+        {
+            foreach (DiceRoll die in newPhysDice)
+            {
+                die.SetDesiredFace(setTargetValue);
+            }
+        }
+
         //Replace updated indices in tracking lists and _context
         for (int i = 0; i < selectedDice.Count; i++)
         {
@@ -349,33 +379,86 @@ public class DiceHandler : MonoBehaviour
         menu.OpenMenu(menu.diceRollMenu);
         bool isUIAlly = isAttackMode ? isAlly : !isAlly;
         SpawnDice(activePhysList, isAttackMode, isUIAlly);
+        foreach (CombatRoll dieSprite in activeAttackDice)
+        {
+            if (dieSprite.GetValue() >= _context.Weapon.hit)
+            {
+                dieSprite.ToggleHit();
+            }
+        }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
     }
     //==================[End standard reroll coroutine]=======================
 
+    // Helper to get the correct UI list based on whether the target die is an attack die
+    private List<CombatRoll> GetActiveUIList(bool isAttack)
+    {
+        return isAttack ? activeAttackDice : activeDefenseDice;
+    }
+
     //determines if a dice panel can be selected
-    public bool CanSelectDie(bool isAttack)
+    public bool CanSelectDie(CombatRoll clickedDie, bool isAttack)
     {
         //Uses current selection state to determine which panels you can select
         if (currentSelectionMode == DiceSelectionMode.None) return false;
-        if (currentSelectionMode == DiceSelectionMode.Attack && !isAttack) return false;
+
+        // Mode restrictions (Attack, Defense, and Duplicates all enforce pool targeting)
+        if ((currentSelectionMode == DiceSelectionMode.Attack || currentSelectionMode == DiceSelectionMode.Duplicates || currentSelectionMode == DiceSelectionMode.Set) && !isAttack) return false;
         if (currentSelectionMode == DiceSelectionMode.Defense && isAttack) return false;
 
-        // Count currently selected dice across active lists
-        int totalSelected = 0;
+        List<CombatRoll> activeList = GetActiveUIList(isAttack);
 
-        for (int i = activeAttackDice.Count - 1; i >= 0; i--)
+        // If in Duplicate mode, count how many total matching dice exist in the pool
+        if (currentSelectionMode == DiceSelectionMode.Duplicates)
         {
-            if (activeAttackDice[i].IsSelected) totalSelected++;
+            if (clickedDie == null) return false;
+            if (clickedDie.IsSelected) return true;
+
+            int targetValue = clickedDie.GetValue();
+            int groupSize = 0;
+
+            // Count every die in the pool that shares this face value
+            for (int i = 0; i < activeList.Count; i++)
+            {
+                if (activeList[i] != null && activeList[i].GetValue() == targetValue)
+                {
+                    groupSize++;
+                }
+            }
+
+            // Must have at least 2 matching dice to qualify as duplicates
+            if (groupSize < 2)
+            {
+                Debug.Log("[DiceHandler] Cannot select: No duplicate dice match this value.");
+                return false;
+            }
+
+            // Count currently selected dice
+            int totalSelected = 0;
+            for (int i = 0; i < activeList.Count; i++)
+            {
+                if (activeList[i] != null && activeList[i].IsSelected) totalSelected++;
+            }
+
+            // If selecting/deselecting, check against max allowed
+            if (!clickedDie.IsSelected && (totalSelected + groupSize) > maxAllowedSelections)
+            {
+                Debug.Log($"[DiceHandler] Cannot select: Duplicate group size ({groupSize}) exceeds max allowed selections ({maxAllowedSelections}).");
+                return false;
+            }
+
+            return true;
         }
 
-        for (int i = activeDefenseDice.Count - 1; i >= 0; i--)
+        // Standard Attack/Defense single selection count
+        int currentSelectedCount = 0;
+        for (int i = 0; i < activeList.Count; i++)
         {
-            if (activeDefenseDice[i].IsSelected) totalSelected++;
+            if (activeList[i] != null && activeList[i].IsSelected) currentSelectedCount++;
         }
 
-        return totalSelected < maxAllowedSelections;
+        return currentSelectedCount < maxAllowedSelections;
     }
 
     public void ClearDiceRolls()
@@ -403,7 +486,7 @@ public class DiceHandler : MonoBehaviour
     {
         if (rerollButton == null) return;
 
-        bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack);
+        bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack || currentSelectionMode == DiceSelectionMode.Duplicates || currentSelectionMode == DiceSelectionMode.Set);
         List<CombatRoll> activeList = isAttackMode ? activeAttackDice : activeDefenseDice;
 
         bool hasSelection = false;
@@ -418,6 +501,41 @@ public class DiceHandler : MonoBehaviour
         // Enable button only if at least 1 panel is selected
         rerollButton.SetActive(hasSelection);
     }
+
+    //FOR DUPLICATE DICE: when a dice is selected, if in duplicate mode, selects all matching dice values
+    public void OnDieSelectedStateChanged(CombatRoll clickedDie, bool isAttack, bool newSelectedState)
+    {
+        if (currentSelectionMode != DiceSelectionMode.Duplicates) return;
+        if (_isSyncingDuplicates) return; // Prevent infinite recursive loops
+
+        _isSyncingDuplicates = true; // Lock
+
+        List<CombatRoll> targetList = GetActiveUIList(isAttack);
+        int clickedValue = clickedDie.GetValue();
+
+        //Loop through all panels in the active pool and sync matching values
+        for (int i = 0; i < targetList.Count; i++)
+        {
+            CombatRoll diePanel = targetList[i];
+            if (diePanel == null || diePanel == clickedDie) continue;
+
+            //If the values match and the selection state doesn't match, sync it
+            if (diePanel.GetValue() == clickedValue && diePanel.IsSelected != newSelectedState)
+            {
+                if (newSelectedState)
+                {
+                    diePanel.Select();
+                }
+                else
+                {
+                    diePanel.Deselect();
+                }
+            }
+        }
+
+        _isSyncingDuplicates = false; //Unlock
+    }
+
     //used to call the reroll coroutine
     public void RerollButton(bool isAlly)
     {

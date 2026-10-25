@@ -16,7 +16,8 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
     private bool _isAttackDie;
     public Transform hitIndicator;
     public Transform blockIndicator;
-    
+    private bool _isAttack;
+
     private void Awake()
     {
         _dicePanel = transform.Find("Dice").gameObject;
@@ -33,30 +34,34 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         PhysicalDie = physicalDie;  
         _handler = diceHandler;
         _isAttackDie = isAttack;
+        _isAttack = isAttack;
 
         int value = physicalDie.GetUpwardFace();
         _diceAnimator.enabled = false;
         _diceImage.sprite = diceSprites[value - 1];
 
-        Deselect();
+        IsSelected = false;
+        _diceImage.color = Color.white;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Toggle off if already selected
+        if (_handler == null) return;
+
         if (IsSelected)
         {
             Deselect();
-            return;
         }
-
-        // Check with Dice_handler if max selected panels exceeded
-        if (_handler != null && _handler.CanSelectDie(_isAttackDie))
+        else
         {
-            Select();
+            
+            if (_handler.CanSelectDie(this, _isAttack))
+            {
+                Select();
+            }
         }
     }
-    private void Select()
+    public void Select()
     {
         IsSelected = true;
         _diceImage.color = Color.black; //temp feedback for now
@@ -64,10 +69,11 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         if (_handler != null)
         {
             _handler.UpdateRerollButtonVisibility();
+            _handler.OnDieSelectedStateChanged(this, _isAttack, true);
         }
     }
 
-    private void Deselect()
+    public void Deselect()
     {
         IsSelected = false;
         _diceImage.color = Color.white;
@@ -75,6 +81,7 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         if (_handler != null)
         {
             _handler.UpdateRerollButtonVisibility();
+            _handler.OnDieSelectedStateChanged(this, _isAttack, false);
         }
     }
 

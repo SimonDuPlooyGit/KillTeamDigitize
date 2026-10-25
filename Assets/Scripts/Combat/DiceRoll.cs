@@ -55,4 +55,35 @@ public class DiceRoll : MonoBehaviour
         //Debug.Log("Rolled a " + topFace);
         return topFace;
     }
+
+    public void SetDesiredFace(int targetFace)
+    {
+        // 1. Identify which local direction corresponds to targetFace
+        Vector3 localDir = Vector3.forward; // Default to face 1
+
+        switch (targetFace)
+        {
+            case 1: localDir = Vector3.forward; break;
+            case 6: localDir = -Vector3.forward; break;
+            case 4: localDir = Vector3.up; break;
+            case 3: localDir = -Vector3.up; break;
+            case 2: localDir = Vector3.right; break;
+            case 5: localDir = -Vector3.right; break;
+            default:
+                localDir = -Vector3.forward;
+                break;
+        }
+
+        // 2. Calculate the rotation required to align localDir to world UP (0, 1, 0)
+        Quaternion alignRotation = Quaternion.FromToRotation(transform.TransformDirection(localDir), Vector3.up);
+
+        // 3. Apply the rotation and freeze physics
+        transform.rotation = alignRotation * transform.rotation;
+
+        if (_rb != null)
+        {
+            _rb.linearVelocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+        }
+    }
 }
