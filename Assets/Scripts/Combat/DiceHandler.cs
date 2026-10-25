@@ -73,9 +73,9 @@ public class DiceHandler : MonoBehaviour
 
     private void Start()
     {
-        //currentSelectionMode = DiceSelectionMode.None;
+        currentSelectionMode = DiceSelectionMode.None;
         //currentSelectionMode = DiceSelectionMode.Duplicates; used to test duplicate functionality
-        currentSelectionMode = DiceSelectionMode.Set;
+        //currentSelectionMode = DiceSelectionMode.Set;
         rerollButton.SetActive(false);    
     }
 
