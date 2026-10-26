@@ -7,12 +7,25 @@ public class ActionSelectionState : BaseState
     //State that handles players selecting actions from the action menu (need to check APL costs and other action eligibility)
     
     private readonly MenuPanel _menu; //Will need to have access to the menu
+    
+    //Action button references
     private GameObject repositionButton;
     private GameObject chargeButton;
     private GameObject dashButton;
-    private GameObject repositionCost;
+    private GameObject fightButton;
     private GameObject shootButton;
+    private GameObject fallBackButton;
+    private GameObject pickupButton;
+    
+    //APL cost references
+    private GameObject repositionCost;
     private GameObject shootCost;
+    private GameObject chargeCost;
+    private GameObject dashCost;
+    private GameObject fightCost;
+    private GameObject fallBackCost;
+    private GameObject pickupCost;
+    
     private GameManager _gameManager;
 
     public ActionSelectionState(InformationPackage context, MenuPanel menu, GameManager gm) : base(context)
@@ -85,6 +98,24 @@ public class ActionSelectionState : BaseState
         {
             shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
             shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
+        }
+
+        if (dashButton != null)
+        {
+            dashButton.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
+            dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
+        }
+
+        if (chargeButton != null)
+        {
+            chargeButton.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
+            chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
+        }
+
+        if (fightButton != null)
+        {
+            fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
+            fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
         }
     }
 }
