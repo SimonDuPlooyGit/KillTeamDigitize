@@ -29,9 +29,10 @@ public class NonPlayerOperative : BaseOperativeClass
 
     [Header("Unit Settings")]
     public UnitArchetype archetype = UnitArchetype.Marksman;
-    
+
     [Header("Combat References")]
-    public DiceHandler _diceHandler;
+    private GameManager _gm;
+    private DiceHandler _diceHandler;
     private InformationPackage _context;
     public bool IsShootingComplete { get; private set; }
     public bool isPerformingAnAction  {get; private set; }
@@ -66,21 +67,6 @@ public class NonPlayerOperative : BaseOperativeClass
         canShootTwice = false;
         base.Awake();
         //Debug.Log($"Double checking that in PrototypeNPO that {name} is assigned to {NpoData.name}");
-        GameManager gm = FindFirstObjectByType<GameManager>();
-        if (gm == null)
-        {
-            //Debug.LogWarning($"{name} didn't get gm");
-        }
-        _context = gm.SharedContext;
-        if (_context == null)
-        {
-            //Debug.LogWarning($"{name} didn't get context from gm");
-        }
-        _diceHandler = gm.diceHandler;
-        if (_diceHandler == null)
-        {
-            //Debug.LogWarning($"{name} didn't get diceHandler from gm");
-        }
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
@@ -144,7 +130,7 @@ public class NonPlayerOperative : BaseOperativeClass
             }
         }
 
-        if (currentShootTarget != null && _diceHandler != null)
+        if (currentShootTarget != null && _diceHandler != null && _context != null)
         {
             _context.SetSelectedOperativesData(this);
             _context.SetSelectedTarget(currentShootTarget);
@@ -161,7 +147,7 @@ public class NonPlayerOperative : BaseOperativeClass
         }
         else
         {
-            Debug.Log("target player is null or dice handler is null");
+            Debug.Log("target player is null or dice handler is null or _context is null");
         }
 
         shootCount++;
@@ -818,5 +804,25 @@ public class NonPlayerOperative : BaseOperativeClass
             }
         }
         return false;
+    }
+    
+    //Grab the game manager and context and dicehandler outside Awake() because it causes problems
+    public void SetGameManager()
+    {
+        _gm = FindFirstObjectByType<GameManager>();
+        if (_gm == null)
+        {
+            Debug.LogWarning($"{name} didn't get gm");
+        }
+        _context = _gm.SharedContext;
+        if (_context == null)
+        {
+            Debug.LogWarning($"{name} didn't get context from gm");
+        }
+        _diceHandler = _gm.diceHandler;
+        if (_diceHandler == null)
+        {
+            Debug.LogWarning($"{name} didn't get diceHandler from gm");
+        }
     }
 }

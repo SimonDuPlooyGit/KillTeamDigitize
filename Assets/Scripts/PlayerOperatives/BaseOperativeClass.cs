@@ -330,7 +330,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             if (hit.collider.CompareTag("Terrain"))
             {
-                Debug.Log($"Ray hit {hit.collider.name}");
+                //Debug.Log($"Ray hit {hit.collider.name}");
                 Debug.DrawLine(start, hit.point, Color.red, 1f);
                 return false;
             }

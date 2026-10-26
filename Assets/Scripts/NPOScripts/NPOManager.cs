@@ -21,6 +21,7 @@ public class NPOManager : MonoBehaviour
         if (candidate != null)
         {
             candidate.AddGlow();
+            candidate.SetGameManager();
             candidate.selected = true;
             return candidate;
         }
@@ -29,6 +30,7 @@ public class NPOManager : MonoBehaviour
         if (candidate != null)
         {
             candidate.AddGlow();
+            candidate.SetGameManager();
             candidate.selected = true;
             return candidate;
         }
