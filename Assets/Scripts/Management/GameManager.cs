@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
             },
             () =>
             {
-            SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
+            SharedContext.CurrentlySelectedOperativeScript.Deselect();
             SharedContext.FullReset();
             }
         );

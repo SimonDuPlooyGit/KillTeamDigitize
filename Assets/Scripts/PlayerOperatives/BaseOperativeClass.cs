@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine.AI;
 
 public enum OrderState {Engage, Conceal}
@@ -410,6 +411,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Update the APL marker on UI
     public void UpdateApl(int currApl)
     {
+        Debug.Log("UpdateApl called");
+        currentApl -= 1;
         SetApl(currApl);
     }
     
