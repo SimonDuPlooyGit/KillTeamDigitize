@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine.AI;
 
 public enum OrderState {Engage, Conceal}

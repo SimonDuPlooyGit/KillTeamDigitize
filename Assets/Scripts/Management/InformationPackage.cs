@@ -42,7 +42,9 @@ public class InformationPackage
     public bool IsShootingRequested;
     public bool IsShootingConfirmed;
     public bool IsWeaponSelected;
-    public bool ValidTarget;
+    public bool ValidTargetShoot;
+    public bool IsFightingRequested;
+    public bool ValidTargetFight;
     
     //Player movement types
     public PlayerMovementType SelectedMovement = PlayerMovementType.None;
@@ -160,7 +162,8 @@ public class InformationPackage
         IsShootingRequested = false;
         IsShootingConfirmed = false;
         IsWeaponSelected = false;
-        ValidTarget = false;
+        ValidTargetShoot = false;
+        ValidTargetFight = false;
     }
 }
 

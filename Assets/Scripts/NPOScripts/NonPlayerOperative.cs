@@ -100,11 +100,6 @@ public class NonPlayerOperative : BaseOperativeClass
         acted = false;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-    }
-
     //Action implementations
     
     //Fight action for brawler

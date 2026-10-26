@@ -113,7 +113,8 @@ public class PlayerOperative : BaseOperativeClass
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                Vector3 finalDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
+                Vector3 rawDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
+                Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
                 _moveMarkerAgent.destination = finalDestination;
             }
 
@@ -180,7 +181,8 @@ public class PlayerOperative : BaseOperativeClass
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                Vector3 finalDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                Vector3 rawDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
                 _moveMarkerAgent.destination = finalDestination;
             }
             
@@ -214,14 +216,17 @@ public class PlayerOperative : BaseOperativeClass
         if (sphereCheck != null)
         {
             bool enemyInControlRange = sphereCheck.CheckEnemyInControlRange(gameObject.tag);
-            Debug.Log("Enemy near move marker");
 
             if (movementType == PlayerMovementType.Charge)
             {
                 validMoveMarkerPosition = enemyInControlRange;
-                if (!validMoveMarkerPosition)
+                if (validMoveMarkerPosition)
                 {
-                    Debug.Log("Charge here doesn't end within control range of NPO");
+                    Debug.Log("Charge here ends in control range");
+                }
+                else
+                {
+                    Debug.Log("Charge here does not end in control range");
                 }
             }
             else
@@ -305,6 +310,51 @@ public class PlayerOperative : BaseOperativeClass
         _limitedPoints.Clear();
         _currentPathDistance = 0f;
         _pathDrawn = false;
+    }
+    
+    //Only allow safe pathfinding outside control ranges
+    private Vector3 GetControlRangeSafeDestination(Vector3 destination)
+    {
+        float controlRange = 0.414f;
+        float minSafeDistance = 0.6f;
+        
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, destination, _operativeAgent.areaMask, path) &&
+            path.corners.Length > 0)
+        {
+            Vector3 finalPoint = path.corners[path.corners.Length - 1];
+
+            foreach (var npo in FindFirstObjectByType<GameManager>().SharedContext.AllNpoUnits)
+            {
+                if (npo == null || npo.dead || !npo.gameObject.activeInHierarchy) continue;
+                Vector3 npoPos = npo.transform.position;
+                float distance = Vector3.Distance(finalPoint, npoPos);
+
+                if (distance < controlRange)
+                {
+                    Debug.Log($"{name}'s movement destination ends inside control range of {npo.name}. Adjusting to stay safe");
+
+                    Vector3 awayFromNpo = (finalPoint - npoPos);
+                    awayFromNpo.y = 0;
+
+                    if (awayFromNpo.magnitude < 0.001f)
+                    {
+                        awayFromNpo = (transform.position - npoPos);
+                        awayFromNpo.y = 0;
+                    }
+                    
+                    awayFromNpo = awayFromNpo.normalized;
+                    Vector3 safeCandidate = npoPos + (awayFromNpo * minSafeDistance);
+                    
+                    if (NavMesh.SamplePosition(safeCandidate, out NavMeshHit hit, 1.0f, _operativeAgent.areaMask))
+                    {
+                        return hit.position;
+                    }
+                }
+            }
+            return finalPoint;
+        }
+        return destination;
     }
     
     public void Reset()
