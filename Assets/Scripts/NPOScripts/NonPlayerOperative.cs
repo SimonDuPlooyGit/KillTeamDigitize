@@ -67,12 +67,13 @@ public class NonPlayerOperative : BaseOperativeClass
         return HasValidShootTarget(npoManager.playerUnits);
     }
 
-    public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && currentApl > 0;
-    public bool CanDash() => !isPerformingAnAction && !hasDashed && currentApl > 0;
+    public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && !hasCharged && currentApl > 0;
+    public bool CanDash() => !isPerformingAnAction && !hasDashed && !hasCharged && currentApl > 0;
     public bool CanFight() => !isPerformingAnAction && !hasFought && InControlRange() && currentApl > 0;
-    //public bool CanCharge() => !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    public bool CanCharge() => !isPerformingAnAction && !hasCharged && !hasRepositioned && PossibleChargeTarget() && currentApl > 0;
+    public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
 
-    public bool CanCharge()
+    /*public bool CanCharge()
     {
         bool isPerforming = isPerformingAnAction;
         bool chargedAlready = hasCharged;
@@ -84,8 +85,7 @@ public class NonPlayerOperative : BaseOperativeClass
         Debug.Log($"{name} [CanCharge Check] -> Result: {result} (IsPerforming: {isPerforming}, HasCharged: {chargedAlready}, HasAPL: {hasApl}, HasTarget: {hasTarget})");
     
         return result;
-    }
-    public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
+    }*/
 
     public OperativeTemplate NpoData => operativeData;
     
@@ -102,7 +102,7 @@ public class NonPlayerOperative : BaseOperativeClass
 
     protected override void Update()
     {
-        //no op
+        base.Update();
     }
 
     //Action implementations
@@ -111,22 +111,92 @@ public class NonPlayerOperative : BaseOperativeClass
     public void PerformFightB()
     {
         Debug.Log($"{name} performs Fight");
-        Debug.Log($"Need to still implement fighting");
-        hasFought = true;
-        currentApl -= 1;
-        SetApl(currentApl);
-        CheckTurnEnd();
+        if (EnemyInControlRange)
+        {
+            BaseOperativeClass target = enemiesInControlRange[0];
+            Debug.Log($"{name} is fighting {target.name}");
+            hasFought = true;
+            UpdateApl(currentApl-1);
+            CheckTurnEnd();
+        }
+        else
+        {
+            Debug.Log($"{name} couldn't fight anyone");
+            hasFought = true;
+            UpdateApl(currentApl-1);
+            CheckTurnEnd();
+        }
     }
 
     //Brawler charge action
     public void PerformCharge()
     {
         Debug.Log($"{name} performs Charge");
-        Debug.Log("Need to still implement charge");
-        hasCharged = true;
-        currentApl -= 1;
-        SetApl(currentApl);
+        PlayerOperative targetPlayer = GetClosestChargeTarget();
+
+        if (targetPlayer != null)
+        {
+            hasCharged = true;
+            UpdateApl(currentApl-1);
+
+            Vector3 chargeSpot = GetChargeDestination(targetPlayer.transform.position);
+            Vector3 limitedChargeSpot = LimitDestination(chargeSpot, chargeDistanceScaled);
+            Vector3 finalSafeChargeSpot = GetUncongestedDestination(limitedChargeSpot);
+            npoAgent.SetDestination(finalSafeChargeSpot);
+            Debug.Log($"{name} charged into control range of {targetPlayer.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"{name} attempted to charge, but no valid charge target was found!");
+        }
+        
         CheckTurnEnd();
+    }
+
+    private PlayerOperative GetClosestChargeTarget()
+    {
+        PlayerOperative closest = null;
+        float minDistance = float.MaxValue;
+
+        if (Context != null && Context.AllPlayerUnits != null)
+        {
+            foreach (var player in Context.AllPlayerUnits)
+            {
+                if (player == null || player.dead || !player.gameObject.activeInHierarchy) continue;
+                
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+
+                if (distance <= chargeDistanceScaled && distance < minDistance)
+                {
+                    minDistance = distance;
+                    closest = player;
+                }
+            }
+        }
+        return closest;
+    }
+
+    private Vector3 GetChargeDestination(Vector3 playerPos)
+    {
+        float engagementDistance = 0.35f;
+        Vector3 directionFromPlayer = transform.position - playerPos;
+        directionFromPlayer.y = 0;
+        
+        if (directionFromPlayer.sqrMagnitude < 0.001f)
+        {
+            directionFromPlayer = Vector3.forward;
+        }
+        
+        directionFromPlayer = directionFromPlayer.normalized;
+        
+        Vector3 chargeCandidate = playerPos + (directionFromPlayer * engagementDistance);
+        
+        if (NavMesh.SamplePosition(chargeCandidate, out NavMeshHit hit, 1.0f, npoAgent.areaMask))
+        {
+            return hit.position;
+        }
+
+        return chargeCandidate;
     }
 
     //Called in behaviour tree to start ExecuteNpoShoot coroutine
@@ -636,8 +706,7 @@ public class NonPlayerOperative : BaseOperativeClass
     //Check if this NPO is in control range of a player unit
     private bool InControlRange()
     {
-        //Debug.Log($"{name} checks if in control range of enemy");
-        return false;
+        return EnemyInControlRange;
     }
 
     //For a brawler to check if a player unit is in range for charging a player unit

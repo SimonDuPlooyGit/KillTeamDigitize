@@ -36,6 +36,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public Material invalidLine;
     public bool AllyInControlRange;
     public bool EnemyInControlRange;
+    public List<BaseOperativeClass> enemiesInControlRange = new List<BaseOperativeClass>();
 
     [Header("UI References")] 
     public GameObject unitUI;
@@ -533,6 +534,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         closeToCover = false;
         AllyInControlRange = false;
         EnemyInControlRange = false;
+        enemiesInControlRange.Clear();
 
         foreach (var col in colliders)
         {
@@ -553,7 +555,11 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 }
                 else if (!col.CompareTag(gameObject.tag) && !col.CompareTag("Terrain"))
                 {
-                    EnemyInControlRange = true;
+                    if (!enemiesInControlRange.Contains(otherOperative))
+                    {
+                        enemiesInControlRange.Add(otherOperative);
+                        EnemyInControlRange = true;
+                    }
                 }
             }
         }
