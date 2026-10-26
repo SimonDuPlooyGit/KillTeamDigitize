@@ -64,8 +64,6 @@ public class TargetingState : BaseState
         {
             _menu.tutFlag7 = true;
         }
-
-     
     }
     
     private void OnSelectPerformed(InputAction.CallbackContext ctx) 

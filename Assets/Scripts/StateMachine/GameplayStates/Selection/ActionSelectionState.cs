@@ -91,31 +91,31 @@ public class ActionSelectionState : BaseState
         if (repositionButton != null)
         {
             repositionButton.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
-            repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
+            //repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
         }
 
         if (shootButton != null)
         {
             shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
-            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
+            //shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
         }
 
         if (dashButton != null)
         {
             dashButton.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
-            dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
+            //dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
         }
 
         if (chargeButton != null)
         {
             chargeButton.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
-            chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
+            //chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
         }
 
         if (fightButton != null)
         {
             fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
-            fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
+            //fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
         }
     }
 }

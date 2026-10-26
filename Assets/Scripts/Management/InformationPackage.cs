@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 //Need to know what kind of movement the player wants to make
 public enum PlayerMovementType {None, Dash, Reposition, Charge}
@@ -57,6 +56,11 @@ public class InformationPackage
     public int CurrentTurningPoint = 1;
     public const int LastTurningPoint = 4;
     public bool PlayerTurn = true;
+    
+    //Melee tracking
+    public bool IsPlayerFightTurn;
+    public List<int> AttackerRemainingDice = new();
+    public List<int> DefenderRemainingDice = new();
 
     //-----Three overloaded methods to be able to set selected operative data no matter which component of it is passed as the argument-----
     public void SetSelectedOperativesData(GameObject selectedOperative)

@@ -88,6 +88,16 @@ public class GameManager : MonoBehaviour
         AddT(npoSelectState, npoTurnPerformState,
             new FuncPredicate(() => SharedContext.CurrentlySelectedOperativeScript != null && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative)); //If NPO is found to activate
         AddT(npoTurnPerformState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
+        AddT(npoTurnPerformState, meleeCombatState, new FuncPredicate(() => SharedContext.IsFightingRequested && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative));AddT(meleeCombatState, npoTurnPerformState, new FuncPredicate(() => 
+        {
+            if (SharedContext.IsFightingRequested && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative)
+            {
+                SharedContext.IsFightingRequested = false;
+                return true;
+            }
+            return false;
+        }));
+        
 
 
         //AddT for pressing a pass turn button

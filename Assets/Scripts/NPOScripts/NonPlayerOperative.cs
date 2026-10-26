@@ -106,13 +106,19 @@ public class NonPlayerOperative : BaseOperativeClass
     public void PerformFightB()
     {
         Debug.Log($"{name} performs Fight");
-        if (EnemyInControlRange)
+        if (EnemyInControlRange && enemiesInControlRange.Count > 0)
         {
             BaseOperativeClass target = enemiesInControlRange[0];
             Debug.Log($"{name} is fighting {target.name}");
+            
+            Context.SetSelectedOperativesData(this);
+            Context.SetSelectedTarget(target);
+            
+            WeaponTemplate meleeWeapon = operativeData.weapons.FirstOrDefault(w => w.rules.OfType<WeaponRules.Melee>().Any());
+            Context.Weapon = meleeWeapon;
+
             hasFought = true;
-            UpdateApl(currentApl-1);
-            CheckTurnEnd();
+            Context.IsFightingRequested = true;
         }
         else
         {
