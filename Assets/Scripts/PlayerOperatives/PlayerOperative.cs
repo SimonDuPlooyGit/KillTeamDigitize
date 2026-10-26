@@ -22,6 +22,7 @@ public class PlayerOperative : BaseOperativeClass
     List<Vector3> _limitedPoints = new List<Vector3>();
     private float _currentPathDistance;
 
+    public bool hasFoughtThisActivation = false;
     public bool hasRepositionedThisActivation = false;
     public bool hasDashedThisActivation = false;
     public bool hasChargedThisActivation = false;
@@ -275,7 +276,7 @@ public class PlayerOperative : BaseOperativeClass
                 $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
             ResetMoveMarker();
         }
-
+        
         return true;
     }
 
