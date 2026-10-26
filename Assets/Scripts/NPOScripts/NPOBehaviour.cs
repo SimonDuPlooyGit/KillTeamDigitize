@@ -90,11 +90,13 @@ public class NPOBehaviour : MonoBehaviour
         var fightSequence = new Sequence("Fight Sequence", priority: 40);
         fightSequence.AddChild(new Leaf("Can Fight?", new Condition(itsOwnNpoScript.CanFight)));
         fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFightB))); //Change to async
+        _treeRoot.AddChild(fightSequence);
         
         //2. CHARGE
         var chargeSequence = new Sequence("Charge Sequence", priority: 30);
         chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(itsOwnNpoScript.CanCharge)));
-        chargeSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformCharge))); //Change to async
+        chargeSequence.AddChild(new Leaf("Do Fight", new AsyncActionStrategy(itsOwnNpoScript.PerformCharge, itsOwnNpoScript.MovementFinished)));
+        _treeRoot.AddChild(chargeSequence);
         
         // 3. CONCEAL & REPOSITION
         var concealRepositionSequence = new Sequence("Conceal & Reposition", priority: 20);
@@ -126,7 +128,7 @@ public class NPOBehaviour : MonoBehaviour
         var fallbackSequence = new Sequence("Fall Back Sequence", priority: 40);
         fallbackSequence.AddChild(new Leaf("Can Shoot?", new Condition(itsOwnNpoScript.CanShoot)));
         fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(itsOwnNpoScript.Fallback)));
-        fallbackSequence.AddChild(new Leaf("Do Fall Back", new ActionStrategy(itsOwnNpoScript.PerformFallback))); //Also async for moving
+        fallbackSequence.AddChild(new Leaf("Do Fall Back", new AsyncActionStrategy(itsOwnNpoScript.PerformFallback, itsOwnNpoScript.MovementFinished))); //Also async for moving
         _treeRoot.AddChild(fallbackSequence);
 
         // 2. SHOOT
@@ -179,7 +181,11 @@ public class NPOBehaviour : MonoBehaviour
             return;
         }
     
+        Debug.Log($"[BehaviorTree] Processing tree root for {itsOwnNpoScript.name}. Current APL: {itsOwnNpoScript.currentApl}");
+        
         Node.Status status = _treeRoot.Process();
+        
+        Debug.Log($"[BehaviorTree] {itsOwnNpoScript.name} tree root returned status: {status}");
 
         if (status == Node.Status.Running)
         {

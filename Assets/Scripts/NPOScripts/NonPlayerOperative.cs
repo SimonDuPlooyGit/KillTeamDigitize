@@ -34,6 +34,19 @@ public class NonPlayerOperative : BaseOperativeClass
     private GameManager _gm;
     private DiceHandler _diceHandler;
     private InformationPackage _context;
+
+    //Context seems to be null when we call getUnitToActivate so we need to find if earlier
+    private InformationPackage Context
+    {
+        get
+        {
+            if (_context == null)
+            {
+                SetGameManager();
+            }
+            return _context;
+        }
+    }
     public bool IsShootingComplete { get; private set; }
     public bool isPerformingAnAction  {get; private set; }
     private PlayerOperative currentShootTarget;
@@ -57,7 +70,21 @@ public class NonPlayerOperative : BaseOperativeClass
     public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && currentApl > 0;
     public bool CanDash() => !isPerformingAnAction && !hasDashed && currentApl > 0;
     public bool CanFight() => !isPerformingAnAction && !hasFought && InControlRange() && currentApl > 0;
-    public bool CanCharge() => !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    //public bool CanCharge() => !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+
+    public bool CanCharge()
+    {
+        bool isPerforming = isPerformingAnAction;
+        bool chargedAlready = hasCharged;
+        bool hasApl = currentApl > 0;
+        bool hasTarget = PossibleChargeTarget();
+
+        bool result = !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    
+        Debug.Log($"{name} [CanCharge Check] -> Result: {result} (IsPerforming: {isPerforming}, HasCharged: {chargedAlready}, HasAPL: {hasApl}, HasTarget: {hasTarget})");
+    
+        return result;
+    }
     public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
 
     public OperativeTemplate NpoData => operativeData;
@@ -616,7 +643,17 @@ public class NonPlayerOperative : BaseOperativeClass
     //For a brawler to check if a player unit is in range for charging a player unit
     private bool PossibleChargeTarget()
     {
-        Debug.Log($"{name} checks if it has a charge target");
+        foreach (var player in Context.AllPlayerUnits)
+        {
+            float distance = Vector3.Distance(transform.position, player.transform.position);
+            Debug.Log($"{name} is {distance} away from {player.name}");
+            if (distance < meterMovement + twoInchesScaled)
+            {
+                Debug.Log($"And {distance} is less than {meterMovement + twoInchesScaled} (8\") so return true for PossibleChargeTarget");
+                return true;
+            }
+        }
+        Debug.Log($"{name} has no charge targets");
         return false;
     }
 

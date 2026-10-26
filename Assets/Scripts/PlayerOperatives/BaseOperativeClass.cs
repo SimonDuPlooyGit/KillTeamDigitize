@@ -24,6 +24,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool acted;
     public OrderState currentOrder;
     public float dashDistanceScaled = (3f / 39.37f) * 10;
+    public float twoInchesScaled = (2f / 39.37f) * 10;
     public float dashDistanceInches = 3;
     public float chargeDistanceScaled;
 
