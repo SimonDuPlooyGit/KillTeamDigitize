@@ -528,7 +528,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Using Physics.OverlapSphere to check colliders in control range
     public void SampleCollidersInControlRange(Vector3 position)
     {
-        Collider[] colliders = Physics.OverlapSphere(unitBase.transform.position, 0.414f);
+        Collider[] colliders = Physics.OverlapSphere(position, 0.414f);
         closeToCover = false;
         AllyInControlRange = false;
         EnemyInControlRange = false;
@@ -550,7 +550,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 {
                     AllyInControlRange = true;
                 }
-                else
+                else if (!col.CompareTag(gameObject.tag) && !col.CompareTag("Terrain"))
                 {
                     EnemyInControlRange = true;
                 }
