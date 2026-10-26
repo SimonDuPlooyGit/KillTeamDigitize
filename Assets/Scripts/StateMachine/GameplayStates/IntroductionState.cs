@@ -6,17 +6,20 @@ public class IntroductionState : BaseState
 {
     private GameManager _gameManager;
     public bool MoveToFirstTurn;
-    
-    public IntroductionState(InformationPackage context, GameManager gm) : base(context)
+    private MenuPanel _menu;
+
+    public IntroductionState(InformationPackage context, GameManager gm,MenuPanel menu) : base(context)
     {
         _gameManager = gm;
         MoveToFirstTurn = false;
+        _menu = menu;
     }
 
     public override void OnEnter()
     {
         Debug.Log("IntroductionState OnEnter");
         _gameManager.setup.InitialiseSetup();
+        _menu.CloseMenu(_menu.meleeMenu);
     }
 
     public override void Update()

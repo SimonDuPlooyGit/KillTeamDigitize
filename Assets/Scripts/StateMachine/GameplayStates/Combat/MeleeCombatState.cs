@@ -68,8 +68,9 @@ public class MeleeCombatState : BaseState
         if (Context.CurrentlySelectedTargetScript != null)
         {
             targetsWeapon = FindDefenderMeleeWeapon(Context.CurrentlySelectedTargetScript);
+            Context.targetWeapon = targetsWeapon;
             //Throw the defender's attacks as "Defense dice"
-            yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(targetsWeapon.atk, !isPlayerAttacker, Context));
+            yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(targetsWeapon.atk, isPlayerAttacker, Context));
             //Find successfull dice
             InitializeSuccessPools();
             //Set in the context if it's the player's turn to select 

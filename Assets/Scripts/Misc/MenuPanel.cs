@@ -14,6 +14,7 @@ public class MenuPanel : MonoBehaviour
     public GameObject tutSelect, tutAction, tutReposition, tutRepoPrompt ,tutShoot, tutTarget, tutInvalid, tutReset;
     public GameObject moveButton2;
     public GameObject diceRollMenu;
+    public GameObject meleeMenu;
     public GameObject PauseScreen;
     public GameObject tpCounter, objective;
     [SerializeField]

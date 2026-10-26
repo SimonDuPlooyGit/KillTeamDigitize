@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,7 +11,7 @@ public class GameManager : MonoBehaviour
 {
     private InputActions _input;
     public InformationPackage SharedContext; //The script holding information to exchange between all scripts and states
-    private StateMachine _stateMachine; //The state machine 
+    public StateMachine _stateMachine; //The state machine 
     [SerializeField] private MenuPanel menu;
     [SerializeField] public DiceHandler diceHandler;
     [SerializeField] public OrbitCamera mainCamera;
@@ -25,7 +26,7 @@ public class GameManager : MonoBehaviour
     private ShootCombatState shootCombatState;
     private WeaponSelectState weaponSelectState;
     private IntroductionState introductionState;
-    private MeleeCombatState meleeCombatState;
+    public MeleeCombatState meleeCombatState;
 
     //NPO states
     private NPOSelection npoSelectState;
@@ -44,7 +45,7 @@ public class GameManager : MonoBehaviour
         SharedContext.AllNpoUnits = new List<NonPlayerOperative>(FindObjectsByType<NonPlayerOperative>(FindObjectsSortMode.None));
 
         //Initialize states
-        introductionState = new IntroductionState(SharedContext, this);
+        introductionState = new IntroductionState(SharedContext, this, menu);
         unitActivationState = new UnitActivationState(SharedContext, _input, menu, this);
         actionSelectionState = new ActionSelectionState(SharedContext, menu, this);
         movementState = new MovementState(SharedContext, _input, menu, this);
