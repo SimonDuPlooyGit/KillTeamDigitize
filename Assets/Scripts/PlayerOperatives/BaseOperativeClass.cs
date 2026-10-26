@@ -23,6 +23,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool acted;
     public OrderState currentOrder;
     public float dashDistanceScaled = (3f / 39.37f) * 10;
+    public float twoInchesScaled = (2f / 39.37f) * 10;
     public float dashDistanceInches = 3;
     public float chargeDistanceScaled;
 
@@ -34,6 +35,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public Material invalidLine;
     public bool AllyInControlRange;
     public bool EnemyInControlRange;
+    public List<BaseOperativeClass> enemiesInControlRange = new List<BaseOperativeClass>();
 
     [Header("UI References")] 
     public GameObject unitUI;
@@ -104,7 +106,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealSymbol.SetActive(true);
         }
         
-        SampleCollidersInControlRange();
+        SampleCollidersInControlRange(transform.position);
         FogEffectAndCoverToggle();
     }
     
@@ -329,7 +331,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             if (hit.collider.CompareTag("Terrain"))
             {
-                Debug.Log($"Ray hit {hit.collider.name}");
+                //Debug.Log($"Ray hit {hit.collider.name}");
                 Debug.DrawLine(start, hit.point, Color.red, 1f);
                 return false;
             }
@@ -410,6 +412,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Update the APL marker on UI
     public void UpdateApl(int currApl)
     {
+        Debug.Log("UpdateApl called");
+        currentApl -= 1;
         SetApl(currApl);
     }
     
@@ -523,12 +527,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Using Physics.OverlapSphere to check colliders in control range
-    public void SampleCollidersInControlRange()
+    public void SampleCollidersInControlRange(Vector3 position)
     {
-        Collider[] colliders = Physics.OverlapSphere(unitBase.transform.position, 0.414f);
+        Collider[] colliders = Physics.OverlapSphere(position, 0.414f);
         closeToCover = false;
         AllyInControlRange = false;
         EnemyInControlRange = false;
+        enemiesInControlRange.Clear();
 
         foreach (var col in colliders)
         {
@@ -547,9 +552,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 {
                     AllyInControlRange = true;
                 }
-                else
+                else if (!col.CompareTag(gameObject.tag) && !col.CompareTag("Terrain"))
                 {
-                    EnemyInControlRange = true;
+                    if (!enemiesInControlRange.Contains(otherOperative))
+                    {
+                        enemiesInControlRange.Add(otherOperative);
+                        EnemyInControlRange = true;
+                    }
                 }
             }
         }

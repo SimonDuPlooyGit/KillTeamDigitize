@@ -68,8 +68,78 @@ public class TargetingState : BaseState
      
     }
     
-    //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     private void OnSelectPerformed(InputAction.CallbackContext ctx) 
+    {
+        Debug.Log("OnSelectPerformed in TargetingState");
+        if (!Context.CurrentlySelectedOperativeScript.selected) return;
+        
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
+        {
+            if (hit.collider.gameObject.CompareTag("EnemyUnit")) 
+            {
+                Context.SetSelectedTarget(hit.collider.gameObject);
+                Debug.Log("Enemy targeted: " + Context.CurrentlySelectedTargetSo.name);
+                
+                //Rotate toward target
+                Context.CurrentlySelectedOperative.transform.LookAt(new Vector3(
+                Context.CurrentlySelectedTarget.transform.position.x, 
+                Context.CurrentlySelectedOperative.transform.position.y, 
+                Context.CurrentlySelectedTarget.transform.position.z));
+                
+                //--- MELEE COMBAT BRANCH ---
+                if (Context.IsFightingRequested)
+                {
+                    BaseOperativeClass selectedTargetOp = Context.CurrentlySelectedTargetScript;
+                    
+                    // Check if the targeted enemy is inside our operative's control range list
+                    if (Context.CurrentlySelectedOperativeScript.enemiesInControlRange.Contains(selectedTargetOp))
+                    {
+                        Context.ValidTargetFight = true;
+                        Debug.Log($"Valid melee target selected: {selectedTargetOp.name}");
+                    }
+                    else
+                    {
+                        Context.ValidTargetFight = false;
+                        Debug.LogWarning($"Target {selectedTargetOp.name} is not within Control Range!");
+                    }
+                    return;
+                }
+                
+                //--- SHOOTING COMBAT BRANCH ---
+                if (Context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal &&
+                    Context.CurrentlySelectedTargetScript.closeToCover) 
+                {
+                    Debug.Log("Not a valid target, concealed in cover");
+                    return;
+                }
+                
+                float distanceToEnemy = Context.CurrentlySelectedOperativeScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
+                float maxWeaponRange = Mathf.Infinity;
+                var rangeRule = Context.Weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
+                
+                if (rangeRule != null) maxWeaponRange = rangeRule.range; 
+                
+                if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
+                {
+                    Context.ValidTargetShoot = true;
+                    Debug.Log($"Target in range of: {maxWeaponRange}");
+                } 
+                else if (distanceToEnemy > maxWeaponRange)
+                {
+                    Context.ValidTargetShoot = false;
+                    Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
+                    _menu.tutFlag6 = true; 
+                    Debug.Log($"Target out of range of: {maxWeaponRange}");
+                }
+                
+                Context.CurrentlySelectedOperativeScript.CheckTargetingLines(Context.CurrentlySelectedOperativeScript, Context.CurrentlySelectedTargetScript);
+            }
+        }
+    }
+    
+    //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
+    /*private void OnSelectPerformed(InputAction.CallbackContext ctx) 
     {
         Debug.Log("OnSelectPerformed in TargetingState");
         if (Context.CurrentlySelectedOperativeScript.selected)
@@ -99,11 +169,11 @@ public class TargetingState : BaseState
 
                     if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
                     {
-                        Context.ValidTarget = true;
+                        Context.ValidTargetShoot = true;
                         Debug.Log($"Target in range of: {maxWeaponRange}");
                     } else if (distanceToEnemy > maxWeaponRange)
                     {
-                        Context.ValidTarget = false;
+                        Context.ValidTargetShoot = false;
                         Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
                         _menu.tutFlag6 = true; 
                         Debug.Log($"Target out of range of: {maxWeaponRange}");
@@ -113,5 +183,5 @@ public class TargetingState : BaseState
                 }
             }
         }
-    }
+    }*/
 }

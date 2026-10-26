@@ -85,7 +85,7 @@ public class UnitActivationState : BaseState
                 var unitScript = hit.collider.gameObject.GetComponent<PlayerOperative>();
                 if (unitScript != null && unitScript.acted)
                 {
-                    //Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
+                    Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
                     return;
                 }
                 Context.SetSelectedOperativesData(hit.collider.gameObject);

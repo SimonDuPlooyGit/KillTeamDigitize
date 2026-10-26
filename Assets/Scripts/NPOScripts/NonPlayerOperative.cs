@@ -29,10 +29,24 @@ public class NonPlayerOperative : BaseOperativeClass
 
     [Header("Unit Settings")]
     public UnitArchetype archetype = UnitArchetype.Marksman;
-    
+
     [Header("Combat References")]
-    public DiceHandler _diceHandler;
+    private GameManager _gm;
+    private DiceHandler _diceHandler;
     private InformationPackage _context;
+
+    //Context seems to be null when we call getUnitToActivate so we need to find if earlier
+    private InformationPackage Context
+    {
+        get
+        {
+            if (_context == null)
+            {
+                SetGameManager();
+            }
+            return _context;
+        }
+    }
     public bool IsShootingComplete { get; private set; }
     public bool isPerformingAnAction  {get; private set; }
     private PlayerOperative currentShootTarget;
@@ -53,11 +67,25 @@ public class NonPlayerOperative : BaseOperativeClass
         return HasValidShootTarget(npoManager.playerUnits);
     }
 
-    public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && currentApl > 0;
-    public bool CanDash() => !isPerformingAnAction && !hasDashed && currentApl > 0;
+    public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && !hasCharged && currentApl > 0;
+    public bool CanDash() => !isPerformingAnAction && !hasDashed && !hasCharged && currentApl > 0;
     public bool CanFight() => !isPerformingAnAction && !hasFought && InControlRange() && currentApl > 0;
-    public bool CanCharge() => !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    public bool CanCharge() => !isPerformingAnAction && !hasCharged && !hasRepositioned && PossibleChargeTarget() && currentApl > 0;
     public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
+
+    /*public bool CanCharge()
+    {
+        bool isPerforming = isPerformingAnAction;
+        bool chargedAlready = hasCharged;
+        bool hasApl = currentApl > 0;
+        bool hasTarget = PossibleChargeTarget();
+
+        bool result = !isPerformingAnAction && !hasCharged && PossibleChargeTarget() && currentApl > 0;
+    
+        Debug.Log($"{name} [CanCharge Check] -> Result: {result} (IsPerforming: {isPerforming}, HasCharged: {chargedAlready}, HasAPL: {hasApl}, HasTarget: {hasTarget})");
+    
+        return result;
+    }*/
 
     public OperativeTemplate NpoData => operativeData;
     
@@ -66,30 +94,10 @@ public class NonPlayerOperative : BaseOperativeClass
         canShootTwice = false;
         base.Awake();
         //Debug.Log($"Double checking that in PrototypeNPO that {name} is assigned to {NpoData.name}");
-        GameManager gm = FindFirstObjectByType<GameManager>();
-        if (gm == null)
-        {
-            //Debug.LogWarning($"{name} didn't get gm");
-        }
-        _context = gm.SharedContext;
-        if (_context == null)
-        {
-            //Debug.LogWarning($"{name} didn't get context from gm");
-        }
-        _diceHandler = gm.diceHandler;
-        if (_diceHandler == null)
-        {
-            //Debug.LogWarning($"{name} didn't get diceHandler from gm");
-        }
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
         acted = false;
-    }
-
-    protected override void Update()
-    {
-        //no op
     }
 
     //Action implementations
@@ -98,22 +106,92 @@ public class NonPlayerOperative : BaseOperativeClass
     public void PerformFightB()
     {
         Debug.Log($"{name} performs Fight");
-        Debug.Log($"Need to still implement fighting");
-        hasFought = true;
-        currentApl -= 1;
-        SetApl(currentApl);
-        CheckTurnEnd();
+        if (EnemyInControlRange)
+        {
+            BaseOperativeClass target = enemiesInControlRange[0];
+            Debug.Log($"{name} is fighting {target.name}");
+            hasFought = true;
+            UpdateApl(currentApl-1);
+            CheckTurnEnd();
+        }
+        else
+        {
+            Debug.Log($"{name} couldn't fight anyone");
+            hasFought = true;
+            UpdateApl(currentApl-1);
+            CheckTurnEnd();
+        }
     }
 
     //Brawler charge action
     public void PerformCharge()
     {
         Debug.Log($"{name} performs Charge");
-        Debug.Log("Need to still implement charge");
-        hasCharged = true;
-        currentApl -= 1;
-        SetApl(currentApl);
+        PlayerOperative targetPlayer = GetClosestChargeTarget();
+
+        if (targetPlayer != null)
+        {
+            hasCharged = true;
+            UpdateApl(currentApl-1);
+
+            Vector3 chargeSpot = GetChargeDestination(targetPlayer.transform.position);
+            Vector3 limitedChargeSpot = LimitDestination(chargeSpot, chargeDistanceScaled);
+            Vector3 finalSafeChargeSpot = GetUncongestedDestination(limitedChargeSpot);
+            npoAgent.SetDestination(finalSafeChargeSpot);
+            Debug.Log($"{name} charged into control range of {targetPlayer.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"{name} attempted to charge, but no valid charge target was found!");
+        }
+        
         CheckTurnEnd();
+    }
+
+    private PlayerOperative GetClosestChargeTarget()
+    {
+        PlayerOperative closest = null;
+        float minDistance = float.MaxValue;
+
+        if (Context != null && Context.AllPlayerUnits != null)
+        {
+            foreach (var player in Context.AllPlayerUnits)
+            {
+                if (player == null || player.dead || !player.gameObject.activeInHierarchy) continue;
+                
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+
+                if (distance <= chargeDistanceScaled && distance < minDistance)
+                {
+                    minDistance = distance;
+                    closest = player;
+                }
+            }
+        }
+        return closest;
+    }
+
+    private Vector3 GetChargeDestination(Vector3 playerPos)
+    {
+        float engagementDistance = 0.35f;
+        Vector3 directionFromPlayer = transform.position - playerPos;
+        directionFromPlayer.y = 0;
+        
+        if (directionFromPlayer.sqrMagnitude < 0.001f)
+        {
+            directionFromPlayer = Vector3.forward;
+        }
+        
+        directionFromPlayer = directionFromPlayer.normalized;
+        
+        Vector3 chargeCandidate = playerPos + (directionFromPlayer * engagementDistance);
+        
+        if (NavMesh.SamplePosition(chargeCandidate, out NavMeshHit hit, 1.0f, npoAgent.areaMask))
+        {
+            return hit.position;
+        }
+
+        return chargeCandidate;
     }
 
     //Called in behaviour tree to start ExecuteNpoShoot coroutine
@@ -144,7 +222,7 @@ public class NonPlayerOperative : BaseOperativeClass
             }
         }
 
-        if (currentShootTarget != null && _diceHandler != null)
+        if (currentShootTarget != null && _diceHandler != null && _context != null)
         {
             _context.SetSelectedOperativesData(this);
             _context.SetSelectedTarget(currentShootTarget);
@@ -161,7 +239,7 @@ public class NonPlayerOperative : BaseOperativeClass
         }
         else
         {
-            Debug.Log("target player is null or dice handler is null");
+            Debug.Log("target player is null or dice handler is null or _context is null");
         }
 
         shootCount++;
@@ -408,7 +486,8 @@ public class NonPlayerOperative : BaseOperativeClass
         currentCoverSpot = coverNode;
         
         Vector3 limitedSpot = LimitDestination(coverNode.spotToStand.position, maxDistance);
-        npoAgent.SetDestination(limitedSpot);
+        Vector3 finalSafeSpot = GetFullyValidDestination(limitedSpot);
+        npoAgent.SetDestination(finalSafeSpot);
     }
 
     //For marksmans to find the absolute closest cover
@@ -491,7 +570,8 @@ public class NonPlayerOperative : BaseOperativeClass
         if (nearestPlayer != null)
         {
             Vector3 limitedSpot = LimitDestination(nearestPlayer.transform.position, maxDistance);
-            npoAgent.SetDestination(limitedSpot);
+            Vector3 finalSafeSpot = GetFullyValidDestination(limitedSpot);
+            npoAgent.SetDestination(finalSafeSpot);
             Debug.Log($"{name} moving {maxDistance}m directly toward {nearestPlayer.name}");
         }
     }
@@ -621,14 +701,23 @@ public class NonPlayerOperative : BaseOperativeClass
     //Check if this NPO is in control range of a player unit
     private bool InControlRange()
     {
-        //Debug.Log($"{name} checks if in control range of enemy");
-        return false;
+        return EnemyInControlRange;
     }
 
     //For a brawler to check if a player unit is in range for charging a player unit
     private bool PossibleChargeTarget()
     {
-        Debug.Log($"{name} checks if it has a charge target");
+        foreach (var player in Context.AllPlayerUnits)
+        {
+            float distance = Vector3.Distance(transform.position, player.transform.position);
+            Debug.Log($"{name} is {distance} away from {player.name}");
+            if (distance < meterMovement + twoInchesScaled)
+            {
+                Debug.Log($"And {distance} is less than {meterMovement + twoInchesScaled} (8\") so return true for PossibleChargeTarget");
+                return true;
+            }
+        }
+        Debug.Log($"{name} has no charge targets");
         return false;
     }
 
@@ -818,5 +907,142 @@ public class NonPlayerOperative : BaseOperativeClass
             }
         }
         return false;
+    }
+    
+    //Grab the game manager and context and dicehandler outside Awake() because it causes problems
+    public void SetGameManager()
+    {
+        _gm = FindFirstObjectByType<GameManager>();
+        if (_gm == null)
+        {
+            Debug.LogWarning($"{name} didn't get gm");
+        }
+        _context = _gm.SharedContext;
+        if (_context == null)
+        {
+            Debug.LogWarning($"{name} didn't get context from gm");
+        }
+        _diceHandler = _gm.diceHandler;
+        if (_diceHandler == null)
+        {
+            Debug.LogWarning($"{name} didn't get diceHandler from gm");
+        }
+    }
+    
+    //Check if a spot has a teamate there
+    private bool IsBlockedByTeammate(Vector3 position)
+    {
+        float personalRadius = 0.16f;
+        Collider[] colliders = Physics.OverlapSphere(position, personalRadius);
+        
+        foreach (var col in colliders)
+        {
+            BaseOperativeClass otherOp = col.GetComponentInParent<BaseOperativeClass>();
+            if (otherOp != null && otherOp != this && !otherOp.dead && otherOp.CompareTag(gameObject.tag))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    //Filter method to make sure a pathfind destination doesn't end on an ally
+    private Vector3 GetUncongestedDestination(Vector3 destination)
+    {
+        float personalRadius = 0.16f;
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path) && path.corners.Length > 0)
+        {
+            Vector3 finalPoint = path.corners[path.corners.Length - 1];
+            
+            Collider[] colliders = Physics.OverlapSphere(finalPoint, personalRadius);
+            foreach (var col in colliders)
+            {
+                BaseOperativeClass otherOp = col.gameObject.GetComponent<BaseOperativeClass>();
+                if (otherOp != null && otherOp != this && !otherOp.dead && otherOp.CompareTag(gameObject.tag))
+                {
+                    Debug.Log($"{name}'s destination {finalPoint} is blocked by teammate {otherOp.name}. Finding alternative nearby spot");
+
+                    //Try a few random/spiral offsets around the blocked point
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float angle = i * (360f / 6f) * Mathf.Deg2Rad;
+                        Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * 0.6f;
+                        Vector3 candidatePoint = finalPoint + offset;
+
+                        //Verify if this candidate point is on the NavMesh and free of teammates
+                        if (NavMesh.SamplePosition(candidatePoint, out NavMeshHit hit, 0.5f, npoAgent.areaMask))
+                        {
+                            if (!IsBlockedByTeammate(hit.position))
+                            {
+                                return hit.position; //Found a clear spot
+                            }
+                        }
+                    }
+                }
+            }
+            return finalPoint;
+        }
+        return destination;
+    }
+    
+    //Filter method for a destination to make sure it isn't in control range of a player unit
+    private Vector3 GetControlRangeSafeDestination(Vector3 destination)
+    {
+        float controlRange = 0.414f; //Control range threshold
+        float minSafeDistance = 0.6f; //Combined base radius buffer + control range distance
+
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path) && path.corners.Length > 0)
+        {
+            Vector3 finalPoint = path.corners[path.corners.Length - 1];
+            foreach (var player in npoManager.playerUnits)
+            {
+                if (player == null || player.dead || !player.gameObject.activeInHierarchy) continue;
+
+                Vector3 playerPos = player.unitBase != null
+                    ? player.unitBase.transform.position
+                    : player.transform.position;
+                float distance = Vector3.Distance(finalPoint, playerPos);
+
+                if (distance < controlRange)
+                {
+                    Debug.Log(
+                        $"{name}'s destination {finalPoint} ends within control range of {player.name}. Adjusting to stay outside control range");
+
+                    //Direction from player to the destination point
+                    Vector3 awayFromPlayer = (finalPoint - playerPos);
+                    awayFromPlayer.y = 0;
+
+                    //Fallback: If destination is directly on top of the player, push away back toward the NPO's starting position
+                    if (awayFromPlayer.sqrMagnitude < 0.001f)
+                    {
+                        awayFromPlayer = (transform.position - playerPos);
+                        awayFromPlayer.y = 0;
+                    }
+
+                    awayFromPlayer = awayFromPlayer.normalized;
+
+                    // Position the candidate safely outside the control range
+                    Vector3 safeCandidate = playerPos + (awayFromPlayer * minSafeDistance);
+
+                    if (NavMesh.SamplePosition(safeCandidate, out NavMeshHit hit, 1.0f, npoAgent.areaMask))
+                    {
+                        return hit.position;
+                    }
+                }
+            }
+
+            return finalPoint;
+        }
+        return destination;
+    }
+
+    //Combine filter methods to find a fully safe spot
+    private Vector3 GetFullyValidDestination(Vector3 destination)
+    {
+        Vector3 safeFromControlRange = GetControlRangeSafeDestination(destination);
+        Vector3 nonOverlapSpot = GetUncongestedDestination(safeFromControlRange);
+        return nonOverlapSpot;
     }
 }
