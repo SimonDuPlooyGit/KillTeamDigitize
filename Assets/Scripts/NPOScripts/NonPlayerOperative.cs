@@ -394,7 +394,7 @@ public class NonPlayerOperative : BaseOperativeClass
         currentCoverSpot = coverNode;
         
         Vector3 limitedSpot = LimitDestination(coverNode.spotToStand.position, maxDistance);
-        Vector3 finalSafeSpot = GetUncongestedDestination(limitedSpot);
+        Vector3 finalSafeSpot = GetFullyValidDestination(limitedSpot);
         npoAgent.SetDestination(finalSafeSpot);
     }
 
@@ -478,7 +478,7 @@ public class NonPlayerOperative : BaseOperativeClass
         if (nearestPlayer != null)
         {
             Vector3 limitedSpot = LimitDestination(nearestPlayer.transform.position, maxDistance);
-            Vector3 finalSafeSpot = GetUncongestedDestination(limitedSpot);
+            Vector3 finalSafeSpot = GetFullyValidDestination(limitedSpot);
             npoAgent.SetDestination(finalSafeSpot);
             Debug.Log($"{name} moving {maxDistance}m directly toward {nearestPlayer.name}");
         }
@@ -883,5 +883,48 @@ public class NonPlayerOperative : BaseOperativeClass
             return finalPoint;
         }
         return destination;
+    }
+    
+    //Filter method for a destination to make sure it isn't in control range of a player unit
+    private Vector3 GetControlRangeSafeDestination(Vector3 destination)
+    {
+        float controlRange = 0.414f;
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path) && path.corners.Length > 0)
+        {
+            Vector3 finalPoint = path.corners[path.corners.Length - 1];
+
+            foreach (var player in npoManager.playerUnits)
+            {
+                if (player == null || player.dead || !player.gameObject.activeInHierarchy) continue;
+
+                float distance = Vector3.Distance(finalPoint, player.unitBase.transform.position);
+
+                if (distance < controlRange)
+                {
+                    Debug.Log($"{name}'s destination {finalPoint} ends within control range of {player.name}. Adjusting to stay outside control range");
+                    
+                    Vector3 awayFromPlayer = (finalPoint - player.unitBase.transform.position).normalized;
+                    awayFromPlayer.y = 0;
+                    
+                    Vector3 safeCandidate = player.unitBase.transform.position + (awayFromPlayer * 0.1f);
+                    
+                    if (NavMesh.SamplePosition(safeCandidate, out NavMeshHit hit, 1.0f, npoAgent.areaMask))
+                    {
+                        return hit.position; // Return the adjusted safe point outside control range
+                    }
+                }
+            }
+            return finalPoint;
+        }
+        return destination;
+    }
+    
+    //Combine filter methods to find a fully safe spot
+    private Vector3 GetFullyValidDestination(Vector3 destination)
+    {
+        Vector3 safeFromControlRange = GetControlRangeSafeDestination(destination);
+        Vector3 nonOverlapSpot = GetUncongestedDestination(safeFromControlRange);
+        return nonOverlapSpot;
     }
 }
