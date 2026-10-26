@@ -394,7 +394,8 @@ public class NonPlayerOperative : BaseOperativeClass
         currentCoverSpot = coverNode;
         
         Vector3 limitedSpot = LimitDestination(coverNode.spotToStand.position, maxDistance);
-        npoAgent.SetDestination(limitedSpot);
+        Vector3 finalSafeSpot = GetUncongestedDestination(limitedSpot);
+        npoAgent.SetDestination(finalSafeSpot);
     }
 
     //For marksmans to find the absolute closest cover
@@ -477,7 +478,8 @@ public class NonPlayerOperative : BaseOperativeClass
         if (nearestPlayer != null)
         {
             Vector3 limitedSpot = LimitDestination(nearestPlayer.transform.position, maxDistance);
-            npoAgent.SetDestination(limitedSpot);
+            Vector3 finalSafeSpot = GetUncongestedDestination(limitedSpot);
+            npoAgent.SetDestination(finalSafeSpot);
             Debug.Log($"{name} moving {maxDistance}m directly toward {nearestPlayer.name}");
         }
     }
@@ -824,5 +826,62 @@ public class NonPlayerOperative : BaseOperativeClass
         {
             Debug.LogWarning($"{name} didn't get diceHandler from gm");
         }
+    }
+    
+    //Check if a spot has a teamate there
+    private bool IsBlockedByTeammate(Vector3 position)
+    {
+        float personalRadius = 0.16f;
+        Collider[] colliders = Physics.OverlapSphere(position, personalRadius);
+        
+        foreach (var col in colliders)
+        {
+            BaseOperativeClass otherOp = col.GetComponentInParent<BaseOperativeClass>();
+            if (otherOp != null && otherOp != this && !otherOp.dead && otherOp.CompareTag(gameObject.tag))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    //Filter method to make sure a pathfind destination doesn't end on an ally
+    private Vector3 GetUncongestedDestination(Vector3 destination)
+    {
+        float personalRadius = 0.16f;
+        NavMeshPath path = new NavMeshPath();
+        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path) && path.corners.Length > 0)
+        {
+            Vector3 finalPoint = path.corners[path.corners.Length - 1];
+            
+            Collider[] colliders = Physics.OverlapSphere(finalPoint, personalRadius);
+            foreach (var col in colliders)
+            {
+                BaseOperativeClass otherOp = col.gameObject.GetComponent<BaseOperativeClass>();
+                if (otherOp != null && otherOp != this && !otherOp.dead && otherOp.CompareTag(gameObject.tag))
+                {
+                    Debug.Log($"{name}'s destination {finalPoint} is blocked by teammate {otherOp.name}. Finding alternative nearby spot");
+
+                    //Try a few random/spiral offsets around the blocked point
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float angle = i * (360f / 6f) * Mathf.Deg2Rad;
+                        Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * 0.6f;
+                        Vector3 candidatePoint = finalPoint + offset;
+
+                        //Verify if this candidate point is on the NavMesh and free of teammates
+                        if (NavMesh.SamplePosition(candidatePoint, out NavMeshHit hit, 0.5f, npoAgent.areaMask))
+                        {
+                            if (!IsBlockedByTeammate(hit.position))
+                            {
+                                return hit.position; //Found a clear spot
+                            }
+                        }
+                    }
+                }
+            }
+            return finalPoint;
+        }
+        return destination;
     }
 }

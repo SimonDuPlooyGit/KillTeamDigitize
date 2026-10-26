@@ -6350,12 +6350,15 @@ MonoBehaviour:
   acted: 0
   currentOrder: 1
   dashDistanceScaled: 0.7620016
+  dashDistanceInches: 3
+  chargeDistanceScaled: 0
   samplingPoints: []
   losStart: {fileID: 1309909487491554290}
   lineRenderer: {fileID: 1443869018041154187}
   validLine: {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
   invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
-  enemyInControlRange: 0
+  AllyInControlRange: 0
+  EnemyInControlRange: 0
   unitUI: {fileID: 2598318228105086832}
   healthFill: {fileID: 864329973792977482}
   aplCount: {fileID: 6236903750796841253}
@@ -6382,7 +6385,6 @@ MonoBehaviour:
   canShootTwice: 0
   npoManager: {fileID: 0}
   archetype: 1
-  _diceHandler: {fileID: 0}
 --- !u!95 &3347268323279254911
 Animator:
   serializedVersion: 7

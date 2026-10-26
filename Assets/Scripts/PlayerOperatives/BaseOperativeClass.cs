@@ -105,7 +105,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             concealSymbol.SetActive(true);
         }
         
-        SampleCollidersInControlRange();
+        SampleCollidersInControlRange(transform.position);
         FogEffectAndCoverToggle();
     }
     
@@ -526,7 +526,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Using Physics.OverlapSphere to check colliders in control range
-    public void SampleCollidersInControlRange()
+    public void SampleCollidersInControlRange(Vector3 position)
     {
         Collider[] colliders = Physics.OverlapSphere(unitBase.transform.position, 0.414f);
         closeToCover = false;
