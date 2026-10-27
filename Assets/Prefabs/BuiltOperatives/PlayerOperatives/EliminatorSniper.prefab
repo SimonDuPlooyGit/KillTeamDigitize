@@ -151,7 +151,8 @@ PrefabInstance:
       value: EliminatorSniper
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2334169138877219878, guid: fd45902e41ac34244976c2c4f864a178, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 7301379917928092325, guid: fd45902e41ac34244976c2c4f864a178, type: 3}
       insertIndex: 0
