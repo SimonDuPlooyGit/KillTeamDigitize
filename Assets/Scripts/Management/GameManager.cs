@@ -4,6 +4,7 @@ using TMPro;
 using TMPro.EditorUtilities;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 //-----GameManager Class-----
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
     [SerializeField] public GameSetup setup;
+    private PlayerOperative _currentHoveredOperative;
+    private NonPlayerOperative _currentHoveredNPO;
 
     //Player states
     private UnitActivationState unitActivationState;
@@ -188,7 +191,7 @@ public class GameManager : MonoBehaviour
             Scene currentScene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(currentScene.buildIndex);
         }
-        
+
         _stateMachine.Update(); //Keep the state machine updating
         if (_stateMachine.CurrentState == weaponSelectState)
         {
@@ -198,6 +201,66 @@ public class GameManager : MonoBehaviour
         {
             mainCamera.switchOffForMenu = false;
         }
+
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100))
+        {
+            if (hit.collider.gameObject.CompareTag("AllyUnit"))
+            {
+                PlayerOperative hitOperative = hit.collider.GetComponent<PlayerOperative>();
+
+                // Clearing NPO if switching directly to an ally
+                if (_currentHoveredNPO != null && !IsSelectedUnit(_currentHoveredNPO))
+                {
+                    _currentHoveredNPO.ToggleUIOff();
+                    _currentHoveredNPO = null;
+                }
+
+                // Switching from Ally A to Ally B
+                if (_currentHoveredOperative != null && _currentHoveredOperative != hitOperative)
+                {
+                    if (!IsSelectedUnit(_currentHoveredOperative))
+                    {
+                        _currentHoveredOperative.ToggleUIOff();
+                    }
+                }
+
+                if (_currentHoveredOperative != hitOperative)
+                {
+                    _currentHoveredOperative = hitOperative;
+                    _currentHoveredOperative.ToggleUIOn();
+                }
+
+                return;
+            }
+            else if (hit.collider.gameObject.CompareTag("EnemyUnit"))
+            {
+                NonPlayerOperative hitOperative = hit.collider.GetComponent<NonPlayerOperative>();
+
+                if (_currentHoveredOperative != null && !IsSelectedUnit(_currentHoveredOperative))
+                {
+                    _currentHoveredOperative.ToggleUIOff();
+                    _currentHoveredOperative = null;
+                }
+
+                if (_currentHoveredNPO != null && _currentHoveredNPO != hitOperative)
+                {
+                    if (!IsSelectedUnit(_currentHoveredNPO))
+                    {
+                        _currentHoveredNPO.ToggleUIOff();
+                    }
+                }
+
+                if (_currentHoveredNPO != hitOperative)
+                {
+                    _currentHoveredNPO = hitOperative;
+                    _currentHoveredNPO.ToggleUIOn();
+                }
+
+                return;
+            }
+        }
+        ClearHoverState();
     }
 
     public void OnRepositionActionButtonPressed()
@@ -301,5 +364,36 @@ public class GameManager : MonoBehaviour
         {
             SharedContext.PlayerTurn = true;
         }
+    }
+
+    private void ClearHoverState()
+    {
+        if (_currentHoveredOperative != null)
+        {
+            //toggle off if not selected
+            if (!IsSelectedUnit(_currentHoveredOperative))
+            {
+                _currentHoveredOperative.ToggleUIOff();
+            }
+            _currentHoveredOperative = null;
+        }
+
+        if (_currentHoveredNPO != null)
+        {
+            //same for NPO
+            if (!IsSelectedUnit(_currentHoveredNPO))
+            {
+                _currentHoveredNPO.ToggleUIOff();
+            }
+            _currentHoveredNPO = null;
+        }
+    }
+
+    private bool IsSelectedUnit(MonoBehaviour unitScript)
+    {
+        if (SharedContext == null || SharedContext.CurrentlySelectedOperativeScript == null)
+            return false;
+
+        return SharedContext.CurrentlySelectedOperativeScript == unitScript;
     }
 }

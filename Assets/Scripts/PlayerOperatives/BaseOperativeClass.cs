@@ -48,6 +48,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject damagePopOut;
     public TextMeshProUGUI nameText;
     public GameObject unitBase;
+    private Color32 currentColor;
 
     [Header("Effects To Apply")]
     public GameObject fogEffect;
@@ -69,6 +70,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
         SetHealth();
         string brokenUpName = string.Concat(name.Select(c => char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(); //Space out the name from pascal case
         nameText.text = brokenUpName;
+        unitUI.GetComponent<CanvasGroup>().alpha = 0;
+        
+        
         
         //Null check and initialization
         if (operativeData != null)
@@ -524,6 +528,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         selected = false;
         RemoveGlow();
         if (lineRenderer != null) lineRenderer.enabled = false;
+        ToggleUIOff();
     }
 
     //Using Physics.OverlapSphere to check colliders in control range
@@ -571,5 +576,15 @@ public abstract class BaseOperativeClass : MonoBehaviour
         float distance = Vector3.Distance(unitBase.transform.position, otherOperative.unitBase.transform.position);
         float maxEngagementDistance = 0.574f;
         return distance <= maxEngagementDistance;
+    }
+
+    public void ToggleUIOn()
+    {
+        unitUI.GetComponent<CanvasGroup>().alpha = 1;
+    }
+
+    public void ToggleUIOff()
+    {
+        unitUI.GetComponent<CanvasGroup>().alpha = 0;
     }
 }
