@@ -9611,6 +9611,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 249094617}
     m_Modifications:
+    - target: {fileID: 1093046766280335520, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 57.41
+      objectReference: {fileID: 0}
     - target: {fileID: 5647173773186044386, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_Name
       value: EliminatorSniper
@@ -14419,8 +14423,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 95257449}
         m_TargetAssemblyTypeName: DiceHandler, Assembly-CSharp
-        m_MethodName: RerollButton
-        m_Mode: 6
+        m_MethodName: OnParryButtonPressed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -20711,7 +20715,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.508
+      value: 3.492
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -20719,7 +20723,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.091
+      value: 0.157
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -22976,8 +22980,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 95257449}
         m_TargetAssemblyTypeName: DiceHandler, Assembly-CSharp
-        m_MethodName: RerollButton
-        m_Mode: 6
+        m_MethodName: OnStrikeButtonPressed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
