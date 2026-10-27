@@ -138,6 +138,7 @@ public class ShootCombatState : BaseState
 
         Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedNormals,Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
         Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedCrits, Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
+        Context.CurrentlySelectedOperative.GetComponent<Animator>().SetTrigger("Shoot");
 
         Debug.Log("Remaining crit attacks: " + Context.RetainedCrits.ToString());
         Debug.Log("Remaining normal attacks: " + Context.RetainedNormals.ToString());
