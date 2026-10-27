@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 
 //-----DiceHandler Class-----
 public class DiceHandler : MonoBehaviour
@@ -35,6 +36,10 @@ public class DiceHandler : MonoBehaviour
     [SerializeField]
     GameObject defenseDiceHolder; //The horizontal layout group for the defense dice prefabs
     [SerializeField]
+    GameObject meleeAttackHolder; //The horizontal layout group for the attack dice prefabs
+    [SerializeField]
+    GameObject meleeDefenseHolder; //The horizontal layout group for the defense dice prefabs
+    [SerializeField]
     Transform diceThrowPoint; //Where dice spawn from
     public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled UI attack dice to track roll results for menu
     public List<CombatRoll> activeDefenseDice = new List<CombatRoll>(); //List of rolled UI defence dice for menu
@@ -58,6 +63,10 @@ public class DiceHandler : MonoBehaviour
     
     [SerializeField]
     private GameObject rerollButton;
+    [SerializeField] 
+    private GameObject strikeButton;
+    [SerializeField] 
+    private GameObject parryButton;
     [SerializeField]
     private TextMeshProUGUI xToHit;
     [SerializeField]
@@ -70,6 +79,8 @@ public class DiceHandler : MonoBehaviour
     public int maxSelectableDieValue = 6;
     //same but minimum
     public int minSelectableDieValue = 1;
+    [SerializeField]
+    private GameManager gameManager;
 
     private void Start()
     {
@@ -81,7 +92,16 @@ public class DiceHandler : MonoBehaviour
 
     private void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
     {
-        GameObject holder = isAttack ? attackDiceHolder : defenseDiceHolder; //Null check for if we have attackDiceHolder or defenceDiceHolder
+        GameObject holder;
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            holder = isAttack ? meleeAttackHolder : meleeDefenseHolder; 
+        }
+        else
+        {
+            holder = isAttack ? attackDiceHolder : defenseDiceHolder; //Null check for if we have attackDiceHolder or defenceDiceHolde
+        }
+
         List<CombatRoll> activeList = isAttack ? activeAttackDice : activeDefenseDice; //Null check for the lists
         GameObject dicePrefab = isAlly ? allyDicePrefab : enemyDicePrefab; //Sets prefab to either ally or opp depending on the isAlly bool
 
@@ -179,24 +199,34 @@ public class DiceHandler : MonoBehaviour
         yield return new WaitForSeconds(2f);
         xToHit.text = $"{context.Weapon.hit} to hit";
         xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
-        menu.OpenMenu(menu.diceRollMenu);
+        //Stops the sequence here if in melee state
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            yield break;
+        }
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            menu.OpenMenu(menu.meleeMenu);
+        }
+        else
+        {
+            menu.OpenMenu(menu.diceRollMenu);
+        }
         SpawnDice(thrownDice, true, isAlly);
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            FilterDiceList(context, true, context.Weapon.hit);
+        }
         //Display whether the dice hit or not by updating the sprite
         foreach (CombatRoll dieSprite in activeAttackDice)
         {
-            if (dieSprite.GetValue() >= context.Weapon.hit )
+            if (dieSprite.GetValue() >= context.Weapon.hit && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
             {
                 dieSprite.ToggleHit();
             }
         }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
-
-        //Clean up dice objects
-        /*foreach (DiceRoll die in thrownDice)
-        {
-            Destroy(die.gameObject);
-        }*/
     }
     
     //==================[End throw attack coroutine]=======================
@@ -252,21 +282,33 @@ public class DiceHandler : MonoBehaviour
 
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
-        menu.OpenMenu(menu.diceRollMenu);
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            menu.OpenMenu(menu.meleeMenu);
+        }
+        else
+        {
+            menu.OpenMenu(menu.diceRollMenu);
+        }
         SpawnDice(activePhysAttackDice, true, isAlly);
         //Display whether the dice hit or not by updating the sprite
         foreach (CombatRoll dieSprite in activeAttackDice)
         {
-            if (dieSprite.GetValue() >= context.Weapon.hit)
+            if (dieSprite.GetValue() >= context.Weapon.hit && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
             {
                 dieSprite.ToggleHit();
             }
         }
         SpawnDice(activePhysDefenseDice, false, !isAlly);
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            FilterDiceList(context, true, context.Weapon.hit);
+            FilterDiceList(context, false, context.targetWeapon.hit);
+        }
         //Display whether the dice blocked or not by updating the sprite
         foreach (CombatRoll dieSprite in activeDefenseDice)
         {
-            if (dieSprite.GetValue() >= context.CurrentlySelectedOperativeScript.operativeData.save)
+            if (dieSprite.GetValue() >= context.CurrentlySelectedOperativeScript.operativeData.save && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
             {
                 dieSprite.ToggleBlock();
             }
@@ -329,7 +371,15 @@ public class DiceHandler : MonoBehaviour
             }
         }
         //Close menu
-        menu.CloseMenu(menu.diceRollMenu);
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            menu.CloseMenu(menu.meleeMenu);
+        }
+        else
+        {
+            menu.CloseMenu(menu.diceRollMenu);
+        }
+        
         yield return new WaitForSeconds(0.5f);
 
         //Instantiate and throw new dice
@@ -380,9 +430,20 @@ public class DiceHandler : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
         //Update the menu
-        menu.OpenMenu(menu.diceRollMenu);
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            menu.OpenMenu(menu.meleeMenu);
+        }
+        else
+        {
+            menu.OpenMenu(menu.diceRollMenu);
+        }
         bool isUIAlly = isAttackMode ? isAlly : !isAlly;
         SpawnDice(activePhysList, isAttackMode, isUIAlly);
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
+        {
+            FilterDiceList(_context, true, _context.Weapon.hit);
+        }
         foreach (CombatRoll dieSprite in activeAttackDice)
         {
             if (dieSprite.GetValue() >= _context.Weapon.hit)
@@ -404,8 +465,22 @@ public class DiceHandler : MonoBehaviour
     //determines if a dice panel can be selected
     public bool CanSelectDie(CombatRoll clickedDie, bool isAttack)
     {
+        bool isMeleeState = (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState);
         //Uses current selection state to determine which panels you can select
-        if (currentSelectionMode == DiceSelectionMode.None) return false;
+        if (currentSelectionMode == DiceSelectionMode.None)
+        {
+            //If not in melee state, block selection completely
+            if (!isMeleeState) return false;
+
+            //In Melee state with no reroll mode active, limit selection to exactly 1 die at a time
+            List<CombatRoll> meleeActiveList = GetActiveUIList(isAttack);
+            int selectedCount = 0;
+            for (int i = 0; i < meleeActiveList.Count; i++)
+            {
+                if (meleeActiveList[i] != null && meleeActiveList[i].IsSelected) selectedCount++;
+            }
+            return selectedCount < 1;
+        }
 
         //For when restricting the value of die that can be selected
         if (clickedDie != null && !clickedDie.IsSelected)
@@ -498,22 +573,53 @@ public class DiceHandler : MonoBehaviour
     //Makes the reroll button appear when a panel is selected
     public void UpdateRerollButtonVisibility()
     {
-        if (rerollButton == null) return;
+        bool isMeleeState = (gameManager != null && gameManager._stateMachine != null &&
+                             gameManager._stateMachine.CurrentState == gameManager.meleeCombatState);
 
-        bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack || currentSelectionMode == DiceSelectionMode.Duplicates || currentSelectionMode == DiceSelectionMode.Set);
-        List<CombatRoll> activeList = isAttackMode ? activeAttackDice : activeDefenseDice;
+        bool isAttackMode = (currentSelectionMode == DiceSelectionMode.Attack ||
+                             currentSelectionMode == DiceSelectionMode.Duplicates ||
+                             currentSelectionMode == DiceSelectionMode.Set);
 
+        // Determine selection across relevant pools
         bool hasSelection = false;
-        foreach (CombatRoll panel in activeList)
+
+        if (currentSelectionMode != DiceSelectionMode.None)
         {
-            if (panel != null && panel.IsSelected)
+            List<CombatRoll> activeList = isAttackMode ? activeAttackDice : activeDefenseDice;
+            foreach (CombatRoll panel in activeList)
             {
-                hasSelection = true;
-                break;
+                if (panel != null && panel.IsSelected)
+                {
+                    hasSelection = true;
+                    break;
+                }
             }
         }
-        // Enable button only if at least 1 panel is selected
-        rerollButton.SetActive(hasSelection);
+        else
+        {
+            // If selection mode is None (e.g., standard Melee action picking), check both lists
+            foreach (CombatRoll panel in activeAttackDice)
+            {
+                if (panel != null && panel.IsSelected) { hasSelection = true; break; }
+            }
+            if (!hasSelection)
+            {
+                foreach (CombatRoll panel in activeDefenseDice)
+                {
+                    if (panel != null && panel.IsSelected) { hasSelection = true; break; }
+                }
+            }
+        }
+
+        // 1. Reroll Button: Visible ONLY if a die is selected AND an active reroll mode is set
+        if (rerollButton != null)
+        {
+            rerollButton.SetActive(hasSelection && currentSelectionMode != DiceSelectionMode.None);
+        }
+
+        // 2. Strike & Parry Buttons: Visible IF a die is selected AND we are in Melee Combat State
+        if (strikeButton != null) strikeButton.SetActive(hasSelection && isMeleeState);
+        if (parryButton != null) parryButton.SetActive(hasSelection && isMeleeState);
     }
 
     //FOR DUPLICATE DICE: when a dice is selected, if in duplicate mode, selects all matching dice values
@@ -554,5 +660,17 @@ public class DiceHandler : MonoBehaviour
     public void RerollButton(bool isAlly)
     {
         StartCoroutine(Reroll(isAlly));
+    }
+    //Takes in a list of ints and makes the current list of dice panles match it (used for melee combat to only display successes
+    public void FilterDiceList(InformationPackage context, bool isAlly, int hit)
+    {
+        List<CombatRoll> panelList = isAlly ? activeAttackDice : activeDefenseDice;
+        foreach(CombatRoll diePanel in panelList)
+        {
+            if (diePanel.GetValue() < hit)
+            {
+                Destroy(diePanel.gameObject);
+            }
+        }
     }
 }

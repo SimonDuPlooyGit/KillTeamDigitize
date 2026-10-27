@@ -29,7 +29,7 @@ public class UnitActivationState : BaseState
         _input.Controls.Deselect.performed += OnDeselectPerformed;
         _menu.OpenMenu(_menu.tpCounter);
         _menu.OpenMenu(_menu.objective);
-
+        _menu.CloseMenu(_menu.meleeMenu);
         //tutorial panel
         if(_menu.tutFlag1)
         {

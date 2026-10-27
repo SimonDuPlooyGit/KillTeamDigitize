@@ -15284,7 +15284,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -585, y: -210}
+  m_AnchoredPosition: {x: -585, y: -235}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1120994060
@@ -18777,7 +18777,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -585, y: 107}
+  m_AnchoredPosition: {x: -585, y: 82}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1432067962
@@ -21206,6 +21206,7 @@ MonoBehaviour:
   tutReset: {fileID: 133851701}
   moveButton2: {fileID: 1652257065}
   diceRollMenu: {fileID: 190747836}
+  meleeMenu: {fileID: 1847801369}
   PauseScreen: {fileID: 2111573429}
   tpCounter: {fileID: 2048312039}
   objective: {fileID: 802968462}
@@ -22896,7 +22897,7 @@ GameObject:
   - component: {fileID: 1801944739}
   - component: {fileID: 1801944738}
   m_Layer: 5
-  m_Name: Retain
+  m_Name: Strike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22997,7 +22998,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Retain
+  m_text: Strike
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 95e1bcf947c3b5d47a184d34515938b5, type: 2}
   m_sharedMaterial: {fileID: -7741333241529128328, guid: 95e1bcf947c3b5d47a184d34515938b5, type: 2}
@@ -23089,7 +23090,7 @@ GameObject:
   - component: {fileID: 1803297435}
   - component: {fileID: 1803297434}
   m_Layer: 5
-  m_Name: RetainButton
+  m_Name: StrikeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23245,7 +23246,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1847801370
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26807,9 +26808,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2373016438064717629}
     - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 1921963951}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: parryButton
+      value: 
+      objectReference: {fileID: 560017706}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
       propertyPath: rerollButton
       value: 
       objectReference: {fileID: 1098753645}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: strikeButton
+      value: 
+      objectReference: {fileID: 1803297432}
     - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
       propertyPath: diceThrowPoint
       value: 
@@ -26822,6 +26835,14 @@ PrefabInstance:
       propertyPath: defenseDiceHolder
       value: 
       objectReference: {fileID: 432106845}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: meleeAttackHolder
+      value: 
+      objectReference: {fileID: 1432067960}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: meleeDefenseHolder
+      value: 
+      objectReference: {fileID: 1120994058}
     - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
       propertyPath: currentSelectionMode
       value: 0

@@ -16,7 +16,11 @@ MonoBehaviour:
   hit: 1
   dmgNorm: 1
   dmgCrit: 1
-  rules: []
+  rules:
+  - rid: 5788544494025048200
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 5788544494025048200
+      type: {class: WeaponRules/Balanced, ns: , asm: Assembly-CSharp}
+      data: 

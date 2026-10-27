@@ -62,6 +62,8 @@ public class InformationPackage
     public List<int> AttackerRemainingDice = new();
     public List<int> DefenderRemainingDice = new();
 
+    public WeaponTemplate targetWeapon;
+
     //-----Three overloaded methods to be able to set selected operative data no matter which component of it is passed as the argument-----
     public void SetSelectedOperativesData(GameObject selectedOperative)
     {
