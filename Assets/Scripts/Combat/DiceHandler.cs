@@ -83,6 +83,7 @@ public class DiceHandler : MonoBehaviour
     private GameManager gameManager;
 
     public bool playerActionReady = false;
+    public bool isWaitingForParry = false;
 
     private void Start()
     {
@@ -551,6 +552,7 @@ public class DiceHandler : MonoBehaviour
         return currentSelectedCount < maxAllowedSelections;
     }*/
     
+    //Alternative with trying to fix fighting
     public bool CanSelectMeleeDie(CombatRoll clickedDie, bool isAttacker)
     {
         bool isMeleeState = (gameManager != null && gameManager._stateMachine != null && gameManager._stateMachine.CurrentState == gameManager.meleeCombatState);
@@ -639,17 +641,21 @@ public class DiceHandler : MonoBehaviour
         foreach (var d in oppPool) if (d != null && d.IsSelected) oppSelectedCount++;
         
         //Always allow deselecting a currently selected die
-        if (clickedDie.IsSelected) return true;
-        
+        if (clickedDie.IsSelected)
+        {
+            if (isPlayerPool && isWaitingForParry) return false;
+            return true;
+        }
         if (isPlayerPool)
         {
             // Player can select up to 1 of their own dice
+            if (isWaitingForParry) return false;
             return mySelectedCount < 1;
         }
         else
         {
             // Player can select up to 1 opponent die, but only if they have already selected 1 of their own dice (for parrying)
-            return (mySelectedCount >= 1 && oppSelectedCount < 1);
+            return isWaitingForParry && (oppSelectedCount < 1);
         }
     }
 
@@ -721,7 +727,7 @@ public class DiceHandler : MonoBehaviour
         }
 
         // 2. Strike & Parry Buttons: Visible IF a die is selected AND we are in Melee Combat State
-        if (strikeButton != null) strikeButton.SetActive(hasSelection && isMeleeState);
+        if (strikeButton != null) strikeButton.SetActive(hasSelection && isMeleeState && !isWaitingForParry);
         if (parryButton != null) parryButton.SetActive(hasSelection && isMeleeState);
     }
 
@@ -846,6 +852,19 @@ public class DiceHandler : MonoBehaviour
                 break;
             }
         }
+
+        if (!isWaitingForParry)
+        {
+            if (playerDie == null)
+            {
+                Debug.Log("Select one of your dice to use for a parry");
+                return;
+            }
+            isWaitingForParry = true;
+            Debug.Log("Select opponent die to parry");
+            UpdateRerollButtonVisibility();
+            return;
+        }
         
         CombatRoll opponentDie = null;
         foreach (var die in opponentUiList)
@@ -856,10 +875,10 @@ public class DiceHandler : MonoBehaviour
                 break;
             }
         }
-        
+
         if (playerDie == null || opponentDie == null)
         {
-            Debug.LogWarning("Parry requires selecting 1 of your dice and 1 opponent die to parry");
+            Debug.Log("Parry needs one of your dice and one opponent dice");
             return;
         }
 
@@ -869,20 +888,17 @@ public class DiceHandler : MonoBehaviour
         bool isValidParry = (playerVal == 6) || (playerVal < 6 && opponentVal < 6);
         if (!isValidParry)
         {
-            Debug.Log("Invalid parry, cannot parry crit with noncrit");
+            Debug.Log("Invalid parry, cannot block crit with noncrit");
             return;
         }
         
         playerRemainingDice.Remove(playerVal);
         opponentRemainingDice.Remove(opponentVal);
-
         playerUiList.Remove(playerDie);
         opponentUiList.Remove(opponentDie);
         Destroy(playerDie.gameObject);
         Destroy(opponentDie.gameObject);
         
-        Debug.Log("Successful parry");
-
         ClearAllSelections();
         UpdateRerollButtonVisibility();
         playerActionReady = true;
