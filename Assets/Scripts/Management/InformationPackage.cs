@@ -20,6 +20,7 @@ public class InformationPackage
     
     //Data for rules
     public WeaponTemplate Weapon;
+    public WeaponTemplate opponentWeapon; //For melee
     
     public List<int> AttackRolls = new();
     public List<int> DefenseRolls = new();
@@ -58,11 +59,10 @@ public class InformationPackage
     public bool PlayerTurn = true;
     
     //Melee tracking
-    public bool IsPlayerFightTurn;
-    public List<int> AttackerRemainingDice = new();
-    public List<int> DefenderRemainingDice = new();
-
-    public WeaponTemplate targetWeapon;
+    public bool IsPlayerFightTurn; //Flag to check if player's turn to decide
+    public bool IsPlayerAttacker; //Track if player initiated fight
+    public List<int> AttackerRemainingDice = new(); //How many attack dice the attacker has left to parry or strike
+    public List<int> RetaliatorRemainingDice = new(); //How many attack dice the retaliator has left to parry or strike
 
     //-----Three overloaded methods to be able to set selected operative data no matter which component of it is passed as the argument-----
     public void SetSelectedOperativesData(GameObject selectedOperative)

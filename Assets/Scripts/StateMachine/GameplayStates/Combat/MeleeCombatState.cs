@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -7,7 +8,8 @@ public class MeleeCombatState : BaseState
 {
     private MenuPanel _menu;
     private DiceHandler _diceHandler;
-    private WeaponTemplate targetsWeapon;
+    private WeaponTemplate attackerWeapon;
+    private WeaponTemplate retaliatorWeapon;
     
     public MeleeCombatState(InformationPackage context, MenuPanel menu, DiceHandler diceHandler) : base(context)
     {
@@ -20,6 +22,7 @@ public class MeleeCombatState : BaseState
         Debug.Log("MeleeCombatState OnEnter");
         
         Context.DiceHandler = _diceHandler;
+        attackerWeapon = Context.Weapon;
         
         //Reset
         Context.AttackRolls.Clear();
@@ -48,98 +51,103 @@ public class MeleeCombatState : BaseState
     }
 
     //Find the melee weapon for the person defend fighting
-    private WeaponTemplate FindDefenderMeleeWeapon(BaseOperativeClass targetUnit)
+    private WeaponTemplate FindRetaliatorMeleeWeapon(BaseOperativeClass targetUnit)
     {
         WeaponTemplate weaponToReturn =
             targetUnit.operativeData.weapons.FirstOrDefault(weapon => weapon.rules.OfType<WeaponRules.Melee>().Any());
-
+        
         return weaponToReturn;
     }
     
     //Resolve parry and attack sequence, player then npo so and until dice done
     //Need to remove dice from UI that have been used
+    //If a player picks parry they must be able to select an opponent dice to parry (with crit parry rules applied)
     private IEnumerator ResolveSequentialFight()
     {
-        //Player is the attacked if the activeated operative is of type PlayerOperative
+        //Player is the attacked if the activated operative is of type PlayerOperative
         bool isPlayerAttacker = Context.CurrentlySelectedOperativeScript is PlayerOperative;
+        
         //Throw attack dice for the current attacker
-        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(Context.Weapon.atk, isPlayerAttacker, Context));
+        yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(attackerWeapon.atk, isPlayerAttacker, Context));
 
         if (Context.CurrentlySelectedTargetScript != null)
         {
-            targetsWeapon = FindDefenderMeleeWeapon(Context.CurrentlySelectedTargetScript);
-            Context.targetWeapon = targetsWeapon;
-            //Throw the defender's attacks as "Defense dice"
-            yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(targetsWeapon.atk, isPlayerAttacker, Context));
-            //Find successfull dice
+            retaliatorWeapon = FindRetaliatorMeleeWeapon(Context.CurrentlySelectedTargetScript);
+            Context.opponentWeapon = retaliatorWeapon;
+            
+            //Throw the retaliator's attacks as "Defense dice"
+            //Menu selection handling happens in DiceHandler based on state
+            yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(attackerWeapon.atk, isPlayerAttacker, Context));
+            
+            //Find successful dice
             InitializeSuccessPools();
-            //Set in the context if it's the player's turn to select 
-            Context.IsPlayerFightTurn = isPlayerAttacker;
+
+            bool attackerTurn = true;
 
             //Keep alternating till no dice left
-            while (Context.AttackerRemainingDice.Count > 0 || Context.DefenderRemainingDice.Count > 0)
+            while (Context.AttackerRemainingDice.Count > 0 || Context.RetaliatorRemainingDice.Count > 0)
             {
-                //If the player needs to select
-                if (Context.IsPlayerFightTurn)
+                if (Context.CurrentlySelectedOperativeScript == null || Context.CurrentlySelectedOperativeScript.dead ||
+                    Context.CurrentlySelectedTargetScript == null || Context.CurrentlySelectedTargetScript.dead)
                 {
-                    if (Context.AttackerRemainingDice.Count == 0)
-                    {
-                        //Transition if they have no dice left
-                        Context.IsPlayerFightTurn = false;
-                        continue;
-                    }
-                    
-                    Debug.Log("Player selects parry or melee for dice");
-                    //Idk the following code's logic
+                    Debug.Log("Unit defeated. Ending melee sequence early");
+                    break;
+                }
+                
+                if (attackerTurn && Context.AttackerRemainingDice.Count == 0)
+                {
+                    attackerTurn = false;
+                    continue;
+                }
+                if (!attackerTurn && Context.RetaliatorRemainingDice.Count == 0)
+                {
+                    attackerTurn = true;
+                    continue;
+                }
+
+                bool isPlayerTurn = (attackerTurn == isPlayerAttacker);
+                Context.IsPlayerFightTurn = isPlayerTurn;
+
+                if (isPlayerTurn)
+                {
+                    Debug.Log("Player turn to strike or parry");
+                    _diceHandler.playerActionReady = false;
                     _diceHandler.currentSelectionMode = DiceHandler.DiceSelectionMode.Attack;
-                    _menu.OpenMenu(_menu.diceRollMenu);
-                    _diceHandler.maxAllowedSelections = 1;
-                    yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+                    _diceHandler.UpdateRerollButtonVisibility();
                     
-                    //Process the player's decision
-                    ProcessPlayerChoice();
-                    _menu.CloseMenu(_menu.diceRollMenu); //I think this shouldn't happen I think
-                    Context.IsPlayerFightTurn = false;
+                    yield return new WaitUntil(() => _diceHandler.playerActionReady || Context.CurrentlySelectedTargetScript.dead || Context.CurrentlySelectedOperativeScript.dead);
                 }
                 else
                 {
-                    //Do the same but for the NPO
-                    if (Context.DefenderRemainingDice.Count == 0)
-                    {
-                        Context.IsPlayerFightTurn = true;
-                        continue;
-                    }
-                    
-                    Debug.Log("NPO selects parry or melee for dice");
+                    Debug.Log("NPO turn to strike or parry");
                     yield return new WaitForSeconds(1.0f);
-                    ProcessNpoChoice();
-                    Context.IsPlayerFightTurn = true;
+                    ProcessNpoChoice(attackerTurn);
                 }
                 
+                attackerTurn = !attackerTurn;
                 yield return null;
             }
-
+            
             yield return new WaitForSeconds(1.0f);
             _diceHandler.ClearDiceRolls();
             Context.IsFightingRequested = true;
         }
     }
 
-    //Find the successful rolls
+    //Find the successful rolls and populate them into the Context's remaining attacker and retaliator dice
     private void InitializeSuccessPools()
     {
         Context.AttackerRemainingDice.Clear();
-        Context.DefenderRemainingDice.Clear();
+        Context.RetaliatorRemainingDice.Clear();
 
         foreach (int roll in Context.AttackRolls)
         {
-            if (roll >= Context.Weapon.hit) Context.AttackerRemainingDice.Add(roll);
+            if (roll >= attackerWeapon.hit) Context.AttackerRemainingDice.Add(roll);
         }
-
-        int defenderHitStat = targetsWeapon.hit;
+        
         foreach (int roll in Context.DefenseRolls)
         {
-            if (roll >= defenderHitStat) Context.DefenderRemainingDice.Add(roll);
+            if (roll >= retaliatorWeapon.hit) Context.RetaliatorRemainingDice.Add(roll);
         }
     }
 
@@ -178,9 +186,9 @@ public class MeleeCombatState : BaseState
     //Parry first always then remaining is fighting
     private void ProcessNpoChoice()
     {
-        if (Context.DefenderRemainingDice.Count == 0) return;
-        int chosenDie = Context.DefenderRemainingDice[0];
-        Context.DefenderRemainingDice.RemoveAt(0);
+        if (Context.RetaliatorRemainingDice.Count == 0) return;
+        int chosenDie = Context.RetaliatorRemainingDice[0];
+        Context.RetaliatorRemainingDice.RemoveAt(0);
         bool npoParry = Context.RetainedCrits > Context.RetainedCritDefense || Context.RetainedNormals > Context.RetainedNormalDefense;
 
         if (npoParry)
@@ -191,12 +199,106 @@ public class MeleeCombatState : BaseState
         }
         else
         {
-            int dmg = (chosenDie == 6) ? targetsWeapon.dmgCrit : targetsWeapon.dmgNorm;
+            int dmg = (chosenDie == 6) ? retaliatorWeapon.dmgCrit : retaliatorWeapon.dmgNorm;
             Context.CurrentlySelectedOperativeScript.TakeDamage(dmg);
             Debug.Log($"NPO chose to strike with {chosenDie}");
         }
     }
-
+    
+    private void ProcessNpoChoice(bool isAttackerTurn)
+    {
+        bool isNpoAttacker = !Context.IsPlayerAttacker;
+        bool npoActingAsAttacker = isAttackerTurn;
+        
+        List<int> npoPool = npoActingAsAttacker ? Context.AttackerRemainingDice : Context.RetaliatorRemainingDice;
+        List<int> oppPool = npoActingAsAttacker ? Context.RetaliatorRemainingDice : Context.AttackerRemainingDice;
+        
+        List<CombatRoll> npoUIList = npoActingAsAttacker ? _diceHandler.activeAttackDice : _diceHandler.activeDefenseDice;
+        List<CombatRoll> oppUIList = npoActingAsAttacker ? _diceHandler.activeDefenseDice : _diceHandler.activeAttackDice;
+        
+        if (npoPool.Count == 0) return;
+        
+        bool didParry = false;
+        if (oppPool.Count > 0)
+        {
+            // Find highest threat opponent die
+            int bestOppIndex = -1;
+            int bestOppVal = -1;
+            for (int i = 0; i < oppPool.Count; i++)
+            {
+                if (oppPool[i] > bestOppVal)
+                {
+                    bestOppVal = oppPool[i];
+                    bestOppIndex = i;
+                }
+            }
+            
+            // Try to parry with valid NPO die
+            for (int i = 0; i < npoPool.Count; i++)
+            {
+                int pVal = npoPool[i];
+                bool valid = (pVal == 6) || (pVal < 6 && bestOppVal < 6);
+                if (valid)
+                {
+                    int npoVal = pVal;
+                    npoPool.RemoveAt(i);
+                    oppPool.RemoveAt(bestOppIndex);
+                    
+                    if (i < npoUIList.Count && npoUIList[i] != null)
+                    {
+                        var dr = npoUIList[i];
+                        npoUIList.RemoveAt(i);
+                        Object.Destroy(dr.gameObject);
+                    }
+                    if (bestOppIndex < oppUIList.Count && oppUIList[bestOppIndex] != null)
+                    {
+                        var dr = oppUIList[bestOppIndex];
+                        oppUIList.RemoveAt(bestOppIndex);
+                        Object.Destroy(dr.gameObject);
+                    }
+                    
+                    Debug.Log($"[MeleeCombatState] NPO parried player die {bestOppVal} with {npoVal}.");
+                    didParry = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!didParry)
+        {
+            // Execute Strike using highest NPO die
+            int bestNpoIndex = 0;
+            int bestNpoVal = npoPool[0];
+            for (int i = 1; i < npoPool.Count; i++)
+            {
+                if (npoPool[i] > bestNpoVal)
+                {
+                    bestNpoVal = npoPool[i];
+                    bestNpoIndex = i;
+                }
+            }
+            
+            npoPool.RemoveAt(bestNpoIndex);
+            CombatRoll strikeDie = bestNpoIndex < npoUIList.Count ? npoUIList[bestNpoIndex] : null;
+            if (strikeDie != null)
+            {
+                npoUIList.RemoveAt(bestNpoIndex);
+                Object.Destroy(strikeDie.gameObject);
+            }
+            
+            WeaponTemplate npoWeapon = npoActingAsAttacker ? attackerWeapon : retaliatorWeapon;
+            int damage = (bestNpoVal == 6) ? npoWeapon.dmgCrit : npoWeapon.dmgNorm;
+            
+            BaseOperativeClass targetUnit = isNpoAttacker ? Context.CurrentlySelectedTargetScript : Context.CurrentlySelectedOperativeScript;
+            if (targetUnit != null)
+            {
+                targetUnit.TakeDamage(damage);
+                targetUnit.UpdateHealth(targetUnit.currentWounds, targetUnit.operativeData.wounds);
+                Debug.Log($"[MeleeCombatState] NPO struck target with die {bestNpoVal} for {damage} damage.");
+            }
+        }
+    }
+    
     //Apply the damage of one die
     private void ApplySingleStrikeDamage(int dieValue)
     {

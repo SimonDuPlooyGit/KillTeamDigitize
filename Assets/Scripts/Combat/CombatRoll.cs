@@ -55,7 +55,7 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         else
         {
             
-            if (_handler.CanSelectDie(this, _isAttack))
+            if (_handler.CanSelectMeleeDie(this, _isAttack))
             {
                 Select();
             }

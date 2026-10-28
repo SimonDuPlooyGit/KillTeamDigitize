@@ -66,6 +66,7 @@ public class TargetingState : BaseState
         }
     }
     
+    //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     private void OnSelectPerformed(InputAction.CallbackContext ctx) 
     {
         Debug.Log("OnSelectPerformed in TargetingState");
@@ -85,7 +86,7 @@ public class TargetingState : BaseState
                 Context.CurrentlySelectedOperative.transform.position.y, 
                 Context.CurrentlySelectedTarget.transform.position.z));
                 
-                //--- MELEE COMBAT BRANCH ---
+                //Check if the target is valid for fighting in melee
                 if (Context.IsFightingRequested)
                 {
                     BaseOperativeClass selectedTargetOp = Context.CurrentlySelectedTargetScript;
@@ -104,7 +105,7 @@ public class TargetingState : BaseState
                     return;
                 }
                 
-                //--- SHOOTING COMBAT BRANCH ---
+                //Check if the target is valid for shooting since we aren't fighting
                 if (Context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal &&
                     Context.CurrentlySelectedTargetScript.closeToCover) 
                 {
@@ -136,7 +137,6 @@ public class TargetingState : BaseState
         }
     }
     
-    //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
     /*private void OnSelectPerformed(InputAction.CallbackContext ctx) 
     {
         Debug.Log("OnSelectPerformed in TargetingState");
