@@ -49,6 +49,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public TextMeshProUGUI nameText;
     public GameObject unitBase;
     private Color32 currentColor;
+    public bool isUIForcedOn = false;
 
     [Header("Effects To Apply")]
     public GameObject fogEffect;
@@ -585,6 +586,14 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
     public void ToggleUIOff()
     {
-        unitUI.GetComponent<CanvasGroup>().alpha = 0;
+        if (isUIForcedOn) return;
+
+        if (unitUI != null) unitUI.GetComponent<CanvasGroup>().alpha = 0;
+    }
+    public void ForceUIOn(bool force)
+    {
+        isUIForcedOn = force;
+        if (force) ToggleUIOn();
+        else ToggleUIOff();
     }
 }

@@ -44,6 +44,7 @@ public class ShootCombatState : BaseState
         }
         
         _diceHandler.StartCoroutine(ResolveCombat());
+        Context.CurrentlySelectedTargetScript.ForceUIOn(true);
     }
 
     private IEnumerator ResolveCombat()
@@ -175,6 +176,7 @@ public class ShootCombatState : BaseState
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
         Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
+        Context.CurrentlySelectedTargetScript.ForceUIOn(false);
     }
     
     private void ExecuteRulesInThisStep(AttackTimings currentStep)

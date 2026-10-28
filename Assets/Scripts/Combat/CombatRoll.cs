@@ -21,7 +21,7 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
     private void Awake()
     {
         _dicePanel = transform.Find("Dice").gameObject;
-        _diceAnimator = _dicePanel.GetComponent<Animator>();
+        //_diceAnimator = _dicePanel.GetComponent<Animator>();
         _diceImage = _dicePanel.GetComponent<Image>();
         hitIndicator = transform.Find("Hit");
         blockIndicator = transform.Find("Block");
@@ -37,7 +37,7 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         _isAttack = isAttack;
 
         int value = physicalDie.GetUpwardFace();
-        _diceAnimator.enabled = false;
+        //_diceAnimator.enabled = false;
         _diceImage.sprite = diceSprites[value - 1];
 
         IsSelected = false;

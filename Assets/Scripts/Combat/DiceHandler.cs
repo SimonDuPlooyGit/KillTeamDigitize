@@ -811,6 +811,8 @@ public class DiceHandler : MonoBehaviour
             ? _context.CurrentlySelectedTargetScript
             : _context.CurrentlySelectedOperativeScript;
 
+        StartCoroutine(MeleeMenuBlip());
+
         if (opponent != null)
         {
             opponent.TakeDamage(damage);
@@ -898,8 +900,9 @@ public class DiceHandler : MonoBehaviour
         playerUiList.Remove(_savedParryPlayerDie);
         opponentUiList.Remove(opponentDie);
 
-        Destroy(_savedParryPlayerDie.gameObject);
-        Destroy(opponentDie.gameObject);
+        StartCoroutine(AnimateParryDice(_savedParryPlayerDie,opponentDie));
+        //Destroy(_savedParryPlayerDie.gameObject);
+        //Destroy(opponentDie.gameObject);
 
         _savedParryPlayerDie = null;
         isWaitingForParry = false;
@@ -912,5 +915,23 @@ public class DiceHandler : MonoBehaviour
     {
         foreach (var die in activeAttackDice) if (die != null) die.Deselect();
         foreach (var die in activeDefenseDice) if (die != null) die.Deselect();
+    }
+
+    private IEnumerator MeleeMenuBlip()
+    {
+        menu.CloseMenu(menu.meleeMenu);
+        yield return new WaitForSeconds(1);
+        menu.OpenMenu(menu.meleeMenu);
+    }
+
+    private IEnumerator AnimateParryDice(CombatRoll topDie, CombatRoll bottomDie)
+    {
+        Animator topAnim = topDie.GetComponent<Animator>();
+        topAnim.SetTrigger("ClashTop");
+        Animator bottomAnim = bottomDie.GetComponent<Animator>();
+        bottomAnim.SetTrigger("ClashBottom");
+        yield return new WaitForSeconds(0.5f);
+        Destroy(topDie.gameObject);
+        Destroy(bottomDie.gameObject);
     }
 }

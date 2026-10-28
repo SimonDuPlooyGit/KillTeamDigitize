@@ -37,6 +37,7 @@ public class MeleeCombatState : BaseState
         if (playerOp != null) playerOp.hasFoughtThisActivation = true;
 
         _diceHandler.StartCoroutine(ResolveSequentialFight());
+        Context.CurrentlySelectedTargetScript.ForceUIOn(true);
     }
 
     public override void Update()
@@ -49,6 +50,7 @@ public class MeleeCombatState : BaseState
         Debug.Log("MeleeCombatState OnExit");
         _diceHandler.ClearAllDice();
         Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
+        Context.CurrentlySelectedTargetScript.ForceUIOn(false);
     }
 
     //Find the melee weapon for the person defend fighting
@@ -93,6 +95,7 @@ public class MeleeCombatState : BaseState
                     Context.CurrentlySelectedTargetScript == null || Context.CurrentlySelectedTargetScript.dead)
                 {
                     Debug.Log("Unit defeated. Ending melee sequence early");
+                    _menu.CloseMenu(_menu.meleeMenu);
                     break;
                 }
                 

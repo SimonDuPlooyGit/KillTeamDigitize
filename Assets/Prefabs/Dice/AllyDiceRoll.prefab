@@ -87,7 +87,6 @@ GameObject:
   - component: {fileID: 3720929685598361762}
   - component: {fileID: 5371537949679950726}
   - component: {fileID: 1482067014740678880}
-  - component: {fileID: 7792985514982957344}
   m_Layer: 5
   m_Name: Dice
   m_TagString: Untagged
@@ -152,28 +151,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!95 &7792985514982957344
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5752994036937853643}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b2a4393164c1b1443abd7b100f0ef55c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5809522606677289363
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,6 +449,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2354819735278078693}
   - component: {fileID: 5408923317558164617}
+  - component: {fileID: 2671466722568550318}
   m_Layer: 5
   m_Name: AllyDiceRoll
   m_TagString: Untagged
@@ -523,6 +501,28 @@ MonoBehaviour:
   - {fileID: 21300000, guid: b7cd303d9cfb70846be9397102ed8a25, type: 3}
   hitIndicator: {fileID: 0}
   blockIndicator: {fileID: 0}
+--- !u!95 &2671466722568550318
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7170281717928522806}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 14dd3b4c3f5a4004d81599a79940df73, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8548315555277403167
 GameObject:
   m_ObjectHideFlags: 0
