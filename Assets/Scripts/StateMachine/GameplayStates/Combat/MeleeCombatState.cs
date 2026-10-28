@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using static DiceHandler;
 
 public class MeleeCombatState : BaseState
 {
@@ -66,7 +67,8 @@ public class MeleeCombatState : BaseState
     {
         //Player is the attacked if the activated operative is of type PlayerOperative
         bool isPlayerAttacker = Context.CurrentlySelectedOperativeScript is PlayerOperative;
-        
+        Context.IsPlayerAttacker = isPlayerAttacker;
+
         //Throw attack dice for the current attacker
         yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(attackerWeapon.atk, isPlayerAttacker, Context));
 
@@ -112,20 +114,24 @@ public class MeleeCombatState : BaseState
                 {
                     Debug.Log("Player turn to strike or parry");
                     _diceHandler.playerActionReady = false;
-                    _diceHandler.currentSelectionMode = DiceHandler.DiceSelectionMode.Attack;
+                    _diceHandler.currentSelectionMode = DiceSelectionMode.None;
                     _diceHandler.UpdateRerollButtonVisibility();
                     
                     yield return new WaitUntil(() => _diceHandler.playerActionReady || Context.CurrentlySelectedTargetScript.dead || Context.CurrentlySelectedOperativeScript.dead);
+
+                    _diceHandler.playerActionReady = false;
                 }
                 else
                 {
                     Debug.Log("NPO turn to strike or parry");
                     yield return new WaitForSeconds(1.0f);
                     ProcessNpoChoice(attackerTurn);
+                    _diceHandler.ClearAllSelections(); 
+                    _diceHandler.UpdateRerollButtonVisibility();
                 }
                 
                 attackerTurn = !attackerTurn;
-                yield return null;
+                yield return new WaitForSeconds(0.5f);
             }
             
             yield return new WaitForSeconds(1.0f);
@@ -204,35 +210,26 @@ public class MeleeCombatState : BaseState
             Debug.Log($"NPO chose to strike with {chosenDie}");
         }
     }
-    
+
     private void ProcessNpoChoice(bool isAttackerTurn)
     {
         bool isNpoAttacker = !Context.IsPlayerAttacker;
         bool npoActingAsAttacker = isAttackerTurn;
-        
+
         List<int> npoPool = npoActingAsAttacker ? Context.AttackerRemainingDice : Context.RetaliatorRemainingDice;
         List<int> oppPool = npoActingAsAttacker ? Context.RetaliatorRemainingDice : Context.AttackerRemainingDice;
-        
+
         List<CombatRoll> npoUIList = npoActingAsAttacker ? _diceHandler.activeAttackDice : _diceHandler.activeDefenseDice;
         List<CombatRoll> oppUIList = npoActingAsAttacker ? _diceHandler.activeDefenseDice : _diceHandler.activeAttackDice;
-        
+
         if (npoPool.Count == 0) return;
-        
+
         bool didParry = false;
         if (oppPool.Count > 0)
         {
-            // Find highest threat opponent die
-            int bestOppIndex = -1;
-            int bestOppVal = -1;
-            for (int i = 0; i < oppPool.Count; i++)
-            {
-                if (oppPool[i] > bestOppVal)
-                {
-                    bestOppVal = oppPool[i];
-                    bestOppIndex = i;
-                }
-            }
-            
+            // Find highest value opponent die
+            int bestOppVal = oppPool.Max();
+
             // Try to parry with valid NPO die
             for (int i = 0; i < npoPool.Count; i++)
             {
@@ -242,53 +239,47 @@ public class MeleeCombatState : BaseState
                 {
                     int npoVal = pVal;
                     npoPool.RemoveAt(i);
-                    oppPool.RemoveAt(bestOppIndex);
-                    
-                    if (i < npoUIList.Count && npoUIList[i] != null)
+                    oppPool.Remove(bestOppVal);
+
+                    // Match and destroy NPO UI die
+                    CombatRoll npoUiDie = npoUIList.FirstOrDefault(d => d != null && d.GetValue() == npoVal);
+                    if (npoUiDie != null)
                     {
-                        var dr = npoUIList[i];
-                        npoUIList.RemoveAt(i);
-                        Object.Destroy(dr.gameObject);
+                        npoUIList.Remove(npoUiDie);
+                        Object.Destroy(npoUiDie.gameObject);
                     }
-                    if (bestOppIndex < oppUIList.Count && oppUIList[bestOppIndex] != null)
+
+                    // Match and destroy Opponent UI die
+                    CombatRoll oppUiDie = oppUIList.FirstOrDefault(d => d != null && d.GetValue() == bestOppVal);
+                    if (oppUiDie != null)
                     {
-                        var dr = oppUIList[bestOppIndex];
-                        oppUIList.RemoveAt(bestOppIndex);
-                        Object.Destroy(dr.gameObject);
+                        oppUIList.Remove(oppUiDie);
+                        Object.Destroy(oppUiDie.gameObject);
                     }
-                    
+
                     Debug.Log($"[MeleeCombatState] NPO parried player die {bestOppVal} with {npoVal}.");
                     didParry = true;
                     break;
                 }
             }
         }
-        
+
         if (!didParry)
         {
             // Execute Strike using highest NPO die
-            int bestNpoIndex = 0;
-            int bestNpoVal = npoPool[0];
-            for (int i = 1; i < npoPool.Count; i++)
-            {
-                if (npoPool[i] > bestNpoVal)
-                {
-                    bestNpoVal = npoPool[i];
-                    bestNpoIndex = i;
-                }
-            }
-            
-            npoPool.RemoveAt(bestNpoIndex);
-            CombatRoll strikeDie = bestNpoIndex < npoUIList.Count ? npoUIList[bestNpoIndex] : null;
+            int bestNpoVal = npoPool.Max();
+            npoPool.Remove(bestNpoVal);
+
+            CombatRoll strikeDie = npoUIList.FirstOrDefault(d => d != null && d.GetValue() == bestNpoVal);
             if (strikeDie != null)
             {
-                npoUIList.RemoveAt(bestNpoIndex);
+                npoUIList.Remove(strikeDie);
                 Object.Destroy(strikeDie.gameObject);
             }
-            
+
             WeaponTemplate npoWeapon = npoActingAsAttacker ? attackerWeapon : retaliatorWeapon;
             int damage = (bestNpoVal == 6) ? npoWeapon.dmgCrit : npoWeapon.dmgNorm;
-            
+
             BaseOperativeClass targetUnit = isNpoAttacker ? Context.CurrentlySelectedTargetScript : Context.CurrentlySelectedOperativeScript;
             if (targetUnit != null)
             {
@@ -298,7 +289,7 @@ public class MeleeCombatState : BaseState
             }
         }
     }
-    
+
     //Apply the damage of one die
     private void ApplySingleStrikeDamage(int dieValue)
     {

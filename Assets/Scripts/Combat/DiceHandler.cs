@@ -84,6 +84,7 @@ public class DiceHandler : MonoBehaviour
 
     public bool playerActionReady = false;
     public bool isWaitingForParry = false;
+    private CombatRoll _savedParryPlayerDie = null;
 
     private void Start()
     {
@@ -91,6 +92,8 @@ public class DiceHandler : MonoBehaviour
         //currentSelectionMode = DiceSelectionMode.Duplicates; used to test duplicate functionality
         //currentSelectionMode = DiceSelectionMode.Set;
         rerollButton.SetActive(false);    
+        parryButton.SetActive(false);
+        strikeButton.SetActive(false);
     }
 
     private void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
@@ -551,110 +554,97 @@ public class DiceHandler : MonoBehaviour
 
         return currentSelectedCount < maxAllowedSelections;
     }*/
-    
+
     //Alternative with trying to fix fighting
     public bool CanSelectMeleeDie(CombatRoll clickedDie, bool isAttacker)
     {
         bool isMeleeState = (gameManager != null && gameManager._stateMachine != null && gameManager._stateMachine.CurrentState == gameManager.meleeCombatState);
-        
-        //1. If not in melee state AND selection mode is None, block selection completely
+
+        // 1. If not in melee state AND selection mode is None, block selection completely
         if (!isMeleeState && currentSelectionMode == DiceSelectionMode.None) return false;
-        
-        //2. If an active reroll mode is set (Attack, Defense, Duplicates, Set), use standard reroll selection rules
+
+        // 2. If an active reroll mode is set, use standard reroll rules
         if (currentSelectionMode != DiceSelectionMode.None)
         {
             if (clickedDie != null && !clickedDie.IsSelected)
             {
                 int dieValue = clickedDie.GetValue();
-                if (dieValue < minSelectableDieValue || dieValue > maxSelectableDieValue)
-                {
-                    return false;
-                }
+                if (dieValue < minSelectableDieValue || dieValue > maxSelectableDieValue) return false;
             }
-            
-            //Mode restrictions (Attack, Defense, and Duplicates all enforce pool targeting)
+
             if ((currentSelectionMode == DiceSelectionMode.Attack || currentSelectionMode == DiceSelectionMode.Duplicates || currentSelectionMode == DiceSelectionMode.Set) && !isAttacker) return false;
             if (currentSelectionMode == DiceSelectionMode.Defense && isAttacker) return false;
-            
+
             List<CombatRoll> activeList = GetActiveUIList(isAttacker);
-            
-            //If in Duplicate mode, count how many total matching dice exist in the pool
+
             if (currentSelectionMode == DiceSelectionMode.Duplicates)
             {
                 if (clickedDie == null) return false;
                 if (clickedDie.IsSelected) return true;
-                
+
                 int targetValue = clickedDie.GetValue();
                 int groupSize = 0;
-                
+
                 for (int i = 0; i < activeList.Count; i++)
                 {
-                    if (activeList[i] != null && activeList[i].GetValue() == targetValue)
-                    {
-                        groupSize++;
-                    }
+                    if (activeList[i] != null && activeList[i].GetValue() == targetValue) groupSize++;
                 }
-                
-                if (groupSize < 2)
-                {
-                    Debug.Log("[DiceHandler] Cannot select: No duplicate dice match this value.");
-                    return false;
-                }
-                
+
+                if (groupSize < 2) return false;
+
                 int totalSelected = 0;
                 for (int i = 0; i < activeList.Count; i++)
                 {
                     if (activeList[i] != null && activeList[i].IsSelected) totalSelected++;
                 }
-                
-                if (!clickedDie.IsSelected && (totalSelected + groupSize) > maxAllowedSelections)
-                {
-                    Debug.Log($"[DiceHandler] Cannot select: Duplicate group size ({groupSize}) exceeds max allowed selections ({maxAllowedSelections}).");
-                    return false;
-                }
-                
+
+                if (!clickedDie.IsSelected && (totalSelected + groupSize) > maxAllowedSelections) return false;
+
                 return true;
             }
 
-            //Standard Attack/Defense single selection count
             int currentSelectedCount = 0;
             for (int i = 0; i < activeList.Count; i++)
             {
                 if (activeList[i] != null && activeList[i].IsSelected) currentSelectedCount++;
             }
-            
+
             return currentSelectedCount < maxAllowedSelections;
         }
-        
-        //3. Melee Combat Selection Rules (currentSelectionMode == DiceSelectionMode.None)
+
+        // 3. Melee Combat Selection Rules (currentSelectionMode == DiceSelectionMode.None)
         if (_context == null) return false;
+
         bool isPlayerAttacker = _context.IsPlayerAttacker;
-        bool isPlayerPool = (isAttacker == isPlayerAttacker);
-        
+        bool isPlayerTurn = _context.IsPlayerFightTurn;
+
+        // My pool is Attack pool if I'm Attacker, Defense pool if I'm Retaliator/Defender
+        bool isClickingMyPool = (isPlayerAttacker == activeAttackDice.Contains(clickedDie));
+
         List<CombatRoll> myPool = isPlayerAttacker ? activeAttackDice : activeDefenseDice;
         List<CombatRoll> oppPool = isPlayerAttacker ? activeDefenseDice : activeAttackDice;
-        
+
         int mySelectedCount = 0;
         foreach (var d in myPool) if (d != null && d.IsSelected) mySelectedCount++;
-        
+
         int oppSelectedCount = 0;
         foreach (var d in oppPool) if (d != null && d.IsSelected) oppSelectedCount++;
-        
-        //Always allow deselecting a currently selected die
+
+        // Always allow deselecting a currently selected die
         if (clickedDie.IsSelected)
         {
-            if (isPlayerPool && isWaitingForParry) return false;
             return true;
         }
-        if (isPlayerPool)
+
+        if (isClickingMyPool)
         {
-            // Player can select up to 1 of their own dice
+            // Player can select exactly 1 of their own dice when NOT waiting for parry target
             if (isWaitingForParry) return false;
             return mySelectedCount < 1;
         }
         else
         {
-            // Player can select up to 1 opponent die, but only if they have already selected 1 of their own dice (for parrying)
+            // Player can select 1 opponent die ONLY when in parry selection mode
             return isWaitingForParry && (oppSelectedCount < 1);
         }
     }
@@ -788,84 +778,95 @@ public class DiceHandler : MonoBehaviour
     public void OnStrikeButtonPressed()
     {
         if (_context == null) return;
+
         bool isPlayerAttacker = _context.IsPlayerAttacker;
-        
+
+        // Player's dice are ALWAYS activeAttackDice if attacker, activeDefenseDice if retaliator
         List<CombatRoll> playerUiList = isPlayerAttacker ? activeAttackDice : activeDefenseDice;
         List<int> playerRemainingDice = isPlayerAttacker ? _context.AttackerRemainingDice : _context.RetaliatorRemainingDice;
 
         CombatRoll selectedDie = null;
-        foreach (var die in playerUiList)
+        for (int i = playerUiList.Count - 1; i >= 0; i--)
         {
-            if (die != null && die.IsSelected)
+            if (playerUiList[i] != null && playerUiList[i].IsSelected)
             {
-                selectedDie = die;
+                selectedDie = playerUiList[i];
                 break;
             }
         }
 
         if (selectedDie == null)
         {
-            Debug.LogWarning("No die selected for strike.");
+            Debug.LogWarning("[DiceHandler] No die selected for strike.");
             return;
         }
-        
+
         int val = selectedDie.GetValue();
         playerRemainingDice.Remove(val);
-        
+
         WeaponTemplate weaponToUse = isPlayerAttacker ? _context.Weapon : _context.opponentWeapon;
         int damage = (val == 6) ? weaponToUse.dmgCrit : weaponToUse.dmgNorm;
-        
-        BaseOperativeClass opponent = isPlayerAttacker ? _context.CurrentlySelectedTargetScript : _context.CurrentlySelectedOperativeScript;
+
+        BaseOperativeClass opponent = isPlayerAttacker
+            ? _context.CurrentlySelectedTargetScript
+            : _context.CurrentlySelectedOperativeScript;
+
         if (opponent != null)
         {
             opponent.TakeDamage(damage);
             opponent.UpdateHealth(opponent.currentWounds, opponent.operativeData.wounds);
-            Debug.Log($"Strike dealt {damage} damage");
+            Debug.Log($"[DiceHandler] Strike dealt {damage} damage to {opponent.name}");
         }
 
         playerUiList.Remove(selectedDie);
         Destroy(selectedDie.gameObject);
 
+        _savedParryPlayerDie = null;
+        isWaitingForParry = false;
         ClearAllSelections();
         UpdateRerollButtonVisibility();
         playerActionReady = true;
     }
-    
+
     //Handle parries for the player
     public void OnParryButtonPressed()
     {
         if (_context == null) return;
+
         bool isPlayerAttacker = _context.IsPlayerAttacker;
-        
+
         List<CombatRoll> playerUiList = isPlayerAttacker ? activeAttackDice : activeDefenseDice;
         List<int> playerRemainingDice = isPlayerAttacker ? _context.AttackerRemainingDice : _context.RetaliatorRemainingDice;
 
         List<CombatRoll> opponentUiList = isPlayerAttacker ? activeDefenseDice : activeAttackDice;
         List<int> opponentRemainingDice = isPlayerAttacker ? _context.RetaliatorRemainingDice : _context.AttackerRemainingDice;
 
-        CombatRoll playerDie = null;
-        foreach (var die in playerUiList)
-        {
-            if (die != null && die.IsSelected)
-            {
-                playerDie = die;
-                break;
-            }
-        }
-
         if (!isWaitingForParry)
         {
-            if (playerDie == null)
+            // Step 1: Lock in player die selection
+            _savedParryPlayerDie = null;
+            foreach (var die in playerUiList)
             {
-                Debug.Log("Select one of your dice to use for a parry");
+                if (die != null && die.IsSelected)
+                {
+                    _savedParryPlayerDie = die;
+                    break;
+                }
+            }
+
+            if (_savedParryPlayerDie == null)
+            {
+                Debug.Log("[DiceHandler] Select one of your dice to use for a parry.");
                 return;
             }
+
             isWaitingForParry = true;
-            Debug.Log("Select opponent die to parry");
+            Debug.Log("[DiceHandler] Player die locked for parry. Now select an opponent die to parry.");
             UpdateRerollButtonVisibility();
             return;
         }
-        
+
+        // Step 2: Confirmation click (opponent die should now be selected)
         CombatRoll opponentDie = null;
         foreach (var die in opponentUiList)
         {
@@ -876,29 +877,32 @@ public class DiceHandler : MonoBehaviour
             }
         }
 
-        if (playerDie == null || opponentDie == null)
+        if (_savedParryPlayerDie == null || opponentDie == null)
         {
-            Debug.Log("Parry needs one of your dice and one opponent dice");
+            Debug.Log("[DiceHandler] Parry requires one of your dice and one opponent die selected.");
             return;
         }
 
-        int playerVal = playerDie.GetValue();
+        int playerVal = _savedParryPlayerDie.GetValue();
         int opponentVal = opponentDie.GetValue();
-        
+
         bool isValidParry = (playerVal == 6) || (playerVal < 6 && opponentVal < 6);
         if (!isValidParry)
         {
-            Debug.Log("Invalid parry, cannot block crit with noncrit");
+            Debug.Log("[DiceHandler] Invalid parry: Normal die cannot block a Crit die.");
             return;
         }
-        
+
         playerRemainingDice.Remove(playerVal);
         opponentRemainingDice.Remove(opponentVal);
-        playerUiList.Remove(playerDie);
+        playerUiList.Remove(_savedParryPlayerDie);
         opponentUiList.Remove(opponentDie);
-        Destroy(playerDie.gameObject);
+
+        Destroy(_savedParryPlayerDie.gameObject);
         Destroy(opponentDie.gameObject);
-        
+
+        _savedParryPlayerDie = null;
+        isWaitingForParry = false;
         ClearAllSelections();
         UpdateRerollButtonVisibility();
         playerActionReady = true;
