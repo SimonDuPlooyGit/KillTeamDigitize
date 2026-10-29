@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
 
 
         //AddT for pressing a pass turn button
-        _stateMachine.SetState(unitActivationState);
+        _stateMachine.SetState(introductionState);
 
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState,
