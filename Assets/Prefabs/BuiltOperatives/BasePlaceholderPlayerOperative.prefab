@@ -6375,15 +6375,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4948545270696065821}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.034, z: 0}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.038, y: 0.026, z: 0.09}
   m_LocalScale: {x: 0.32, y: 0.02, z: 0.32}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3111832155056283292}
   - {fileID: 5339116771740494321}
   m_Father: {fileID: 4787203296240699626}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!33 &8707036129199999214
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -6911,6 +6911,7 @@ MonoBehaviour:
   damagePopOut: {fileID: 2207886363201068217}
   nameText: {fileID: 8004231822574503436}
   unitBase: {fileID: 4948545270696065821}
+  isUIForcedOn: 0
   fogEffect: {fileID: 3249404380935832136}
   glow: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
   deathParticles: {fileID: 3381858293456355160}
@@ -7761,6 +7762,10 @@ PrefabInstance:
     - target: {fileID: 4578130728935454582, guid: 0a4f91306af5f054ca2fb65adaeaf835, type: 3}
       propertyPath: m_Name
       value: KiriCaptain
+      objectReference: {fileID: 0}
+    - target: {fileID: 4578130728935454582, guid: 0a4f91306af5f054ca2fb65adaeaf835, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

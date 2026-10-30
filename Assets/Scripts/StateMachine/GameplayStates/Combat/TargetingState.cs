@@ -109,8 +109,17 @@ public class TargetingState : BaseState
                 if (Context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal &&
                     Context.CurrentlySelectedTargetScript.closeToCover) 
                 {
-                    Debug.Log("Not a valid target, concealed in cover");
-                    return;
+                    Debug.Log("Target is concealed and in cover, checking targeting lines");
+                    if (Context.CurrentlySelectedOperativeScript.CheckTargetingLines(
+                            Context.CurrentlySelectedOperativeScript, Context.CurrentlySelectedTargetScript))
+                    {
+                        Debug.Log("Targeting lines rule can see the enemy");
+                    }
+                    else
+                    {
+                        Debug.Log("Targeting lines rule can't see the enemy");
+                        
+                    }
                 }
                 
                 float distanceToEnemy = Context.CurrentlySelectedOperativeScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
@@ -131,8 +140,6 @@ public class TargetingState : BaseState
                     _menu.tutFlag6 = true; 
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
                 }
-                
-                Context.CurrentlySelectedOperativeScript.CheckTargetingLines(Context.CurrentlySelectedOperativeScript, Context.CurrentlySelectedTargetScript);
             }
         }
     }
