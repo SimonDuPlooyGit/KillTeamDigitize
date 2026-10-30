@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 using static DiceHandler;
 
@@ -67,7 +66,7 @@ public class MeleeCombatState : BaseState
     //If a player picks parry they must be able to select an opponent dice to parry (with crit parry rules applied)
     private IEnumerator ResolveSequentialFight()
     {
-        //Player is the attacked if the activated operative is of type PlayerOperative
+        //Player is the attacker if the activated operative is of type PlayerOperative
         bool isPlayerAttacker = Context.CurrentlySelectedOperativeScript is PlayerOperative;
         Context.IsPlayerAttacker = isPlayerAttacker;
 
