@@ -213,6 +213,7 @@ public class GameManager : MonoBehaviour
                 if (_currentHoveredNPO != null && !IsSelectedUnit(_currentHoveredNPO))
                 {
                     _currentHoveredNPO.ToggleUIOff();
+                    _currentHoveredNPO.ToggleStatusOff();
                     _currentHoveredNPO = null;
                 }
 
@@ -222,6 +223,7 @@ public class GameManager : MonoBehaviour
                     if (!IsSelectedUnit(_currentHoveredOperative))
                     {
                         _currentHoveredOperative.ToggleUIOff();
+                        _currentHoveredOperative.ToggleStatusOff();
                     }
                 }
 
@@ -229,6 +231,7 @@ public class GameManager : MonoBehaviour
                 {
                     _currentHoveredOperative = hitOperative;
                     _currentHoveredOperative.ToggleUIOn();
+                    _currentHoveredOperative.ToggleStatusIcons();
                 }
 
                 return;
@@ -255,6 +258,7 @@ public class GameManager : MonoBehaviour
                 {
                     _currentHoveredNPO = hitOperative;
                     _currentHoveredNPO.ToggleUIOn();
+                    _currentHoveredNPO.ToggleStatusIcons();
                 }
 
                 return;
@@ -374,6 +378,7 @@ public class GameManager : MonoBehaviour
             if (!IsSelectedUnit(_currentHoveredOperative))
             {
                 _currentHoveredOperative.ToggleUIOff();
+                _currentHoveredOperative.ToggleStatusOff();
             }
             _currentHoveredOperative = null;
         }
@@ -384,6 +389,7 @@ public class GameManager : MonoBehaviour
             if (!IsSelectedUnit(_currentHoveredNPO))
             {
                 _currentHoveredNPO.ToggleUIOff();
+                _currentHoveredNPO.ToggleStatusOff();
             }
             _currentHoveredNPO = null;
         }
