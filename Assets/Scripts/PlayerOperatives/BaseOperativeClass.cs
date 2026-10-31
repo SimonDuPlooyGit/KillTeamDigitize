@@ -39,6 +39,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
     [Header("UI References")] 
     public GameObject unitUI;
+    public GameObject statusSymbols;
     public GameObject healthFill;
     public GameObject aplCount;
     public GameObject concealSymbol;
@@ -50,6 +51,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject unitBase;
     private Color32 currentColor;
     public bool isUIForcedOn = false;
+    public GameObject statusHoverHolder;
+    
 
     [Header("Effects To Apply")]
     public GameObject fogEffect;
@@ -72,9 +75,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
         string brokenUpName = string.Concat(name.Select(c => char.IsUpper(c) ? " " + c : c.ToString())).TrimStart(); //Space out the name from pascal case
         nameText.text = brokenUpName;
         unitUI.GetComponent<CanvasGroup>().alpha = 0;
-        
-        
-        
+        statusHoverHolder = GameObject.Find("HoverStatusContainer");
+
+
+
         //Null check and initialization
         if (operativeData != null)
         {
@@ -590,6 +594,35 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
         if (unitUI != null) unitUI.GetComponent<CanvasGroup>().alpha = 0;
     }
+
+    public void ToggleStatusIcons()
+    {
+        if (statusHoverHolder == null || statusSymbols == null) return;
+
+        statusHoverHolder.SetActive(true);
+
+        //loop through units status symbols and activate correspondng panels in the hover holder
+        foreach (Transform symbol in statusSymbols.transform)
+        {
+            Transform hoverSymbol = statusHoverHolder.transform.Find(symbol.name);
+            if (hoverSymbol != null)
+            {
+                bool isActive = symbol.gameObject.activeSelf;
+                hoverSymbol.gameObject.SetActive(isActive);
+            }
+        }
+    }
+
+    public void ToggleStatusOff()
+    {
+        if (statusHoverHolder == null) return;
+
+        foreach (Transform hoverSymbol in statusHoverHolder.transform)
+        {
+            hoverSymbol.gameObject.SetActive(false);
+        }
+    }
+
     public void ForceUIOn(bool force)
     {
         isUIForcedOn = force;

@@ -6375,6 +6375,7 @@ MonoBehaviour:
   EnemyInControlRange: 0
   enemiesInControlRange: []
   unitUI: {fileID: 2598318228105086832}
+  statusSymbols: {fileID: 732106337046518694}
   healthFill: {fileID: 864329973792977482}
   aplCount: {fileID: 6236903750796841253}
   concealSymbol: {fileID: 2015722719575890863}
@@ -6384,6 +6385,8 @@ MonoBehaviour:
   damagePopOut: {fileID: 2512070335018532520}
   nameText: {fileID: 7362769743932105703}
   unitBase: {fileID: 2063543643037542596}
+  isUIForcedOn: 0
+  statusHoverHolder: {fileID: 0}
   fogEffect: {fileID: 3681392821243835701}
   glow: {fileID: 2100000, guid: a2ff2e93a79c10f48a1dac3ab7e2288c, type: 2}
   deathParticles: {fileID: 4660242697195336866}
