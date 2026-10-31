@@ -86,6 +86,7 @@ public class PlayerOperative : BaseOperativeClass
     //Click the board and then calculate a path to that spot limited by movement distance, move the move marker there
     public void ClickToPathfindReposition()
     {
+        
         // Do not pathfind if clicking on UI elements/buttons
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
@@ -95,6 +96,7 @@ public class PlayerOperative : BaseOperativeClass
         if (selected)
         {
             Debug.Log("ClickToPathfindReposition is entered and unit is selected");
+            validMoveMarkerPosition = true;
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;
@@ -129,11 +131,13 @@ public class PlayerOperative : BaseOperativeClass
     private Coroutine _moveMarker;
     public void ClickToPathfindCharge()
     {
+        
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return; 
 
         if (selected)
         {
-            //Debug.Log("ClickToPathfindCharge is entered and unit is selected");
+            Debug.Log("ClickToPathfindCharge is entered and unit is selected");
+            validMoveMarkerPosition = true;
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;
@@ -169,6 +173,7 @@ public class PlayerOperative : BaseOperativeClass
         if (selected)
         {
             Debug.Log("ClickToPathfindReposition is entered and unit is selected");
+            validMoveMarkerPosition = true;
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
             lineRenderer.enabled = false;
@@ -257,7 +262,7 @@ public class PlayerOperative : BaseOperativeClass
     }
 
     //Move the player operative the move marker
-    public bool MoveOperativeToMarker()
+    public bool MoveOperativeToMarker(PlayerMovementType movementType)
     {
         if (!validMoveMarkerPosition)
         {
@@ -266,7 +271,12 @@ public class PlayerOperative : BaseOperativeClass
         }
         
         _operativeAgent.destination = moveMarker.transform.position;
-        remainingMovement -= _currentPathDistance;
+
+        if (movementType == PlayerMovementType.Reposition)
+        {
+            remainingMovement -= _currentPathDistance;
+        }
+        
         _currentPathDistance = 0f;
 
         if (transform.position == moveMarker.transform.position)

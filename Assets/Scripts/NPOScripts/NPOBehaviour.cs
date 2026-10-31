@@ -181,11 +181,11 @@ public class NPOBehaviour : MonoBehaviour
             return;
         }
     
-        Debug.Log($"[BehaviorTree] Processing tree root for {itsOwnNpoScript.name}. Current APL: {itsOwnNpoScript.currentApl}");
+        //Debug.Log($"[BehaviorTree] Processing tree root for {itsOwnNpoScript.name}. Current APL: {itsOwnNpoScript.currentApl}");
         
         Node.Status status = _treeRoot.Process();
         
-        Debug.Log($"[BehaviorTree] {itsOwnNpoScript.name} tree root returned status: {status}");
+        //Debug.Log($"[BehaviorTree] {itsOwnNpoScript.name} tree root returned status: {status}");
 
         if (status == Node.Status.Running)
         {

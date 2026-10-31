@@ -96,7 +96,7 @@ public class MovementState : BaseState
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp != null)
         {
-            if (playerOp.MoveOperativeToMarker())
+            if (playerOp.MoveOperativeToMarker(Context.SelectedMovement))
             {
                 _coroutineRunner.StartCoroutine(ConfirmAndExecuteMovement(playerOp));
             }

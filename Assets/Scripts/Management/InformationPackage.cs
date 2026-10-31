@@ -150,6 +150,7 @@ public class InformationPackage
         Weapon = null;
         opponentWeapon = null;
         FightSequenceOver = false;
+        NumDefenseDiceRoll = 3;
     }
     
     //Only reset Operatives data
