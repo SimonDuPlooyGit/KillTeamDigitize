@@ -124,7 +124,7 @@ public class NonPlayerOperative : BaseOperativeClass
         {
             Debug.Log($"{name} couldn't fight anyone");
             hasFought = true;
-            UpdateApl(currentApl-1);
+            UpdateApl();
             CheckTurnEnd();
         }
     }
@@ -138,7 +138,7 @@ public class NonPlayerOperative : BaseOperativeClass
         if (targetPlayer != null)
         {
             hasCharged = true;
-            UpdateApl(currentApl-1);
+            UpdateApl();
 
             Vector3 chargeSpot = GetChargeDestination(targetPlayer.transform.position);
             Vector3 limitedChargeSpot = LimitDestination(chargeSpot, chargeDistanceScaled);

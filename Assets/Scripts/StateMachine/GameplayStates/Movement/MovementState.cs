@@ -118,7 +118,20 @@ public class MovementState : BaseState
             yield return null;
         }
         
-        playerOp.UpdateApl(playerOp.currentApl-1);
+        switch (Context.SelectedMovement)
+        {
+            case PlayerMovementType.Reposition:
+                playerOp.hasRepositionedThisActivation = true;
+                break;
+            case PlayerMovementType.Dash:
+                playerOp.hasDashedThisActivation = true;
+                break;
+            case PlayerMovementType.Charge:
+                playerOp.hasChargedThisActivation = true;
+                break;
+        }
+        
+        playerOp.UpdateApl();
         playerOp.ResetMoveMarker();
         Context.IsMovementConfirmed = true;
         MovementFinished = true;

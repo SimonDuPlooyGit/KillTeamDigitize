@@ -88,36 +88,42 @@ public class ActionSelectionState : BaseState
     //This is not working properly
     private void ActivateOrDeactivateActionButtons()
     {
+        Debug.Log("ActionSelectionState ActivateOrDeactivateActionButtons entered");
         //Activate different action buttons according to what the unit hasn't done yet
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp == null) return;
 
         if (repositionButton != null)
         {
+            Debug.Log($"hasRepositionedThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
             repositionButton.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
             repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
         }
 
         if (shootButton != null)
         {
+            Debug.Log($"hasShotThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
             shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
             shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
         }
 
         if (dashButton != null)
         {
+            Debug.Log($"hasDashedThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
             dashButton.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
             dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
         }
 
         if (chargeButton != null)
         {
+            Debug.Log($"hasChargedThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
             chargeButton.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
             chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
         }
 
         if (fightButton != null)
         {
+            Debug.Log($"hasFoughtThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
             fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
             fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
         }

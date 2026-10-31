@@ -175,7 +175,8 @@ public class ShootCombatState : BaseState
         Debug.Log("ShootCombatState OnExit");
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
-        Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
+        int updatedApl = Context.CurrentlySelectedOperativeScript.currentApl - 1;
+        Context.CurrentlySelectedOperativeScript.UpdateApl();
         Context.CurrentlySelectedTargetScript.ForceUIOn(false);
     }
     

@@ -437,11 +437,11 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Update the APL marker on UI
-    public void UpdateApl(int currApl)
+    public void UpdateApl()
     {
         Debug.Log("UpdateApl called");
         currentApl -= 1;
-        SetApl(currApl);
+        SetApl(currentApl);
     }
     
     //Do animations or effects of a unit dying in here (Calls DeathSequence coroutine)
