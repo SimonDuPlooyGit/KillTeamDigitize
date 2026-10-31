@@ -364,6 +364,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void CheckGameEnd()
+    {
+        int alivePlayerUnits = 0;
+        int aliveNpoUnits = 0;
+
+        foreach (var unit in SharedContext.AllPlayerUnits)
+        {
+            if (!unit.dead)
+            {
+                alivePlayerUnits++;
+            }
+        }
+
+        foreach (var unit in SharedContext.AllNpoUnits)
+        {
+            if (!unit.dead)
+            {
+                aliveNpoUnits++;
+            }
+        }
+
+        if (alivePlayerUnits == 0 || aliveNpoUnits == 0)
+        {
+            Debug.Log("Game is over");
+        }
+    }
+
     private void ClearHoverState()
     {
         if (_currentHoveredOperative != null)

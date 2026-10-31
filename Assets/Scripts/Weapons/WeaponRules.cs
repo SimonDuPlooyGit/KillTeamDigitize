@@ -1,4 +1,8 @@
 //-----WeaponRules Class (all of the weapon rules)-----
+
+using UnityEngine;
+using UnityEngine.LowLevelPhysics2D;
+
 public class WeaponRules
 {
     //ALPHABETICAL LIST OF WEAPON RULES!
@@ -115,7 +119,21 @@ public class WeaponRules
 
         public void Execute(InformationPackage context)
         {
-            //Roll D6 after attack
+            Debug.Log("Checking hot effect");
+            int roll = UnityEngine.Random.Range(1, 7);
+            if (roll < context.Weapon.hit)
+            {
+                int selfDamage = roll * 2;
+                if (context.CurrentlySelectedOperativeScript != null)
+                {
+                    context.CurrentlySelectedOperativeScript.TakeDamage(selfDamage);
+                    Debug.Log("Took self damage from hot");
+                }
+            }
+            else
+            {
+                Debug.Log("Took no damage from hot");
+            }
         }
         
         public override string ToString() => "Hot";
@@ -313,7 +331,12 @@ public class WeaponRules
         
         public void Execute(InformationPackage context)
         {
-            //Retained critical hits deal x damage to units immediately, they are not discarded
+            int devDamage = context.RetainedCrits * devastatingX;
+            if (context.CurrentlySelectedTargetScript != null)
+            {
+                context.CurrentlySelectedTargetScript.TakeDamage(devDamage);
+                Debug.Log($"Devastating did {devDamage} immediately");
+            }
         }
         
         public override string ToString() => $"Devastating: {devastatingX}";
