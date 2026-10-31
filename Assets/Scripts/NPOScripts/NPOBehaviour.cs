@@ -199,6 +199,7 @@ public class NPOBehaviour : MonoBehaviour
             if (itsOwnNpoScript.currentApl > 0 && !itsOwnNpoScript.acted)
             {
                 _treeRoot.Reset();
+                IsRunning = true;
             }
             else
             {

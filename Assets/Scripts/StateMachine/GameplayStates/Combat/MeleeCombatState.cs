@@ -35,6 +35,7 @@ public class MeleeCombatState : BaseState
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp != null) playerOp.hasFoughtThisActivation = true;
 
+        Debug.Log("Calling ResolveSequentialFight()");
         _diceHandler.StartCoroutine(ResolveSequentialFight());
         Context.CurrentlySelectedTargetScript.ForceUIOn(true);
     }
@@ -47,17 +48,34 @@ public class MeleeCombatState : BaseState
     public override void OnExit()
     {
         Debug.Log("MeleeCombatState OnExit");
-        _diceHandler.ClearAllDice();
-        Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
+        
+        if (_diceHandler != null)
+        {
+            _diceHandler.StopAllCoroutines();
+            _diceHandler.ClearAllDice();
+        }
+        
+        if (Context.CurrentlySelectedOperativeScript is PlayerOperative)
+        {
+            Context.CurrentlySelectedOperativeScript.UpdateApl(Context.CurrentlySelectedOperativeScript.currentApl -= 1);
+        }
+        
         Context.CurrentlySelectedTargetScript.ForceUIOn(false);
+        Context.FightSequenceOver = false;
+        Context.IsFightingRequested = false;
+        Context.IsWeaponSelected = false;
+        Context.ValidTargetFight = false;
+        Context.Weapon = null;
     }
 
     //Find the melee weapon for the person defend fighting
     private WeaponTemplate FindRetaliatorMeleeWeapon(BaseOperativeClass targetUnit)
     {
+        Debug.Log("Called and in FindRetaliatorMeleeWeapon");
         WeaponTemplate weaponToReturn =
             targetUnit.operativeData.weapons.FirstOrDefault(weapon => weapon.rules.OfType<WeaponRules.Melee>().Any());
         
+        Debug.Log($"Returning {weaponToReturn}");
         return weaponToReturn;
     }
     
@@ -66,50 +84,65 @@ public class MeleeCombatState : BaseState
     //If a player picks parry they must be able to select an opponent dice to parry (with crit parry rules applied)
     private IEnumerator ResolveSequentialFight()
     {
+        Context.FightSequenceOver = false;
+        Debug.Log("Called and in ResolveSequentialFight()");
         //Player is the attacker if the activated operative is of type PlayerOperative
         bool isPlayerAttacker = Context.CurrentlySelectedOperativeScript is PlayerOperative;
+        Debug.Log($"Player is attacker: {isPlayerAttacker}");
         Context.IsPlayerAttacker = isPlayerAttacker;
 
         //Throw attack dice for the current attacker
+        Debug.Log($"Calling StartCouroutine for ThrowAttackDice on _diceHandler with {attackerWeapon.name} with parameters ({attackerWeapon.atk}, {isPlayerAttacker}, Context)");
         yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(attackerWeapon.atk, isPlayerAttacker, Context));
 
         if (Context.CurrentlySelectedTargetScript != null)
         {
+            Debug.Log("Calling FindRetaliatorMeleeWeapon");
             retaliatorWeapon = FindRetaliatorMeleeWeapon(Context.CurrentlySelectedTargetScript);
             Context.opponentWeapon = retaliatorWeapon;
             
             //Throw the retaliator's attacks as "Defense dice"
             //Menu selection handling happens in DiceHandler based on state
-            yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(attackerWeapon.atk, isPlayerAttacker, Context));
+            Debug.Log($"Calling StartCouroutine for ThrowDefenseDice on _diceHandler with {retaliatorWeapon.name} with parameters ({retaliatorWeapon.atk}, {isPlayerAttacker}, Context)");
+            yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(retaliatorWeapon.atk, isPlayerAttacker, Context));
             
             //Find successful dice
             InitializeSuccessPools();
 
+            Debug.Log("Set attackerTurn = true");
             bool attackerTurn = true;
 
             //Keep alternating till no dice left
+            Debug.Log("While AttackerRemainingDice OR RetaliatorRemainingDice counts > 0");
             while (Context.AttackerRemainingDice.Count > 0 || Context.RetaliatorRemainingDice.Count > 0)
             {
+                Debug.Log($"Attacker has {Context.AttackerRemainingDice.Count} remaining");
+                Debug.Log($"Retaliator has {Context.RetaliatorRemainingDice.Count} remaining");
+                
                 if (Context.CurrentlySelectedOperativeScript == null || Context.CurrentlySelectedOperativeScript.dead ||
                     Context.CurrentlySelectedTargetScript == null || Context.CurrentlySelectedTargetScript.dead)
                 {
-                    Debug.Log("Unit defeated. Ending melee sequence early");
+                    Debug.Log("Unit defeated. Ending melee sequence early. Closing menu");
                     _menu.CloseMenu(_menu.meleeMenu);
+                    _diceHandler.ClearDiceRolls();
                     break;
                 }
                 
                 if (attackerTurn && Context.AttackerRemainingDice.Count == 0)
                 {
+                    Debug.Log("Attacker has no dice left, skip to retaliator with attackerTurn = false");
                     attackerTurn = false;
                     continue;
                 }
                 if (!attackerTurn && Context.RetaliatorRemainingDice.Count == 0)
                 {
+                    Debug.Log("Retaliator has no dice left, skip to attacker with attackerTurn = true");
                     attackerTurn = true;
                     continue;
                 }
-
+                
                 bool isPlayerTurn = (attackerTurn == isPlayerAttacker);
+                Debug.Log($"isPlayerTurn: {isPlayerTurn}");
                 Context.IsPlayerFightTurn = isPlayerTurn;
 
                 if (isPlayerTurn)
@@ -136,9 +169,14 @@ public class MeleeCombatState : BaseState
                 yield return new WaitForSeconds(0.5f);
             }
             
+            Debug.Log("All dice used");
+            Debug.Log("Fight sequence is finished");
+            _menu.CloseMenu(_menu.meleeMenu);
+            Context.FightSequenceOver = true;
+            
             yield return new WaitForSeconds(1.0f);
             _diceHandler.ClearDiceRolls();
-            Context.IsFightingRequested = true;
+            Context.IsFightingRequested = false;
         }
     }
 

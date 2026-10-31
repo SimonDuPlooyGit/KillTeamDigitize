@@ -143,6 +143,7 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws ATK Dice Physically]==========================================
     public IEnumerator ThrowAttackDice(int numDice, bool isAlly, InformationPackage context)
     {
+        Debug.Log($"Called and in ThrowAttackDice with (numdice:{numDice}, isAlly:{isAlly}, context)");
         //Move dice spawn point to active unit
         if (isAlly)
         {
@@ -213,6 +214,7 @@ public class DiceHandler : MonoBehaviour
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
             menu.OpenMenu(menu.meleeMenu);
+            Debug.Log("Opened meleeMenu");
         }
         else
         {
@@ -233,6 +235,7 @@ public class DiceHandler : MonoBehaviour
         }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         menu.CloseMenu(menu.diceRollMenu);
+        Debug.Log("ThrowAttackDice Coroutine has finished");
     }
     
     //==================[End throw attack coroutine]=======================
@@ -240,6 +243,7 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
+        Debug.Log($"Called and in ThrowDefenseDice with numdice:{numDice}, isAlly:{isAlly}");
         diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
             context.CurrentlySelectedTarget.transform.position.y + 0.4f,
             context.CurrentlySelectedTarget.transform.position.z);
@@ -289,6 +293,7 @@ public class DiceHandler : MonoBehaviour
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
             menu.OpenMenu(menu.meleeMenu);
+            Debug.Log("Opened meleeMenu");
         }
         else
         {
@@ -318,8 +323,15 @@ public class DiceHandler : MonoBehaviour
                 dieSprite.ToggleBlock();
             }
         }
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+        if (gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
+        {
+            Debug.Log("Waiting for Space input to continue");
+            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        }
+        
         menu.CloseMenu(menu.diceRollMenu);
+        Debug.Log("ThrowDefenseDice Coroutine has finished");
     }
     //==================[End throw defense coroutine]=======================
 
@@ -379,6 +391,7 @@ public class DiceHandler : MonoBehaviour
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
             menu.CloseMenu(menu.meleeMenu);
+            Debug.Log("Closed meleeMenu");
         }
         else
         {
@@ -438,6 +451,7 @@ public class DiceHandler : MonoBehaviour
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
             menu.OpenMenu(menu.meleeMenu);
+            Debug.Log("Opened meleeMenu");
         }
         else
         {
@@ -811,7 +825,14 @@ public class DiceHandler : MonoBehaviour
             ? _context.CurrentlySelectedTargetScript
             : _context.CurrentlySelectedOperativeScript;
 
-        StartCoroutine(MeleeMenuBlip());
+        if (opponent != null && !opponent.dead)
+        {
+            StartCoroutine(MeleeMenuBlip());
+        }
+        else
+        {
+            menu.CloseMenu(menu.meleeMenu);
+        }
 
         if (opponent != null)
         {
@@ -920,8 +941,10 @@ public class DiceHandler : MonoBehaviour
     private IEnumerator MeleeMenuBlip()
     {
         menu.CloseMenu(menu.meleeMenu);
+        Debug.Log("Blip close");
         yield return new WaitForSeconds(1);
         menu.OpenMenu(menu.meleeMenu);
+        Debug.Log("Blip open");
     }
 
     private IEnumerator AnimateParryDice(CombatRoll topDie, CombatRoll bottomDie)

@@ -92,20 +92,14 @@ public class GameManager : MonoBehaviour
         AddT(npoSelectState, npoTurnPerformState,
             new FuncPredicate(() => SharedContext.CurrentlySelectedOperativeScript != null && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative)); //If NPO is found to activate
         AddT(npoTurnPerformState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn));
-        AddT(npoTurnPerformState, meleeCombatState, new FuncPredicate(() => SharedContext.IsFightingRequested && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative));AddT(meleeCombatState, npoTurnPerformState, new FuncPredicate(() => 
-        {
-            if (SharedContext.IsFightingRequested && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative)
-            {
-                SharedContext.IsFightingRequested = false;
-                return true;
-            }
-            return false;
-        }));
+        AddT(npoTurnPerformState, meleeCombatState, new FuncPredicate(() => SharedContext.IsFightingRequested && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative));
+        AddT(meleeCombatState, npoTurnPerformState, new FuncPredicate(() => SharedContext.FightSequenceOver && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative));
+        AddT(meleeCombatState, actionSelectionState, new FuncPredicate(() => SharedContext.FightSequenceOver && SharedContext.CurrentlySelectedOperativeScript is PlayerOperative));
         
 
 
         //AddT for pressing a pass turn button
-        _stateMachine.SetState(introductionState);
+        _stateMachine.SetState(unitActivationState);
 
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState,
