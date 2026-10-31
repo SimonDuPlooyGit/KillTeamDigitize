@@ -318,7 +318,7 @@ public class DiceHandler : MonoBehaviour
         //Display whether the dice blocked or not by updating the sprite
         foreach (CombatRoll dieSprite in activeDefenseDice)
         {
-            if (dieSprite.GetValue() >= context.CurrentlySelectedOperativeScript.operativeData.save && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
+            if (dieSprite.GetValue() >= context.CurrentlySelectedTargetScript.operativeData.save && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
             {
                 dieSprite.ToggleBlock();
             }

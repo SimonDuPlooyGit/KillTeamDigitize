@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 3170327194339252520}
   - component: {fileID: 3552478640874735357}
   m_Layer: 5
-  m_Name: Concealed(Spent)
+  m_Name: Conc(Spent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 5974415616231446152}
   - component: {fileID: 5516369537484969374}
   m_Layer: 5
-  m_Name: Concealed
+  m_Name: Conc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -611,7 +611,7 @@ GameObject:
   - component: {fileID: 7253134275788140661}
   - component: {fileID: 8565544015836360365}
   m_Layer: 5
-  m_Name: Enaged(Spent)
+  m_Name: Eng(Spent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6064,7 +6064,7 @@ GameObject:
   - component: {fileID: 8028557231711558774}
   - component: {fileID: 4450090723975607106}
   m_Layer: 5
-  m_Name: Cover
+  m_Name: Cov
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6659,7 +6659,7 @@ GameObject:
   - component: {fileID: 4906888879301697959}
   - component: {fileID: 7144617104551472524}
   m_Layer: 5
-  m_Name: Enaged
+  m_Name: Eng
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6765,7 +6765,7 @@ GameObject:
   - component: {fileID: 4974055744444400248}
   - component: {fileID: 544541093311580330}
   m_Layer: 5
-  m_Name: Injured
+  m_Name: Inj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

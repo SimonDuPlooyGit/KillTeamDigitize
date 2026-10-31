@@ -1684,7 +1684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 137423553}
   m_Layer: 5
-  m_Name: Engaged
+  m_Name: Eng
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2980,7 +2980,7 @@ GameObject:
   m_Component:
   - component: {fileID: 266676524}
   m_Layer: 5
-  m_Name: Concealed(Spent)
+  m_Name: Conc(Spent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10490,9 +10490,29 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 57.41
       objectReference: {fileID: 0}
+    - target: {fileID: 2216779668001546862, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2216779668001546862, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2216779668001546862, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2216779668001546862, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5647173773186044386, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_Name
       value: EliminatorSniper
+      objectReference: {fileID: 0}
+    - target: {fileID: 6227280588595321435, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_Name
+      value: 'Injured '
       objectReference: {fileID: 0}
     - target: {fileID: 7510767729299967080, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10532,6 +10552,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7510767729299967080, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012916110149490443, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -14617,7 +14641,7 @@ GameObject:
   m_Component:
   - component: {fileID: 837678556}
   m_Layer: 5
-  m_Name: Concealed
+  m_Name: Conc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18694,7 +18718,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1295950106}
   m_Layer: 5
-  m_Name: 'Injured '
+  m_Name: Inj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26089,7 +26113,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1934153788}
   m_Layer: 5
-  m_Name: Engaged(Spent)
+  m_Name: Eng(Spent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27105,7 +27129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2038282446}
   m_Layer: 5
-  m_Name: Cover
+  m_Name: Cov
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

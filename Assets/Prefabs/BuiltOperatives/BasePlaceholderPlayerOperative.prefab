@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 2500014646244643741}
   - component: {fileID: 7875493054252761511}
   m_Layer: 5
-  m_Name: Concealed(Spent)
+  m_Name: Conc(Spent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -579,7 +579,7 @@ GameObject:
   - component: {fileID: 909353652029202103}
   - component: {fileID: 2603711792437417248}
   m_Layer: 5
-  m_Name: Enaged(Spent)
+  m_Name: Eng(Spent)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5883,7 +5883,7 @@ GameObject:
   - component: {fileID: 8102196371152524936}
   - component: {fileID: 3749745083845471467}
   m_Layer: 5
-  m_Name: Cover
+  m_Name: Cov
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6286,7 +6286,7 @@ GameObject:
   - component: {fileID: 510657133843242893}
   - component: {fileID: 4031544063176571420}
   m_Layer: 5
-  m_Name: Concealed
+  m_Name: Conc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6453,7 +6453,7 @@ GameObject:
   - component: {fileID: 8246026980272950918}
   - component: {fileID: 8041804775852095759}
   m_Layer: 5
-  m_Name: Enaged
+  m_Name: Eng
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6902,16 +6902,18 @@ MonoBehaviour:
   EnemyInControlRange: 0
   enemiesInControlRange: []
   unitUI: {fileID: 1420086678442614927}
+  statusSymbols: {fileID: 7493340328778013332}
   healthFill: {fileID: 4349708838005869823}
   aplCount: {fileID: 8215639158211220109}
   concealSymbol: {fileID: 4896400574242412389}
   engageSymbol: {fileID: 5001128376997696393}
-  injuredSymbol: {fileID: 1599348246904485814}
+  injuredSymbol: {fileID: 8953074488598929113}
   concealInCoverSymbol: {fileID: 3720882771788012080}
   damagePopOut: {fileID: 2207886363201068217}
   nameText: {fileID: 8004231822574503436}
   unitBase: {fileID: 4948545270696065821}
   isUIForcedOn: 0
+  statusHoverHolder: {fileID: 0}
   fogEffect: {fileID: 3249404380935832136}
   glow: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
   deathParticles: {fileID: 3381858293456355160}
@@ -7632,7 +7634,7 @@ GameObject:
   - component: {fileID: 4593206926123328421}
   - component: {fileID: 3525930726347960597}
   m_Layer: 5
-  m_Name: Injured
+  m_Name: Inj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
