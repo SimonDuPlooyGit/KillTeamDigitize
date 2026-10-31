@@ -51,8 +51,12 @@ public class ActionSelectionState : BaseState
         chargeButton = _menu.actionMenu.transform.Find("Buttons").Find("ChargeButton").gameObject;
         dashButton = _menu.actionMenu.transform.Find("Buttons").Find("DashButton").gameObject;
         shootButton = _menu.actionMenu.transform.Find("Buttons").Find("ShootButton").gameObject;
-        repositionCost = _menu.actionMenu.transform.Find("APLCosts").Find("MoveAPL").gameObject;
+        fightButton = _menu.actionMenu.transform.Find("Buttons").Find("FightButton").gameObject;
+        repositionCost = _menu.actionMenu.transform.Find("APLCosts").Find("RepositionAPL").gameObject;
         shootCost = _menu.actionMenu.transform.Find("APLCosts").Find("ShootAPL").gameObject;
+        chargeCost = _menu.actionMenu.transform.Find("APLCosts").Find("ChargeAPL").gameObject;
+        dashCost = _menu.actionMenu.transform.Find("APLCosts").Find("DashAPL").gameObject;
+        fightCost = _menu.actionMenu.transform.Find("APLCosts").Find("FightAPL").gameObject;
 
         //tutorial panel
         if(_menu.tutFlag2)
@@ -91,31 +95,31 @@ public class ActionSelectionState : BaseState
         if (repositionButton != null)
         {
             repositionButton.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
-            //repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
+            repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
         }
 
         if (shootButton != null)
         {
             shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
-            //shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
+            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
         }
 
         if (dashButton != null)
         {
             dashButton.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
-            //dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
+            dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
         }
 
         if (chargeButton != null)
         {
             chargeButton.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
-            //chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
+            chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
         }
 
         if (fightButton != null)
         {
             fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
-            //fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
+            fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
         }
     }
 }

@@ -181,33 +181,51 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Check LOS between a unit's head LOS start to another unit's LOS start (losEnd in this) overloaded for a projected point as well
-    public float DetermineLosAndDistance(Transform losEnd) //Call LOS and distance check on the unit
+    public float DetermineLosAndDistance(Transform losEnd) 
     {
         float distance = (Vector3.Distance(losStart.position, losEnd.position) / 10) * 39.37f; //Converting back to inches
         print(distance + "\"");
         Vector3 direction = (losEnd.position - losStart.position).normalized;
+        float maxDistance = Vector3.Distance(losStart.position, losEnd.position);
+    
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, losStart.position);
 
-        if (Physics.Raycast(losStart.position, direction, out RaycastHit hit, distance))
+        bool isBlocked = false;
+        Vector3 blockedPoint = losEnd.position;
+
+        RaycastHit[] hits = Physics.RaycastAll(losStart.position, direction, maxDistance);
+        System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
+
+        foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("EnemyUnit"))
+            //Ignore hits on the shooter itself or its children or allies
+            if (hit.collider.transform.IsChildOf(transform) || hit.collider.gameObject == gameObject)
+                continue;
+
+            if (hit.collider.CompareTag("Terrain"))
             {
-                lineRenderer.material = validLine;
-                lineRenderer.SetPosition(1, losEnd.position);
-                Debug.Log($"LOS Clear. Total range to target: {distance} (From Unit Call)");
-            }
-            else
-            {
-                lineRenderer.material = invalidLine;
-                lineRenderer.SetPosition(1, hit.point);
+                isBlocked = true;
+                blockedPoint = hit.point;
                 Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance} (From Unit Call)");
-                distance = 0;
+                break;
             }
         }
 
-        lineRenderer.enabled = true;
+        if (isBlocked)
+        {
+            lineRenderer.material = invalidLine;
+            lineRenderer.SetPosition(1, blockedPoint);
+            distance = 0f;
+        }
+        else
+        {
+            lineRenderer.material = validLine;
+            lineRenderer.SetPosition(1, losEnd.position);
+            Debug.Log($"LOS Clear. Total range to target: {distance} (From Unit Call)");
+        }
 
+        lineRenderer.enabled = true;
         return distance;
     }
 
