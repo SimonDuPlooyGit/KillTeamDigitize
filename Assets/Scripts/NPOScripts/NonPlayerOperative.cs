@@ -212,6 +212,7 @@ public class NonPlayerOperative : BaseOperativeClass
     //Coroutine for Executing an NPOs shoot action calls DiceHandler dice throwing methods
     private IEnumerator ExecuteNpoShoot()
     {
+        currentShootTarget.ForceUIOn(true);
         Debug.Log($"{name} starts shoot coroutine");
 
         WeaponTemplate chosenWeapon = null;
@@ -248,10 +249,13 @@ public class NonPlayerOperative : BaseOperativeClass
             Debug.Log("target player is null or dice handler is null or _context is null");
         }
 
+        yield return new WaitForSeconds(0.5f);
+        currentShootTarget.ForceUIOn(false);
         shootCount++;
         currentApl -= 1;
         SetApl(currentApl);
         CheckTurnEnd();
+        currentShootTarget = null;
         IsShootingComplete = true;
         isPerformingAnAction = false;
     }
@@ -300,12 +304,15 @@ public class NonPlayerOperative : BaseOperativeClass
             norm = 0;
         }
 
+        Animator animator = gameObject.GetComponent<Animator>();
+        animator.SetTrigger("Shoot");
+        gameObject.GetComponent<SmokeTrails>().SpawnSmoke(norm,gameObject.transform,target.transform);
+        gameObject.GetComponent<SmokeTrails>().SpawnSmoke(crit, gameObject.transform, target.transform);
         Debug.Log($"{name} is hitting {target.name} for {norm} hits of {context.Weapon.dmgNorm} and {crit} hit of {context.Weapon.dmgCrit}");
         int totalDamage = (crit * context.Weapon.dmgCrit) + (norm * context.Weapon.dmgNorm);
         Debug.Log($"This totals to {totalDamage} damage");
         target.TakeDamage(totalDamage);
         target.UpdateHealth(target.currentWounds, target.operativeData.wounds);
-        currentShootTarget = null;
         _diceHandler.ClearDiceRolls();
     }
 
