@@ -61,7 +61,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [Header("Animation")]
     [SerializeField]
     private ParticleSystem deathParticles;
-    private Animator _animator;
+    public Animator _animator;
     
     [Header("Navmesh and Movement")]
     public NavMeshAgent agent;

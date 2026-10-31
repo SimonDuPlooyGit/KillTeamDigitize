@@ -828,6 +828,8 @@ public class DiceHandler : MonoBehaviour
         if (opponent != null && !opponent.dead)
         {
             StartCoroutine(MeleeMenuBlip());
+            Animator animator = _context.CurrentlySelectedOperative.GetComponent<Animator>();
+            animator.SetTrigger("Strike");
         }
         else
         {
@@ -938,7 +940,7 @@ public class DiceHandler : MonoBehaviour
         foreach (var die in activeDefenseDice) if (die != null) die.Deselect();
     }
 
-    private IEnumerator MeleeMenuBlip()
+    public IEnumerator MeleeMenuBlip()
     {
         menu.CloseMenu(menu.meleeMenu);
         Debug.Log("Blip close");

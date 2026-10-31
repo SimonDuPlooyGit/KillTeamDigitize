@@ -323,6 +323,8 @@ public class MeleeCombatState : BaseState
             BaseOperativeClass targetUnit = isNpoAttacker ? Context.CurrentlySelectedTargetScript : Context.CurrentlySelectedOperativeScript;
             if (targetUnit != null)
             {
+                Context.CurrentlySelectedOperativeScript._animator.SetTrigger("Strike");
+                _diceHandler.StartCoroutine(_diceHandler.MeleeMenuBlip());
                 targetUnit.TakeDamage(damage);
                 targetUnit.UpdateHealth(targetUnit.currentWounds, targetUnit.operativeData.wounds);
                 Debug.Log($"[MeleeCombatState] NPO struck target with die {bestNpoVal} for {damage} damage.");
