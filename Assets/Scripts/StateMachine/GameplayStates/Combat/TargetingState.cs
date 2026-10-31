@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 
 //-----TargetingState Class (When you have picked a weapon on your unit and you want to click an NPO to shoot)-----
@@ -67,8 +68,10 @@ public class TargetingState : BaseState
     }
     
     //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
-    private void OnSelectPerformed(InputAction.CallbackContext ctx) 
+    private void OnSelectPerformed(InputAction.CallbackContext ctx)
     {
+        bool validTarget = true;
+        
         Debug.Log("OnSelectPerformed in TargetingState");
         if (!Context.CurrentlySelectedOperativeScript.selected) return;
         
@@ -78,13 +81,6 @@ public class TargetingState : BaseState
             if (hit.collider.gameObject.CompareTag("EnemyUnit")) 
             {
                 Context.SetSelectedTarget(hit.collider.gameObject);
-                Debug.Log("Enemy targeted: " + Context.CurrentlySelectedTargetSo.name);
-                
-                //Rotate toward target
-                Context.CurrentlySelectedOperative.transform.LookAt(new Vector3(
-                Context.CurrentlySelectedTarget.transform.position.x, 
-                Context.CurrentlySelectedOperative.transform.position.y, 
-                Context.CurrentlySelectedTarget.transform.position.z));
                 
                 //Check if the target is valid for fighting in melee
                 if (Context.IsFightingRequested)
@@ -118,6 +114,7 @@ public class TargetingState : BaseState
                     else
                     {
                         Debug.Log("Targeting lines rule can't see the enemy");
+                        validTarget = false;
                         
                     }
                 }
@@ -130,15 +127,33 @@ public class TargetingState : BaseState
                 
                 if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
                 {
-                    Context.ValidTargetShoot = true;
                     Debug.Log($"Target in range of: {maxWeaponRange}");
                 } 
                 else if (distanceToEnemy > maxWeaponRange)
                 {
-                    Context.ValidTargetShoot = false;
                     Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
                     _menu.tutFlag6 = true; 
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
+                    validTarget = false;
+                }
+
+                if (validTarget)
+                {
+                    Context.SetSelectedTarget(hit.collider.gameObject);
+                    Debug.Log($"Enemy targeted: {Context.CurrentlySelectedTargetSo.name}");
+                
+                    //Rotate toward target
+                    Context.CurrentlySelectedOperative.transform.LookAt(new Vector3(
+                        Context.CurrentlySelectedTarget.transform.position.x, 
+                        Context.CurrentlySelectedOperative.transform.position.y, 
+                        Context.CurrentlySelectedTarget.transform.position.z));
+
+                    Context.ValidTargetShoot = true;
+                }
+                else
+                {
+                    Context.ValidTargetShoot = false;
+                    Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");
                 }
             }
         }
