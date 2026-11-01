@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using static DiceHandler;
 
 public class MeleeCombatState : BaseState
@@ -38,6 +39,11 @@ public class MeleeCombatState : BaseState
         Debug.Log("Calling ResolveSequentialFight()");
         _diceHandler.StartCoroutine(ResolveSequentialFight());
         Context.CurrentlySelectedTargetScript.ForceUIOn(true);
+        if(Context.CurrentlySelectedOperativeScript is NonPlayerOperative)
+        {
+            Context.CurrentlySelectedOperativeScript.ForceUIOn(true);
+        }
+
     }
 
     public override void Update()
@@ -66,6 +72,11 @@ public class MeleeCombatState : BaseState
         Context.IsWeaponSelected = false;
         Context.ValidTargetFight = false;
         Context.Weapon = null;
+
+        if (Context.CurrentlySelectedOperativeScript is NonPlayerOperative)
+        {
+            Context.CurrentlySelectedOperativeScript.ForceUIOn(false);
+        }
     }
 
     //Find the melee weapon for the person defend fighting
@@ -286,7 +297,6 @@ public class MeleeCombatState : BaseState
                     if (npoUiDie != null)
                     {
                         npoUIList.Remove(npoUiDie);
-                        Object.Destroy(npoUiDie.gameObject);
                     }
 
                     // Match and destroy Opponent UI die
@@ -294,10 +304,10 @@ public class MeleeCombatState : BaseState
                     if (oppUiDie != null)
                     {
                         oppUIList.Remove(oppUiDie);
-                        Object.Destroy(oppUiDie.gameObject);
                     }
 
                     Debug.Log($"[MeleeCombatState] NPO parried player die {bestOppVal} with {npoVal}.");
+                    _diceHandler.StartCoroutine(_diceHandler.AnimateParryDice(oppUiDie,npoUiDie));
                     didParry = true;
                     break;
                 }

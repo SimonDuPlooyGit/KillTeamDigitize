@@ -949,14 +949,40 @@ public class DiceHandler : MonoBehaviour
         Debug.Log("Blip open");
     }
 
-    private IEnumerator AnimateParryDice(CombatRoll topDie, CombatRoll bottomDie)
+    public IEnumerator AnimateParryDice(CombatRoll dieA, CombatRoll dieB)
     {
+        bool isPlayerAttacker = _context.IsPlayerAttacker;
+        if (dieA == null || dieB == null) yield break;
+
+        //Determine row position regardless of who initiated combat
+        CombatRoll topDie = activeAttackDice.Contains(dieA) ? dieA : dieB;
+        CombatRoll bottomDie = (topDie == dieA) ? dieB : dieA;
+
         Animator topAnim = topDie.GetComponent<Animator>();
-        topAnim.SetTrigger("ClashTop");
+        if(isPlayerAttacker)
+        {
+            if (topAnim != null) topAnim.SetTrigger("ClashBottom");
+        }
+        else
+        {
+            if (topAnim != null) topAnim.SetTrigger("ClashTop");
+        }
+        
+
         Animator bottomAnim = bottomDie.GetComponent<Animator>();
-        bottomAnim.SetTrigger("ClashBottom");
+        if (isPlayerAttacker)
+        {
+            if (bottomAnim != null) bottomAnim.SetTrigger("ClashTop");
+        }
+        else
+        {
+            if (bottomAnim != null) bottomAnim.SetTrigger("ClashBottom");
+        }
+        
+
         yield return new WaitForSeconds(0.5f);
-        Destroy(topDie.gameObject);
-        Destroy(bottomDie.gameObject);
+
+        if (topDie != null) Destroy(topDie.gameObject);
+        if (bottomDie != null) Destroy(bottomDie.gameObject);
     }
 }
