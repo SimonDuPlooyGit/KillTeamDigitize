@@ -14,6 +14,7 @@ public class PlayerOperative : BaseOperativeClass
     public GameObject moveMarker;
     public float remainingMovement;
     public GameObject movementInfo;
+    public GameObject moveMarkerUI;
 
     private NavMeshAgent _operativeAgent;
     private NavMeshAgent _moveMarkerAgent;
@@ -59,10 +60,17 @@ public class PlayerOperative : BaseOperativeClass
 
         if (selected)
         {
-            if (moveMarker.activeSelf && !_pathDrawn && !_moveMarkerAgent.pathPending &&
-                _moveMarkerAgent.velocity.sqrMagnitude < 0.01f)
+            if (!_moveMarkerAgent.pathPending && moveMarker.activeSelf)
             {
-                DrawPath(_limitedPoints.ToArray());
+                if (_moveMarkerAgent.remainingDistance <= _moveMarkerAgent.stoppingDistance)
+                {
+                    if (!_moveMarkerAgent.hasPath || _moveMarkerAgent.velocity.sqrMagnitude == 0f)
+                    {
+                        DrawPath(_limitedPoints.ToArray());
+                        movementInfo.SetActive(true);
+                        moveMarkerUI.SetActive(true);
+                    }
+                }
             }
         }
     }
@@ -71,14 +79,17 @@ public class PlayerOperative : BaseOperativeClass
     {
         if (selected)
         {
-            if (moveMarker.activeSelf &&
-                !_pathDrawn &&
-                !_moveMarkerAgent.pathPending &&
-                _moveMarkerAgent.velocity.sqrMagnitude < 0.01f &&
-                _moveMarkerAgent.remainingDistance <= _moveMarkerAgent.stoppingDistance &&
-                selected)
+            if (!_moveMarkerAgent.pathPending && moveMarker.activeSelf)
             {
-                DrawPath(_limitedPoints.ToArray());
+                if (_moveMarkerAgent.remainingDistance <= _moveMarkerAgent.stoppingDistance)
+                {
+                    if (!_moveMarkerAgent.hasPath || _moveMarkerAgent.velocity.sqrMagnitude == 0f)
+                    {
+                        DrawPath(_limitedPoints.ToArray());
+                        movementInfo.SetActive(true);
+                        moveMarkerUI.SetActive(true);
+                    }
+                }
             }
         }
     }
@@ -86,7 +97,6 @@ public class PlayerOperative : BaseOperativeClass
     //Click the board and then calculate a path to that spot limited by movement distance, move the move marker there
     public void ClickToPathfindReposition()
     {
-        
         // Do not pathfind if clicking on UI elements/buttons
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
@@ -102,6 +112,8 @@ public class PlayerOperative : BaseOperativeClass
             lineRenderer.enabled = false;
             _pathDrawn = false;
             moveMarker.SetActive(true);
+            movementInfo.SetActive(false);
+            moveMarkerUI.SetActive(false);
 
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\""; //The display on top of the move marker
@@ -116,9 +128,24 @@ public class PlayerOperative : BaseOperativeClass
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                Vector3 rawDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
-                Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
-                _moveMarkerAgent.destination = finalDestination;
+                NavMeshHit navMeshHit;
+                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.01f, NavMesh.AllAreas))
+                {
+                    Debug.Log("Clicked on a valid navmesh position");
+                    Vector3 rawDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
+                    Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
+                    _moveMarkerAgent.destination = finalDestination;
+                }
+                else
+                {
+                    Debug.Log("Clicked on a non-valid navmesh position");
+                    ResetMoveMarker();
+                }
+            }
+            else
+            {
+                Debug.Log("Clicked off the board");
+                ResetMoveMarker();
             }
 
             float projectedSpentMeters = (meterMovement - remainingMovement) + _currentPathDistance;
@@ -143,6 +170,8 @@ public class PlayerOperative : BaseOperativeClass
             lineRenderer.enabled = false;
             _pathDrawn = false;
             moveMarker.SetActive(true);
+            movementInfo.SetActive(false);
+            moveMarkerUI.SetActive(false);
 
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat + 2}\"";
@@ -151,11 +180,27 @@ public class PlayerOperative : BaseOperativeClass
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                Vector3 finalDestination = LimitPathDistance(hit.point, chargeDistanceScaled, out _limitedPoints, out _currentPathDistance);
-                _moveMarkerAgent.destination = finalDestination;
+                NavMeshHit navMeshHit;
+                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.01f, NavMesh.AllAreas))
+                {
+                    Debug.Log("Clicked on a valid navmesh position");
+                    Vector3 finalDestination = LimitPathDistance(hit.point, chargeDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                    _moveMarkerAgent.destination = finalDestination;
 
-                StartMarkerCheckCoroutine(PlayerMovementType.Charge);
+                    StartMarkerCheckCoroutine(PlayerMovementType.Charge);
+                }
+                else
+                {
+                    Debug.Log("Clicked on a non-valid navmesh position");
+                    ResetMoveMarker();
+                }
             }
+            else
+            {
+                Debug.Log("Clicked off the board");
+                ResetMoveMarker();
+            }
+            
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat + 2}\"";
         }
@@ -179,6 +224,8 @@ public class PlayerOperative : BaseOperativeClass
             lineRenderer.enabled = false;
             _pathDrawn = false;
             moveMarker.SetActive(true);
+            movementInfo.SetActive(false);
+            moveMarkerUI.SetActive(false);
 
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{dashDistanceInches}\"";
@@ -187,9 +234,24 @@ public class PlayerOperative : BaseOperativeClass
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
                 selected && hit.transform.CompareTag("Board"))
             {
-                Vector3 rawDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
-                Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
-                _moveMarkerAgent.destination = finalDestination;
+                NavMeshHit navMeshHit;
+                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.01f, NavMesh.AllAreas))
+                {
+                    Debug.Log("Clicked on a valid navmesh position");
+                    Vector3 rawDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
+                    Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
+                    _moveMarkerAgent.destination = finalDestination;
+                }
+                else
+                {
+                    Debug.Log("Clicked on a non-valid navmesh position");
+                    ResetMoveMarker();
+                }
+            }
+            else
+            {
+                Debug.Log("Clicked off the board");
+                ResetMoveMarker();
             }
             
             movementInfo.GetComponent<TextMeshProUGUI>().text =
@@ -316,8 +378,12 @@ public class PlayerOperative : BaseOperativeClass
         {
             moveMarker.transform.position = transform.position;
             moveMarker.SetActive(false);
+            moveMarkerUI.SetActive(false);
         }
 
+        lineRenderer.enabled = false;
+        lineRenderer.positionCount = 0;
+        movementInfo.SetActive(false);
         _limitedPoints.Clear();
         _currentPathDistance = 0f;
         _pathDrawn = false;

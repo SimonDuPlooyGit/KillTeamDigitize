@@ -99,7 +99,6 @@ public class StateMachine
         {
             ChangeState(previous.State);
         }
-        
     }
     
     class StateNode //Class for a state node
