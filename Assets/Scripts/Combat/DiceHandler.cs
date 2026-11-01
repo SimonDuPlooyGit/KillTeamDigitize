@@ -828,7 +828,7 @@ public class DiceHandler : MonoBehaviour
         if (opponent != null && !opponent.dead)
         {
             StartCoroutine(MeleeMenuBlip());
-            Animator animator = _context.CurrentlySelectedOperative.GetComponent<Animator>();
+            Animator animator = isPlayerAttacker? _context.CurrentlySelectedOperative.GetComponent<Animator>(): _context.CurrentlySelectedTargetScript.GetComponent<Animator>();
             animator.SetTrigger("Strike");
         }
         else
