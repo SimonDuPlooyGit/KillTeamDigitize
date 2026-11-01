@@ -49,6 +49,8 @@ public class DiceHandler : MonoBehaviour
     private float currentHealthTest;
     [SerializeField]
     private MenuPanel menu;
+    [SerializeField]
+    public GameObject meleeGuideText;
     
     //Lists used to keep global track of attack and defense dice for rerolling purposes
     public List<DiceRoll> activePhysAttackDice = new List<DiceRoll>();
@@ -80,11 +82,12 @@ public class DiceHandler : MonoBehaviour
     //same but minimum
     public int minSelectableDieValue = 1;
     [SerializeField]
-    private GameManager gameManager;
+    public GameManager gameManager;
 
     public bool playerActionReady = false;
     public bool isWaitingForParry = false;
     private CombatRoll _savedParryPlayerDie = null;
+    public bool isFirstMeleeSelect = true; //used to change the melee guide text only on the first time you select it
 
     private void Start()
     {
@@ -94,6 +97,7 @@ public class DiceHandler : MonoBehaviour
         rerollButton.SetActive(false);    
         parryButton.SetActive(false);
         strikeButton.SetActive(false);
+        meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
     }
 
     private void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
@@ -850,6 +854,7 @@ public class DiceHandler : MonoBehaviour
         isWaitingForParry = false;
         ClearAllSelections();
         UpdateRerollButtonVisibility();
+        meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
         playerActionReady = true;
     }
 
@@ -887,6 +892,7 @@ public class DiceHandler : MonoBehaviour
 
             isWaitingForParry = true;
             Debug.Log("[DiceHandler] Player die locked for parry. Now select an opponent die to parry.");
+            StartCoroutine(UpdateGuideText("Select an opponent's die to parry"));
             UpdateRerollButtonVisibility();
             return;
         }
@@ -931,6 +937,7 @@ public class DiceHandler : MonoBehaviour
         isWaitingForParry = false;
         ClearAllSelections();
         UpdateRerollButtonVisibility();
+        meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
         playerActionReady = true;
     }
 
@@ -984,5 +991,30 @@ public class DiceHandler : MonoBehaviour
 
         if (topDie != null) Destroy(topDie.gameObject);
         if (bottomDie != null) Destroy(bottomDie.gameObject);
+    }
+
+    public IEnumerator UpdateGuideText(string message)
+    {
+        Vector3 originalScale = meleeGuideText.transform.localScale;
+        Vector3 targetScale = new Vector3(1.3f, 1.3f, 1.3f);
+        float lerpTime = 0.1f;
+        float elapsedTimeA = 0;
+        float elapsedTimeB = 0;
+        meleeGuideText.GetComponent<TextMeshProUGUI>().text = message;
+        while(elapsedTimeA<lerpTime)
+        {
+            elapsedTimeA += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTimeA/lerpTime);
+            meleeGuideText.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.2f);
+        while (elapsedTimeB < lerpTime)
+        {
+            elapsedTimeB += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTimeB / lerpTime);
+            meleeGuideText.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
+            yield return null;
+        }
     }
 }

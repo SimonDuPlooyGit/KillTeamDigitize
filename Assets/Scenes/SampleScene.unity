@@ -1670,7 +1670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3588528730184074890, guid: a7ccf27f42fd2dd4a832873aa06befc3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5904862044464561181, guid: a7ccf27f42fd2dd4a832873aa06befc3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12078,7 +12078,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5346343139375103628, guid: 426dd90d5f8e3ee40957e9df572b1845, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -14397,7 +14397,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press space to continue
+  m_text: Click one of your dice to select it
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
   m_sharedMaterial: {fileID: 3261361728455733759, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
@@ -14424,8 +14424,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 45
-  m_fontSizeBase: 45
+  m_fontSize: 38.29
+  m_fontSizeBase: 38.29
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -16361,7 +16361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3676486397253282572, guid: 05d66a91976dc4543bbc07466f7afb99, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5441767575177394898, guid: 05d66a91976dc4543bbc07466f7afb99, type: 3}
       propertyPath: archetype
@@ -24072,7 +24072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4553024318742501938, guid: edcd1594bdf691d4d900d8cf814a825b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5165379594985212908, guid: edcd1594bdf691d4d900d8cf814a825b, type: 3}
       propertyPath: archetype
@@ -28160,7 +28160,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1280585225340077960, guid: ffa30cdf795e4e342986a0369eebb0eb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7585477235343873622, guid: ffa30cdf795e4e342986a0369eebb0eb, type: 3}
       propertyPath: archetype
@@ -28412,7 +28412,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1200, y: 800}
+  m_SizeDelta: {x: 786, y: 266.6667}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2107996994
 MonoBehaviour:
@@ -28468,7 +28468,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f18ac59761fdb1e4e98b2dc9e0c34d2f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce9de4664c23c4f4f8c2fd1507131661, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -29510,6 +29510,10 @@ PrefabInstance:
       propertyPath: diceThrowPoint
       value: 
       objectReference: {fileID: 257584548}
+    - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
+      propertyPath: meleeGuideText
+      value: 
+      objectReference: {fileID: 815414453}
     - target: {fileID: 6628639810616098868, guid: 547d83c1e8ec8a1418594031422be703, type: 3}
       propertyPath: attackDiceHolder
       value: 

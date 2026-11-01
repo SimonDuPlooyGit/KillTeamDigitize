@@ -106,10 +106,6 @@ public class MovementState : BaseState
             {
                 _menu.PopUp(_menu.invCharge);
             }
-            else if(!playerOp.validMoveMarkerPosition && playerOp.isInvalidMove)
-            {
-                Debug.Log("DO POPUP HERE");
-            }
             else
             {
                 Debug.Log("Movement blocked by invalid destination");

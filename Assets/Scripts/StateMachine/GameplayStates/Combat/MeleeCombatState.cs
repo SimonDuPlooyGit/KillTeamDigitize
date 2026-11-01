@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using static DiceHandler;
@@ -162,7 +163,7 @@ public class MeleeCombatState : BaseState
                     _diceHandler.playerActionReady = false;
                     _diceHandler.currentSelectionMode = DiceSelectionMode.None;
                     _diceHandler.UpdateRerollButtonVisibility();
-                    
+
                     yield return new WaitUntil(() => _diceHandler.playerActionReady || Context.CurrentlySelectedTargetScript.dead || Context.CurrentlySelectedOperativeScript.dead);
 
                     _diceHandler.playerActionReady = false;

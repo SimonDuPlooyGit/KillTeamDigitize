@@ -51,6 +51,10 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
         if (IsSelected)
         {
             Deselect();
+            if (_handler.gameManager._stateMachine.CurrentState == _handler.gameManager.meleeCombatState)
+            {
+                _handler.StartCoroutine(_handler.UpdateGuideText("Click one of your dice to select it"));
+            }
         }
         else
         {
@@ -58,6 +62,24 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
             if (_handler.CanSelectMeleeDie(this, _isAttack))
             {
                 Select();
+                if (_handler.isWaitingForParry)
+                {
+                    _handler.StartCoroutine(_handler.UpdateGuideText("Click parry again"));
+                }
+                else if (_handler.gameManager._stateMachine.CurrentState == _handler.gameManager.meleeCombatState && !_handler.isWaitingForParry)
+                {
+                    if(_handler.isFirstMeleeSelect)
+                    {
+                        _handler.StartCoroutine(_handler.UpdateGuideText("Click again to deselect it"));
+                        _handler.isFirstMeleeSelect = false;
+                    }
+                    else
+                    {
+                        _handler.StartCoroutine(_handler.UpdateGuideText("Select parry or strike"));
+                    }
+                    
+                }
+
             }
         }
     }
