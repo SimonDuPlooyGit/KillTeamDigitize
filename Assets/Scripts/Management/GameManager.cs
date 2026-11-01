@@ -352,6 +352,7 @@ public class GameManager : MonoBehaviour
             }
             
             SharedContext.PlayerTurn = true;
+            CheckGameEnd();
             return;
         }
 

@@ -88,6 +88,8 @@ public class UnitActivationState : BaseState
                     Debug.Log("This unit has already acted in this turning points"); //UI prompt for saying that this unit has acted
                     return;
                 }
+                
+                _gameManager.mainCamera.ToggleCam();
                 Context.SetSelectedOperativesData(hit.collider.gameObject);
                 Debug.Log("Selected Operative: " + Context.CurrentlySelectedOperativeSo.name);
                 Context.CurrentlySelectedOperativeScript.AddGlow();
@@ -105,5 +107,7 @@ public class UnitActivationState : BaseState
             Context.CurrentlySelectedOperativeScript.Deselect();
         }
         Context.FullReset();
+        
+        _gameManager.mainCamera.ToggleCam();
     }
 }

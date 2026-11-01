@@ -21,18 +21,17 @@ public class OrbitCamera : MonoBehaviour
     private float mouseY = 0f;
     public bool switchOffForMenu = false;
 
-    void Update()
+    private void Start()
+    {
+        UpdateCursorLock();
+    }
+    
+    private void Update()
     {
         // Toggle between Orbit and Freecam when the toggle key is pressed
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            isFreecam = !isFreecam;
-            
-            // Reset orbit radius or position smoothly if needed when switching back
-            if (!isFreecam && lookAtTarget != null)
-            {
-                transform.position = lookAtTarget.position - transform.forward * orbitRadius;
-            }
+            SetFreecam(!isFreecam);
         }
 
         // Execute behavior based on current mode
@@ -46,6 +45,23 @@ public class OrbitCamera : MonoBehaviour
         }
     }
 
+    private void SetFreecam(bool freecamState)
+    {
+        isFreecam = freecamState;
+        UpdateCursorLock();
+        
+        if (!isFreecam && lookAtTarget != null)
+        {
+            transform.position = lookAtTarget.position - transform.forward * orbitRadius;
+        }
+    }
+
+    private void UpdateCursorLock()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    
     //Logic to use in update to handle orbiting movement
     private void HandleOrbitMovement()
     {
@@ -75,37 +91,44 @@ public class OrbitCamera : MonoBehaviour
     {
         if (!switchOffForMenu)
         {
-            // Mouse Look Rotation
-            float mouseInputX = Input.GetAxis("Mouse X") * sensitivity;
-            float mouseInputY = Input.GetAxis("Mouse Y") * sensitivity;
+            if (Input.GetMouseButton(0))
+            {
+                //Mouse Look Rotation
+                float mouseInputX = Input.GetAxis("Mouse X") * sensitivity;
+                float mouseInputY = Input.GetAxis("Mouse Y") * sensitivity;
         
-            transform.Rotate(-mouseInputY, mouseInputX, 0, Space.Self);
+                transform.Rotate(-mouseInputY, mouseInputX, 0, Space.Self);
         
-            // Lock roll to prevent camera tilt
-            Vector3 eulerRotation = transform.rotation.eulerAngles;
-            transform.rotation = Quaternion.Euler(eulerRotation.x, eulerRotation.y, 0);
-
-            // Keyboard Movement (WASD / Arrows)
+                //Lock roll to prevent camera tilt
+                Vector3 eulerRotation = transform.rotation.eulerAngles;
+                transform.rotation = Quaternion.Euler(eulerRotation.x, eulerRotation.y, 0);
+            }
+            
+            //Keyboard Movement (WASD / Arrows)
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
             Vector3 moveInput = new Vector3(moveX, 0f, moveZ);
         
             transform.Translate(moveInput * speed * Time.deltaTime, Space.Self);
+
+            float moveY = 0f;
+            if (Input.GetKey(KeyCode.Space)) moveY += 0.25f;
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) moveY -= 0.25f;
+            
+            transform.position += Vector3.up * moveY * speed * Time.deltaTime;
         }
     }
 
     //Taggle between freecam and orbit cam
     public void ToggleCam()
     {
-        isFreecam = !isFreecam;
-        //Cursor.lockState = isFreecam ? CursorLockMode.Locked : CursorLockMode.None;
+        SetFreecam(!isFreecam);
     }
 
     //Set to orbit cam and set a unit as the lookat target
     public void SetOrbitTarget(Transform target)
     {
         lookAtTarget = target;
-        isFreecam = false;
-        //Cursor.lockState = CursorLockMode.Locked;
+        SetFreecam(false);
     }
 }
