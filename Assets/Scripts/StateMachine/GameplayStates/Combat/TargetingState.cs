@@ -153,6 +153,7 @@ public class TargetingState : BaseState
                 else
                 {
                     Context.ValidTargetShoot = false;
+                    _menu.PopUp(_menu.invTarget);
                     Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");
                 }
             }

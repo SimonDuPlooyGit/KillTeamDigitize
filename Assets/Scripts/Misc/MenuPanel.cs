@@ -17,6 +17,10 @@ public class MenuPanel : MonoBehaviour
     public GameObject meleeMenu;
     public GameObject PauseScreen;
     public GameObject tpCounter, objective;
+    [Header("Pop ups")]
+    public GameObject invTarget;
+    public GameObject concTarget;
+    public GameObject invCharge;
     [SerializeField]
     private GameObject weaponTooltipHolder;
     [Header("Tutorial flags")]
@@ -105,6 +109,14 @@ public class MenuPanel : MonoBehaviour
                 child.SetParent(null);
                 Destroy(child.gameObject);
             }
+        }
+    }
+
+    public void PopUp(GameObject panel)
+    {
+        if(panel != null)
+        {
+            panel.gameObject.SetActive(true);
         }
     }
 

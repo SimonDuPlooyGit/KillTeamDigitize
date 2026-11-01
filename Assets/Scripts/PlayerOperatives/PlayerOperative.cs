@@ -15,6 +15,7 @@ public class PlayerOperative : BaseOperativeClass
     public float remainingMovement;
     public GameObject movementInfo;
     public GameObject moveMarkerUI;
+    public MenuPanel menu;
 
     private NavMeshAgent _operativeAgent;
     private NavMeshAgent _moveMarkerAgent;
@@ -29,6 +30,9 @@ public class PlayerOperative : BaseOperativeClass
     public bool hasChargedThisActivation = false;
     public bool hasShotThisActivation = false; //This needs to be tweaked because they can all shoot twice but a bolt weapon needed to be used
     public bool validMoveMarkerPosition = true;
+    //used to specify if the invalid marker position is because of charge rules or dash rules
+    public bool isInvalidCharge;
+    public bool isInvalidMove;
 
     protected override void Awake()
     {
@@ -40,6 +44,7 @@ public class PlayerOperative : BaseOperativeClass
         _moveMarkerAgent = moveMarker.GetComponent<NavMeshAgent>();
         Path = new NavMeshPath();
         moveMarker.SetActive(false);
+        menu = FindAnyObjectByType<MenuPanel>();
 
         //Find UI for this operative
         healthFill = transform.Find("UnitUI/HealthBar/HealthFill").gameObject;
@@ -291,9 +296,11 @@ public class PlayerOperative : BaseOperativeClass
                 if (validMoveMarkerPosition)
                 {
                     Debug.Log("Charge here ends in control range");
+                    isInvalidCharge = false;
                 }
                 else
                 {
+                    isInvalidCharge = true;
                     Debug.Log("Charge here does not end in control range");
                 }
             }
@@ -303,6 +310,7 @@ public class PlayerOperative : BaseOperativeClass
                 if (!validMoveMarkerPosition)
                 {
                     Debug.Log("Dash Or Reposition can't end within control range of NPO");
+                    isInvalidMove = true;
                 }
             }
         }

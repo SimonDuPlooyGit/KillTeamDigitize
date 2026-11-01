@@ -99,6 +99,16 @@ public class MovementState : BaseState
             if (playerOp.MoveOperativeToMarker(Context.SelectedMovement))
             {
                 _coroutineRunner.StartCoroutine(ConfirmAndExecuteMovement(playerOp));
+                playerOp.isInvalidCharge = false;
+                playerOp.isInvalidMove = false;
+            }
+            else if(!playerOp.validMoveMarkerPosition && playerOp.isInvalidCharge)
+            {
+                _menu.PopUp(_menu.invCharge);
+            }
+            else if(!playerOp.validMoveMarkerPosition && playerOp.isInvalidMove)
+            {
+                Debug.Log("DO POPUP HERE");
             }
             else
             {
