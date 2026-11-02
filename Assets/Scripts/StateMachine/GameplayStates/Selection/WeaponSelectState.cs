@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Linq;
 using UnityEngine;
 
 //-----WeaponSelectState (When the player selects weapons from the weapon menu)-----
@@ -74,7 +76,25 @@ public class WeaponSelectState : BaseState
     private void OnWeaponClicked(WeaponTemplate chosenWeapon)
     {
         Debug.Log($"Selected Weapon: {chosenWeapon.name}");
-        Context.Weapon = chosenWeapon; //Set the information package weapon to the current weapon selected
-        Context.IsWeaponSelected = true; //State transition flag to true
+
+        var heavyRule = chosenWeapon.rules.OfType<WeaponRules.Heavy>().FirstOrDefault();
+        PlayerOperative playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
+        if (heavyRule != null)
+        {
+            if (playerOp.hasRepositionedThisActivation)
+            {
+                Debug.Log("Can't shoot this weapon after reposition due to heavy weapon rule");
+            }
+            else
+            {
+                Context.Weapon = chosenWeapon; //Set the information package weapon to the current weapon selected
+                Context.IsWeaponSelected = true; //State transition flag to true
+            }
+        }
+        else
+        {
+            Context.Weapon = chosenWeapon; //Set the information package weapon to the current weapon selected
+            Context.IsWeaponSelected = true; //State transition flag to true
+        }
     }
 }
