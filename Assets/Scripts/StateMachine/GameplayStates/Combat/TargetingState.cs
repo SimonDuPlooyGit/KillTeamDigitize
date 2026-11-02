@@ -114,7 +114,17 @@ public class TargetingState : BaseState
                     else
                     {
                         Debug.Log("Targeting lines rule can't see the enemy");
-                        validTarget = false;
+                        
+                        var seekRule = Context.Weapon != null ? Context.Weapon.rules.OfType<WeaponRules.Seek>().FirstOrDefault() : null;
+                        if (seekRule != null)
+                        {
+                            Debug.Log($"Weapon has Seek rule ({seekRule.coverType}), allowing target selection despite blocked lines.");
+                        }
+                        else
+                        {
+                            Debug.Log("Targeting lines rule can't see the enemy and weapon lacks Seek rule.");
+                            validTarget = false;
+                        }
                         
                     }
                 }

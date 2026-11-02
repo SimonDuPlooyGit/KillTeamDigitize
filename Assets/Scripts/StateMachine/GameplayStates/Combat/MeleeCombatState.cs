@@ -21,6 +21,7 @@ public class MeleeCombatState : BaseState
 
     public override void OnEnter()
     {
+        Context.IsFightingRequested = false;
         Debug.Log("MeleeCombatState OnEnter");
         
         Context.DiceHandler = _diceHandler;
@@ -69,7 +70,6 @@ public class MeleeCombatState : BaseState
         
         Context.CurrentlySelectedTargetScript.ForceUIOn(false);
         Context.FightSequenceOver = false;
-        Context.IsFightingRequested = false;
         Context.IsWeaponSelected = false;
         Context.ValidTargetFight = false;
         Context.Weapon = null;
