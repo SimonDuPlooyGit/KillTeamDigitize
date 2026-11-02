@@ -183,6 +183,7 @@ public class WeaponRules
         public void Execute(InformationPackage context)
         {
             //Defender cannot retain cover saves
+            //Ended up getting implemented in DiceRoll and DiceHandler
         }
         
         public override string ToString() => "Saturate";
@@ -302,6 +303,7 @@ public class WeaponRules
         public void Execute(InformationPackage context)
         {
             //When selecting valid targets, enemies cannot use (cover type) for cover
+            //Ended up getting handled in TargetingState
         }
         
         public override string ToString() => $"Seek: {coverType}";

@@ -183,7 +183,7 @@ public class InformationPackage
         IsWeaponSelected = false;
         ValidTargetShoot = false;
         ValidTargetFight = false;
-        IsFightingRequested = false;
+        //IsFightingRequested = false;
     }
 }
 

@@ -58,8 +58,8 @@ public class DiceRoll : MonoBehaviour
 
     public void SetDesiredFace(int targetFace)
     {
-        // 1. Identify which local direction corresponds to targetFace
-        Vector3 localDir = Vector3.forward; // Default to face 1
+        //1. Identify which local direction corresponds to targetFace
+        Vector3 localDir = Vector3.forward; //Default to face 1
 
         switch (targetFace)
         {
@@ -74,10 +74,10 @@ public class DiceRoll : MonoBehaviour
                 break;
         }
 
-        // 2. Calculate the rotation required to align localDir to world UP (0, 1, 0)
+        //2. Calculate the rotation required to align localDir to world UP (0, 1, 0)
         Quaternion alignRotation = Quaternion.FromToRotation(transform.TransformDirection(localDir), Vector3.up);
 
-        // 3. Apply the rotation and freeze physics
+        //3. Apply the rotation and freeze physics
         transform.rotation = alignRotation * transform.rotation;
 
         if (_rb != null)
