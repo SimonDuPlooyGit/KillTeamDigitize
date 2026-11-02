@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using System.Collections;
 using System.Linq;
 using TMPro;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
 //-----DiceHandler Class-----
 public class DiceHandler : MonoBehaviour
@@ -97,7 +98,7 @@ public class DiceHandler : MonoBehaviour
         rerollButton.SetActive(false);    
         parryButton.SetActive(false);
         strikeButton.SetActive(false);
-        meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
+        //meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
     }
 
     private void SpawnDice(List<DiceRoll> physDiceList, bool isAttack, bool isAlly)
@@ -679,16 +680,19 @@ public class DiceHandler : MonoBehaviour
         int oppSelectedCount = 0;
         foreach (var d in oppPool) if (d != null && d.IsSelected) oppSelectedCount++;
 
-        // Always allow deselecting a currently selected die
         if (clickedDie.IsSelected)
         {
             return true;
         }
-
+        
+        // Always allow deselecting a currently selected die
         if (isClickingMyPool)
         {
-            // Player can select exactly 1 of their own dice when NOT waiting for parry target
-            if (isWaitingForParry) return false;
+            // If we're waiting for parry and user clicks their locked die, allow deselect and cancel
+            if (isWaitingForParry)
+            {
+                return true;
+            }
             return mySelectedCount < 1;
         }
         else
@@ -696,6 +700,23 @@ public class DiceHandler : MonoBehaviour
             // Player can select 1 opponent die ONLY when in parry selection mode
             return isWaitingForParry && (oppSelectedCount < 1);
         }
+    }
+
+    public void CheckParryDeselect(CombatRoll clickedDie, bool newState)
+    {
+        if (isWaitingForParry && !newState && clickedDie == _savedParryPlayerDie)
+        {
+            CancelParryMode();
+        }
+    }
+
+    public void CancelParryMode()
+    {
+        Debug.Log("CancelParryMode");
+        _savedParryPlayerDie = null;
+        isWaitingForParry = false;
+        ClearAllSelections();
+        UpdateRerollButtonVisibility();
     }
 
     public void ClearDiceRolls()
@@ -773,6 +794,8 @@ public class DiceHandler : MonoBehaviour
     //FOR DUPLICATE DICE: when a dice is selected, if in duplicate mode, selects all matching dice values
     public void OnDieSelectedStateChanged(CombatRoll clickedDie, bool isAttack, bool newSelectedState)
     {
+        CheckParryDeselect(clickedDie, newSelectedState);
+        
         if (currentSelectionMode != DiceSelectionMode.Duplicates) return;
         if (_isSyncingDuplicates) return; // Prevent infinite recursive loops
 
@@ -885,7 +908,7 @@ public class DiceHandler : MonoBehaviour
         isWaitingForParry = false;
         ClearAllSelections();
         UpdateRerollButtonVisibility();
-        meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
+        //meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
         playerActionReady = true;
     }
 
@@ -968,7 +991,7 @@ public class DiceHandler : MonoBehaviour
         isWaitingForParry = false;
         ClearAllSelections();
         UpdateRerollButtonVisibility();
-        meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
+        //meleeGuideText.GetComponent<TextMeshProUGUI>().text = "Click one of your dice to select it";
         playerActionReady = true;
     }
 
@@ -1026,17 +1049,17 @@ public class DiceHandler : MonoBehaviour
 
     public IEnumerator UpdateGuideText(string message)
     {
-        Vector3 originalScale = meleeGuideText.transform.localScale;
+        //Vector3 originalScale = meleeGuideText.transform.localScale;
         Vector3 targetScale = new Vector3(1.3f, 1.3f, 1.3f);
         float lerpTime = 0.1f;
         float elapsedTimeA = 0;
         float elapsedTimeB = 0;
-        meleeGuideText.GetComponent<TextMeshProUGUI>().text = message;
+        //meleeGuideText.GetComponent<TextMeshProUGUI>().text = message;
         while(elapsedTimeA<lerpTime)
         {
             elapsedTimeA += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTimeA/lerpTime);
-            meleeGuideText.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
+            //meleeGuideText.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
@@ -1044,7 +1067,7 @@ public class DiceHandler : MonoBehaviour
         {
             elapsedTimeB += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTimeB / lerpTime);
-            meleeGuideText.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
+            //meleeGuideText.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
             yield return null;
         }
     }

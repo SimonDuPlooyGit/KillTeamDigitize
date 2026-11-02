@@ -22220,7 +22220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.416
+      value: 1.175
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -22228,7 +22228,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.916
+      value: -0.483
       objectReference: {fileID: 0}
     - target: {fileID: 4964377809013877437, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -22727,6 +22727,9 @@ MonoBehaviour:
   PauseScreen: {fileID: 2111573429}
   tpCounter: {fileID: 2048312039}
   objective: {fileID: 802968462}
+  invTarget: {fileID: 0}
+  concTarget: {fileID: 0}
+  invCharge: {fileID: 0}
   weaponTooltipHolder: {fileID: 0}
   tutFlag1: 1
   tutFlag2: 1
