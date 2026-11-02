@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Collections;
+using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 
 //-----DiceHandler Class-----
 public class DiceHandler : MonoBehaviour
@@ -257,35 +257,62 @@ public class DiceHandler : MonoBehaviour
         //Assign prefab based on whether the attacker is an enemy or ally 
         GameObject defDiceObj = !isAlly ? allyDicePhysical : enemyDicePhysical;
 
-        //Instantiate/throw the defense dice
-        for (int i = 0; i < numDice; i++)
+        //Instantiate/throw the defense dice with or without guaranteed cover save
+        bool applyCoverSave = false;
+        bool isConcealedInCover = (context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal && context.CurrentlySelectedTargetScript.closeToCover);
+        bool targetingLinesBlocked = !context.CurrentlySelectedOperativeScript.CheckTargetingLines(context.CurrentlySelectedOperativeScript, context.CurrentlySelectedTargetScript);
+        bool weaponHasSaturate = context.Weapon != null && context.Weapon.rules.OfType<WeaponRules.Saturate>().Any();
+
+        if (isConcealedInCover && targetingLinesBlocked && !weaponHasSaturate)
+        {
+            applyCoverSave = true;
+        } else if (isConcealedInCover && targetingLinesBlocked && weaponHasSaturate)
+        {
+            Debug.Log("Saturate denies cover save");
+        }
+        
+        int diceToThrow = numDice;
+
+        if (applyCoverSave)
+        {
+            diceToThrow = numDice - 1;
+            
+            GameObject forcedDieObj = Instantiate(defDiceObj, diceThrowPoint.position, Quaternion.identity);
+            DiceRoll forcedDieScript = forcedDieObj.GetComponent<DiceRoll>();
+        
+            int saveValue = context.CurrentlySelectedTargetScript.operativeData.save;
+            forcedDieScript.SetDesiredFace(saveValue);
+        
+            activePhysDefenseDice.Add(forcedDieScript);
+            Debug.Log($"[DiceHandler] Cover save active: 1 die pre-forced to success ({saveValue}), throwing remaining {diceToThrow} dice.");
+        }
+
+        for (int i = 0; i < diceToThrow; i++)
         {
             GameObject physDefDie = Instantiate(defDiceObj, diceThrowPoint.position, Random.rotation);
             DiceRoll dieScript = physDefDie.GetComponent<DiceRoll>();
             activePhysDefenseDice.Add(dieScript);
             yield return new WaitForSeconds(0.1f);
         }
-
+        
         yield return new WaitForSeconds(0.5f);
-
-        //Wait until all dice stop moving before processing their results
+        
         bool allStopped = false;
-        while(!allStopped)
+        while (!allStopped)
         {
             allStopped = true;
-
-            foreach(DiceRoll die in activePhysDefenseDice)
+            foreach (DiceRoll die in activePhysDefenseDice)
             {
-                if(!die.IsStopped())
+                if (!die.IsStopped())
                 {
-                    allStopped=false;
+                    allStopped = false;
                     break;
                 }
             }
             yield return null;
         }
-
-        //Process Defense dice values
+        
+        //Process Defense dice values (includes both the pre-forced die and the rolled ones)
         foreach (DiceRoll die in activePhysDefenseDice)
         {
             int face = die.GetUpwardFace();
@@ -303,8 +330,9 @@ public class DiceHandler : MonoBehaviour
         {
             menu.OpenMenu(menu.diceRollMenu);
         }
-        SpawnDice(activePhysAttackDice, true, isAlly);
         
+        SpawnDice(activePhysAttackDice, true, isAlly);
+    
         //Display whether the dice hit or not by updating the sprite
         foreach (CombatRoll dieSprite in activeAttackDice)
         {
@@ -313,12 +341,15 @@ public class DiceHandler : MonoBehaviour
                 dieSprite.ToggleHit();
             }
         }
+        
         SpawnDice(activePhysDefenseDice, false, !isAlly);
+        
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
             FilterDiceList(context, true, context.Weapon.hit);
             FilterDiceList(context, false, context.opponentWeapon.hit);
         }
+        
         //Display whether the dice blocked or not by updating the sprite
         foreach (CombatRoll dieSprite in activeDefenseDice)
         {
@@ -333,7 +364,7 @@ public class DiceHandler : MonoBehaviour
             Debug.Log("Waiting for Space input to continue");
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         }
-        
+    
         menu.CloseMenu(menu.diceRollMenu);
         Debug.Log("ThrowDefenseDice Coroutine has finished");
     }

@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
         GoBackAState(weaponSelectState, actionSelectionState, ()=>true,() =>
         {
             SharedContext.IsShootingRequested = false;
+            SharedContext.IsFightingRequested = false;
         });
         GoBackAState(targetingState, weaponSelectState,()=>true,() =>
         {
