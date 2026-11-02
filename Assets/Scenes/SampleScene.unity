@@ -14742,10 +14742,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 1573381767}
     m_Modifications:
     - target: {fileID: 47344954465138842, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
-      propertyPath: scrollArrows
-      value: 
-      objectReference: {fileID: 1470724445}
-    - target: {fileID: 47344954465138842, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
       propertyPath: panelContainer
       value: 
       objectReference: {fileID: 652041722}

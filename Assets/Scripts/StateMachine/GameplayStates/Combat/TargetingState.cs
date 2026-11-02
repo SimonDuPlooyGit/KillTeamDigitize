@@ -144,6 +144,7 @@ public class TargetingState : BaseState
                     Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
                     _menu.tutFlag6 = true; 
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
+                    _menu.PopUp(_menu.invTarget);
                     validTarget = false;
                 }
 
@@ -163,7 +164,7 @@ public class TargetingState : BaseState
                 else
                 {
                     Context.ValidTargetShoot = false;
-                    _menu.PopUp(_menu.invTarget);
+                    _menu.PopUp(_menu.concTarget);
                     Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");
                 }
             }

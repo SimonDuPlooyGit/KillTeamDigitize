@@ -382,6 +382,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd6cca065f9e96b439033c6c9b3e1c36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShootButton
+  targetScale: {x: 1.05, y: 1.05, z: 1.05}
+  isParentLerp: 1
 --- !u!1 &5701950917300597220
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,18 +573,16 @@ MonoBehaviour:
     weaponRule: {fileID: 214091925676753744, guid: ba1968da8e8b61b49a2babf0975e13d2, type: 3}
   - keyword: Saturate
     weaponRule: {fileID: 5230546757151683354, guid: df13efb997543d44a8b2051e54082e41, type: 3}
-  - keyword: Piercing crits
+  - keyword: PiercingCrit
     weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
-  - keyword: Piercing crits
-    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
-  - keyword: Piercing crits
-    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
-  - keyword: Piercing crits
-    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
-  - keyword: Piercing crits
-    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
-  - keyword: Piercing crits
-    weaponRule: {fileID: 5019713804738156942, guid: 533b4b827e6be7c4ab5dff5577bf72a8, type: 3}
+  - keyword: Torrent
+    weaponRule: {fileID: 7625075110880056334, guid: 35abebc874823cf4687ce8d9869f5659, type: 3}
+  - keyword: Silent
+    weaponRule: {fileID: 4998545295465133923, guid: 491ad5dad68c4f04fb9b659da5cf9db2, type: 3}
+  - keyword: Seek
+    weaponRule: {fileID: 3474985513979735290, guid: baf79f4e298a8c343bb14822d4bcb1b9, type: 3}
+  - keyword: Melee
+    weaponRule: {fileID: 7090205000669358741, guid: a90eab7e0beaafd488becc6d86d7c815, type: 3}
   isRuleText: 1
 --- !u!1 &6578261781524685780
 GameObject:
