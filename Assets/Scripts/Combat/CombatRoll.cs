@@ -48,12 +48,26 @@ public class CombatRoll : MonoBehaviour, IPointerClickHandler
     {
         if (_handler == null) return;
 
+        bool isMeleeState = (_handler.gameManager != null &&
+                         _handler.gameManager._stateMachine != null &&
+                         _handler.gameManager._stateMachine.CurrentState == _handler.gameManager.meleeCombatState);
+
         if (IsSelected)
         {
             Deselect();
-            if (_handler.gameManager._stateMachine.CurrentState == _handler.gameManager.meleeCombatState)
+            if (isMeleeState)
             {
-                _handler.StartCoroutine(_handler.UpdateGuideText("Click one of your dice to select it"));
+                // Reset parry mode if player deselects a die at any stage
+                if (_handler.isWaitingForParry)
+                {
+                    _handler.CancelParryMode();
+                }
+                else
+                {
+                    _handler.StartCoroutine(_handler.UpdateGuideText("Click one of your dice to select it"));
+                }
+
+                _handler.UpdateRerollButtonVisibility();
             }
         }
         else

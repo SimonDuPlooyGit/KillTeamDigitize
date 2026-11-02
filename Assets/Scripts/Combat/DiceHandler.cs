@@ -952,6 +952,7 @@ public class DiceHandler : MonoBehaviour
         if (!isValidParry)
         {
             Debug.Log("[DiceHandler] Invalid parry: Normal die cannot block a Crit die.");
+            CancelParryMode();
             return;
         }
 
@@ -1047,5 +1048,14 @@ public class DiceHandler : MonoBehaviour
             meleeGuideText.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
             yield return null;
         }
+    }
+
+    public void CancelParryMode()
+    {
+        isWaitingForParry = false;
+        _savedParryPlayerDie = null;
+        ClearAllSelections();
+        UpdateRerollButtonVisibility();
+        StartCoroutine(UpdateGuideText("Click one of your dice to select it"));
     }
 }
