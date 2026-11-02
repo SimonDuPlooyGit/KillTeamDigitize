@@ -219,6 +219,7 @@ public class NonPlayerOperative : BaseOperativeClass
     //Coroutine for Executing an NPOs shoot action calls DiceHandler dice throwing methods
     private IEnumerator ExecuteNpoShoot()
     {
+        SetOrderState(OrderState.Engage);
         currentShootTarget.ForceUIOn(true);
         Debug.Log($"{name} starts shoot coroutine");
 
@@ -352,7 +353,6 @@ public class NonPlayerOperative : BaseOperativeClass
 
         if (targetCover != null)
         {
-            SetOrderState(OrderState.Engage);
             ExecuteMoveToCover(targetCover, meterMovement);
             Debug.Log($"{name} repositioned into {targetCover.name} and changed to ENGAGE");
             targetCover.occupied = true;
