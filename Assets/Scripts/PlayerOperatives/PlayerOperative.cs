@@ -121,8 +121,7 @@ public class PlayerOperative : BaseOperativeClass
             movementInfo.SetActive(false);
             moveMarkerUI.SetActive(false);
 
-            movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(remainingMovement * 39.37f / 10)}/{movementStat}\""; //The display on top of the move marker
+            float maxBudgetMeters = meterMovement;
 
             if (remainingMovement <= 0.05f)
             {
@@ -154,9 +153,10 @@ public class PlayerOperative : BaseOperativeClass
                 ResetMoveMarker();
             }
 
-            float projectedSpentMeters = (GetCurrentRepositionBudget() - remainingMovement) + _currentPathDistance;
+            float totalSpentMeters = (maxBudgetMeters - remainingMovement) + _currentPathDistance;
+
             movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
+                $"{Math.Round(totalSpentMeters * 39.37f / 10)}/{movementStat}\"";
         }
     }
     
@@ -223,7 +223,7 @@ public class PlayerOperative : BaseOperativeClass
         
         if (selected)
         {
-            Debug.Log("ClickToPathfindReposition is entered and unit is selected");
+            Debug.Log("ClickToPathfindDash is entered and unit is selected");
             validMoveMarkerPosition = true;
             _limitedPoints.Clear();
             _currentPathDistance = 0f;
@@ -441,6 +441,19 @@ public class PlayerOperative : BaseOperativeClass
             return finalPoint;
         }
         return destination;
+    }
+    
+    //Override of movement stats for remaining movement changes
+    public override void UpdateMovementStats()
+    {
+        float oldMax = meterMovement;
+        base.UpdateMovementStats();
+    
+        //If remainingMovement was at max or exceeds the new injured max, sync it
+        if (remainingMovement >= oldMax || remainingMovement > meterMovement || remainingMovement == 0f)
+        {
+            remainingMovement = meterMovement;
+        }
     }
     
     public void Reset()

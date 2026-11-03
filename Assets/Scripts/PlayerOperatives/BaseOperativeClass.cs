@@ -78,8 +78,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
         unitUI.GetComponent<CanvasGroup>().alpha = 0;
         statusHoverHolder = GameObject.Find("HoverStatusContainer");
 
-
-
         //Null check and initialization
         if (operativeData != null)
         {
@@ -87,9 +85,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             currentWounds = operativeData.wounds;
             currentApl = operativeData.apl;
             SetApl(operativeData.apl);
-            movementStat = operativeData.move;
-            meterMovement = (movementStat / 39.37f) * 10;
-            chargeDistanceScaled = meterMovement + (2f / 39.37f) * 10;
+            UpdateMovementStats();
         }
         
         //Initialize the sampling points for targeting lines
@@ -101,6 +97,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
                 samplingPoints.Add(pt.gameObject);
             }
         }
+        
+        //Testing injured effects
+        TakeDamage(10);
     }
 
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
@@ -378,8 +377,12 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             if (currentWounds <= (int)Mathf.Ceil((float)operativeData.wounds / 2))
             {
-                injuredSymbol.SetActive(true);
-                injured = true;
+                if (!injured)
+                {
+                    injuredSymbol.SetActive(true);
+                    injured = true;
+                    UpdateMovementStats(); //Recalculate movement stats
+                }
             }
             _animator.SetTrigger("TakeDamage");
 
@@ -664,4 +667,13 @@ public abstract class BaseOperativeClass : MonoBehaviour
         return meterMovement;
     }
     
+    //Update movement related variables for injured
+    public virtual void UpdateMovementStats()
+    {
+        if (operativeData == null) return;
+        float effectiveMove = injured ? Mathf.Max(2f, operativeData.move - 2f) : operativeData.move;
+        movementStat = effectiveMove;
+        meterMovement = (movementStat / 39.37f) * 10;
+        chargeDistanceScaled = meterMovement + (2f / 39.37f) * 10;
+    }
 }
