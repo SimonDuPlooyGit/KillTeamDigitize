@@ -42,6 +42,8 @@ public class DiceHandler : MonoBehaviour
     GameObject meleeDefenseHolder; //The horizontal layout group for the defense dice prefabs
     [SerializeField]
     Transform diceThrowPoint; //Where dice spawn from
+    [SerializeField]
+    private Transform ruleTooltipHolder; //for rules that popup outsude of the shoot menu e.g. balanced during combat
     public List<CombatRoll> activeAttackDice = new List<CombatRoll>(); //List of rolled UI attack dice to track roll results for menu
     public List<CombatRoll> activeDefenseDice = new List<CombatRoll>(); //List of rolled UI defence dice for menu
     [SerializeField]
@@ -74,6 +76,9 @@ public class DiceHandler : MonoBehaviour
     private TextMeshProUGUI xToHit;
     [SerializeField]
     private TextMeshProUGUI xToSave;
+    [SerializeField]
+    private GameObject balancedPrefab;
+    private GameObject balancedObject;
     // Guard flag to prevent infinite recursion during duplicate state syncing
     private bool _isSyncingDuplicates = false;
     //Used externally when rerolling a die to a set value
@@ -233,6 +238,12 @@ public class DiceHandler : MonoBehaviour
         else
         {
             menu.OpenMenu(menu.diceRollMenu);
+            //If in attack then popup the balanced rule
+            if(currentSelectionMode == DiceSelectionMode.Attack)
+            {
+                GameObject balancedPopup = Instantiate(balancedPrefab,ruleTooltipHolder);
+                balancedObject = balancedPopup;
+            }
         }
         SpawnDice(thrownDice, true, isAlly);
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
@@ -400,6 +411,10 @@ public class DiceHandler : MonoBehaviour
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
         }
     
+        if(balancedObject != null)
+        {
+            Destroy(balancedObject);
+        }
         menu.CloseMenu(menu.diceRollMenu);
         Debug.Log("ThrowDefenseDice Coroutine has finished");
     }
@@ -881,6 +896,10 @@ public class DiceHandler : MonoBehaviour
     //used to call the reroll coroutine
     public void RerollButton(bool isAlly)
     {
+        if (balancedObject != null)
+        {
+            Destroy(balancedObject);
+        }
         StartCoroutine(Reroll(isAlly));
     }
     

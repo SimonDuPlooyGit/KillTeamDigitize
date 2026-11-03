@@ -84,6 +84,7 @@ public class WeaponSelectState : BaseState
             if (playerOp.hasRepositionedThisActivation)
             {
                 Debug.Log("Can't shoot this weapon after reposition due to heavy weapon rule");
+                _menu.PopUp(_menu.heavyPopup);
             }
             else
             {
