@@ -87,17 +87,36 @@ public class ShootCombatState : BaseState
         Debug.Log("Evaluating hits and saves");
         for (int i = 0; i < Context.AttackRolls.Count; i++)
         {
-            if (Context.AttackRolls[i] >= Context.Weapon.hit)
+            if (Context.CurrentlySelectedOperativeScript.injured)
             {
-                if (Context.AttackRolls[i] == 6)
+                if (Context.AttackRolls[i] >= Context.Weapon.hit + 1)
                 {
-                    Context.RetainedCrits += 1;
-                    Debug.Log("Number of crits: " + Context.RetainedCrits.ToString());
+                    if (Context.AttackRolls[i] == 6)
+                    {
+                        Context.RetainedCrits += 1;
+                        Debug.Log("Number of crits: " + Context.RetainedCrits.ToString());
+                    }
+                    else
+                    {
+                        Context.RetainedNormals += 1;
+                        Debug.Log("Number of normals: " + Context.RetainedNormals.ToString());
+                    }
                 }
-                else
+            }
+            else
+            {
+                if (Context.AttackRolls[i] >= Context.Weapon.hit)
                 {
-                    Context.RetainedNormals += 1;
-                    Debug.Log("Number of normals: " + Context.RetainedNormals.ToString());
+                    if (Context.AttackRolls[i] == 6)
+                    {
+                        Context.RetainedCrits += 1;
+                        Debug.Log("Number of crits: " + Context.RetainedCrits.ToString());
+                    }
+                    else
+                    {
+                        Context.RetainedNormals += 1;
+                        Debug.Log("Number of normals: " + Context.RetainedNormals.ToString());
+                    }
                 }
             }
         }
@@ -175,7 +194,6 @@ public class ShootCombatState : BaseState
         Debug.Log("ShootCombatState OnExit");
         //_menu.CloseMenu(_menu.diceRollMenu);
         _diceHandler.ClearAllDice();
-        int updatedApl = Context.CurrentlySelectedOperativeScript.currentApl - 1;
         Context.CurrentlySelectedOperativeScript.UpdateApl();
         Context.CurrentlySelectedTargetScript.ForceUIOn(false);
     }

@@ -209,7 +209,7 @@ public class MeleeCombatState : BaseState
         }
     }
 
-    //This is where player must select dice
+    //This is where player must select dice (not being used)
     private void ProcessPlayerChoice()
     {
         foreach (var dieSprite in _diceHandler.activeAttackDice)

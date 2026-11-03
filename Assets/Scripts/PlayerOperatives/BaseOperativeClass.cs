@@ -57,6 +57,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     [Header("Effects To Apply")]
     public GameObject fogEffect;
     public Material glow;
+    public bool injured = false;
 
     [Header("Animation")]
     [SerializeField]
@@ -378,6 +379,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             if (currentWounds <= (int)Mathf.Ceil((float)operativeData.wounds / 2))
             {
                 injuredSymbol.SetActive(true);
+                injured = true;
             }
             _animator.SetTrigger("TakeDamage");
 

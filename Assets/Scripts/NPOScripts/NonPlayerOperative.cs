@@ -670,6 +670,11 @@ public class NonPlayerOperative : BaseOperativeClass
             return CheckTargetingLines(target);
         }
 
+        if (target.EnemyInControlRange)
+        {
+            return false;
+        }
+
         return true;
     }
 

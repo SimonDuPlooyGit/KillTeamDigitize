@@ -209,7 +209,16 @@ public class DiceHandler : MonoBehaviour
 
         //Populate UI panel with roll results
         yield return new WaitForSeconds(2f);
-        xToHit.text = $"{context.Weapon.hit} to hit";
+
+        if (context.CurrentlySelectedOperativeScript.injured)
+        {
+            xToHit.text = $"{context.Weapon.hit + 1} to hit (+1 from Injured)";
+        }
+        else
+        {
+            xToHit.text = $"{context.Weapon.hit} to hit";
+        }
+        
         xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
         //Stops the sequence here if in melee state
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
@@ -228,14 +237,32 @@ public class DiceHandler : MonoBehaviour
         SpawnDice(thrownDice, true, isAlly);
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
-            FilterDiceList(context, true, context.Weapon.hit);
+            if (context.CurrentlySelectedOperativeScript.injured)
+            {
+                FilterDiceList(context, true, context.Weapon.hit + 1);
+            }
+            else
+            {
+                FilterDiceList(context, true, context.Weapon.hit);
+            }
         }
+        
         //Display whether the dice hit or not by updating the sprite
         foreach (CombatRoll dieSprite in activeAttackDice)
         {
-            if (dieSprite.GetValue() >= context.Weapon.hit && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
+            if (context.CurrentlySelectedOperativeScript.injured)
             {
-                dieSprite.ToggleHit();
+                if (dieSprite.GetValue() >= (context.Weapon.hit + 1) && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
+                {
+                    dieSprite.ToggleHit();
+                }
+            }
+            else
+            {
+                if (dieSprite.GetValue() >= context.Weapon.hit && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
+                {
+                    dieSprite.ToggleHit();
+                }
             }
         }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
@@ -347,7 +374,14 @@ public class DiceHandler : MonoBehaviour
         
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
-            FilterDiceList(context, true, context.Weapon.hit);
+            if (context.CurrentlySelectedOperativeScript.injured)
+            {
+                FilterDiceList(context, true, context.Weapon.hit + 1);
+            }
+            else
+            {
+                FilterDiceList(context, true, context.Weapon.hit);
+            }
             FilterDiceList(context, false, context.opponentWeapon.hit);
         }
         
@@ -497,13 +531,30 @@ public class DiceHandler : MonoBehaviour
         SpawnDice(activePhysList, isAttackMode, isUIAlly);
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
-            FilterDiceList(_context, true, _context.Weapon.hit);
+            if (_context.CurrentlySelectedOperativeScript.injured)
+            {
+                FilterDiceList(_context, true, _context.Weapon.hit + 1);
+            }
+            else
+            {
+                FilterDiceList(_context, true, _context.Weapon.hit);
+            }
         }
         foreach (CombatRoll dieSprite in activeAttackDice)
         {
-            if (dieSprite.GetValue() >= _context.Weapon.hit)
+            if (_context.CurrentlySelectedOperativeScript.injured)
             {
-                dieSprite.ToggleHit();
+                if (dieSprite.GetValue() >= _context.Weapon.hit + 1)
+                {
+                    dieSprite.ToggleHit();
+                }
+            }
+            else
+            {
+                if (dieSprite.GetValue() >= _context.Weapon.hit)
+                {
+                    dieSprite.ToggleHit();
+                }
             }
         }
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));

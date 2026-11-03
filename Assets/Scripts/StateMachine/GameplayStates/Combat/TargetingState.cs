@@ -148,6 +148,12 @@ public class TargetingState : BaseState
                     validTarget = false;
                 }
 
+                if (Context.CurrentlySelectedTargetScript.EnemyInControlRange)
+                {
+                    validTarget = false;
+                    Debug.Log("Cannot target an operative engaged in a fight");
+                }
+
                 if (validTarget)
                 {
                     Context.SetSelectedTarget(hit.collider.gameObject);
