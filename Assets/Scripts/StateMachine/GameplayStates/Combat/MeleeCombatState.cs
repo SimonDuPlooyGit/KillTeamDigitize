@@ -241,7 +241,7 @@ public class MeleeCombatState : BaseState
         }
     }
 
-    //Parry first always then remaining is fighting
+    //Parry first always then remaining is fighting, old not using
     private void ProcessNpoChoice()
     {
         if (Context.RetaliatorRemainingDice.Count == 0) return;
@@ -263,6 +263,7 @@ public class MeleeCombatState : BaseState
         }
     }
 
+    //Handle the NPO parry and strike decisions
     private void ProcessNpoChoice(bool isAttackerTurn)
     {
         bool isNpoAttacker = !Context.IsPlayerAttacker;
@@ -277,6 +278,10 @@ public class MeleeCombatState : BaseState
         if (npoPool.Count == 0) return;
 
         bool didParry = false;
+        
+        WeaponTemplate playerWeapon = Context.IsPlayerAttacker ? attackerWeapon : retaliatorWeapon;
+        bool playerHasBrutal = playerWeapon != null && playerWeapon.rules.OfType<WeaponRules.Brutal>().Any();
+        
         if (oppPool.Count > 0)
         {
             // Find highest value opponent die
@@ -286,6 +291,13 @@ public class MeleeCombatState : BaseState
             for (int i = 0; i < npoPool.Count; i++)
             {
                 int pVal = npoPool[i];
+                
+                if (!npoActingAsAttacker && playerHasBrutal && pVal < 6)
+                {
+                    //Debug.Log($"[MeleeCombatState] NPO cannot parry with die {pVal} due to Brutal weapon rule.");
+                    continue; //Skip over non crit dice for parry due to brutal
+                }
+                
                 bool valid = (pVal == 6) || (pVal < 6 && bestOppVal < 6);
                 if (valid)
                 {

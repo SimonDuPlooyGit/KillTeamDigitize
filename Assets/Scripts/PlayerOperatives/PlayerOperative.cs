@@ -154,7 +154,7 @@ public class PlayerOperative : BaseOperativeClass
                 ResetMoveMarker();
             }
 
-            float projectedSpentMeters = (meterMovement - remainingMovement) + _currentPathDistance;
+            float projectedSpentMeters = (GetCurrentRepositionBudget() - remainingMovement) + _currentPathDistance;
             movementInfo.GetComponent<TextMeshProUGUI>().text =
                 $"{Math.Round(projectedSpentMeters * 39.37f / 10)}/{movementStat}\"";
         }
@@ -364,7 +364,7 @@ public class PlayerOperative : BaseOperativeClass
     public override void ResetForNewTurningPoint()
     {
         base.ResetForNewTurningPoint();
-        remainingMovement = meterMovement;
+        remainingMovement = GetCurrentRepositionBudget();
         hasRepositionedThisActivation = false;
         hasShotThisActivation = false;
         ResetMoveMarker();
@@ -375,7 +375,7 @@ public class PlayerOperative : BaseOperativeClass
         base.TurnFinished();
         if (!hasRepositionedThisActivation)
         {
-            remainingMovement = meterMovement;
+            remainingMovement = GetCurrentRepositionBudget();
         }
         ResetMoveMarker();
     }

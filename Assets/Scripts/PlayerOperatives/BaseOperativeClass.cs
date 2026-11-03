@@ -123,7 +123,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Calculate a path to destination and clamp the path distance according to max a distance
     //(Makes use of the out keyword at the limitedPoints and totalPathDistance arguments. This passes them by reference and makes it so we can also get limitedPoints and totalPathDistance from this function)
     //(Simply put this function can give us 3 outputs)
-    public virtual Vector3 LimitPathDistance(Vector3 destination, float maxDistance, out List<Vector3> limitedPoints, out float totalPathDistance)
+    public  Vector3 LimitPathDistance(Vector3 destination, float maxDistance, out List<Vector3> limitedPoints, out float totalPathDistance)
     {
         limitedPoints = new List<Vector3>();
         totalPathDistance = 0f;
@@ -643,10 +643,25 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
     }
 
+    //Force unit UI on when they are selected or targeted
     public void ForceUIOn(bool force)
     {
         isUIForcedOn = force;
         if (force) ToggleUIOn();
         else ToggleUIOff();
     }
+    
+    //Helper for when reposition budget changes due to injured
+    public float GetCurrentRepositionBudget()
+    {
+        float twoInchesScaled = (2f / 39.37f) * 10;
+
+        if (injured)
+        {
+            return Mathf.Max(0f, meterMovement - twoInchesScaled);
+        }
+        
+        return meterMovement;
+    }
+    
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //-----CombatState Class (Handles all of combat)-----
@@ -45,12 +47,30 @@ public class ShootCombatState : BaseState
         
         _diceHandler.StartCoroutine(ResolveCombat());
         Context.CurrentlySelectedTargetScript.ForceUIOn(true);
+
+        var silentRule = Context.Weapon.rules.OfType<WeaponRules.Silent>().FirstOrDefault();
+        if (silentRule != null)
+        {
+            Debug.Log("Silent rule on weapon, can shoot from conceal");
+        }
+        else
+        {
+            Debug.Log("Firing non silent weapon, order changing to Engage");
+            Context.CurrentlySelectedOperativeScript.currentOrder = OrderState.Engage;
+        }
     }
 
     private IEnumerator ResolveCombat()
     {
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (playerOp != null) playerOp.hasShotThisActivation = true;
+
+        var heavyRule = Context.Weapon.rules.OfType<WeaponRules.Heavy>().FirstOrDefault();
+        if (heavyRule != null)
+        {
+            playerOp.hasRepositionedThisActivation = true; //Take reposition away if you start a shoot with a heavy weapon
+            playerOp.hasChargedThisActivation = true; //Take charge away if you have started a shoot witha heavy weapon
+        }
         Debug.Log("ResolveCombat");
         
         //Pre-Roll

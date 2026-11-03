@@ -349,23 +349,24 @@ public class NonPlayerOperative : BaseOperativeClass
         currentApl -= 1;
         SetApl(currentApl);
         
-        NPOCoverNodes targetCover = FindBestMarksmanCoverNode(true, meterMovement);
+        float currentMoveBudget = GetCurrentRepositionBudget();
+        NPOCoverNodes targetCover = FindBestMarksmanCoverNode(true, currentMoveBudget);
 
         if (targetCover != null)
         {
-            ExecuteMoveToCover(targetCover, meterMovement);
+            ExecuteMoveToCover(targetCover, currentMoveBudget);
             Debug.Log($"{name} repositioned into {targetCover.name} and changed to ENGAGE");
             targetCover.occupied = true;
             CheckTurnEnd();
             return;
         }
         
-        targetCover = FindBestMarksmanCoverNode(false, meterMovement);
+        targetCover = FindBestMarksmanCoverNode(false, currentMoveBudget);
         
         if (targetCover != null)
         {
             SetOrderState(OrderState.Conceal);
-            ExecuteMoveToCover(targetCover, meterMovement);
+            ExecuteMoveToCover(targetCover, currentMoveBudget);
             Debug.Log($"{name} repositioned into {targetCover.name} and changed to CONCEAL");
             targetCover.occupied = true;
             Debug.Log("Ending turn early with APL = 0 because no more tactical moves");
@@ -380,8 +381,8 @@ public class NonPlayerOperative : BaseOperativeClass
         if (coverToGetTo != null)
         {
             SetOrderState(OrderState.Conceal);
-            ExecuteMoveToCover(coverToGetTo, meterMovement);
-            Debug.Log($"{name} cannot reach cover in 1 turn. Moving {meterMovement}m closer to {coverToGetTo.name}");
+            ExecuteMoveToCover(coverToGetTo, currentMoveBudget);
+            Debug.Log($"{name} cannot reach cover in 1 turn. Moving {currentMoveBudget}m closer to {coverToGetTo.name}");
         }
         else
         {
@@ -399,7 +400,9 @@ public class NonPlayerOperative : BaseOperativeClass
         currentApl -= 1;
         SetApl(currentApl);
         SetOrderState(OrderState.Conceal);
-        NPOCoverNodes bestBrawlerCover = FindBestBrawlerCover(meterMovement);
+        
+        float currentMoveBudget = GetCurrentRepositionBudget();
+        NPOCoverNodes bestBrawlerCover = FindBestBrawlerCover(currentMoveBudget);
 
         if (bestBrawlerCover != null)
         {
@@ -408,7 +411,7 @@ public class NonPlayerOperative : BaseOperativeClass
                 currentCoverSpot.occupied = false;
                 Debug.Log($"{name} left {currentCoverSpot.name}");
             }
-            ExecuteMoveToCover(bestBrawlerCover, meterMovement);
+            ExecuteMoveToCover(bestBrawlerCover, currentMoveBudget);
             Debug.Log($"{name} brawler-repositioned into {bestBrawlerCover.name} under CONCEAL");
             bestBrawlerCover.occupied = true;
         }
@@ -418,7 +421,7 @@ public class NonPlayerOperative : BaseOperativeClass
             {
                 currentCoverSpot.occupied = false;
             }
-            MoveToNearestPlayer(meterMovement);
+            MoveToNearestPlayer(currentMoveBudget);
         }
         
         CheckTurnEnd();
