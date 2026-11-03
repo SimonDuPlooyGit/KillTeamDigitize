@@ -117,8 +117,8 @@ public class ActionSelectionState : BaseState
         if (chargeButton != null)
         {
             Debug.Log($"hasChargedThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            chargeButton.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
-            chargeCost.SetActive(!playerOp.hasChargedThisActivation && playerOp.currentApl > 0);
+            chargeButton.SetActive((!playerOp.hasChargedThisActivation && playerOp.currentApl > 0) && !playerOp.hasDashedThisActivation && !playerOp.hasRepositionedThisActivation);
+            chargeCost.SetActive((!playerOp.hasChargedThisActivation && playerOp.currentApl > 0) && !playerOp.hasDashedThisActivation && !playerOp.hasRepositionedThisActivation);
         }
 
         if (fightButton != null)

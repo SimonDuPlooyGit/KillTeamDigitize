@@ -121,13 +121,8 @@ public class PlayerOperative : BaseOperativeClass
             movementInfo.SetActive(false);
             moveMarkerUI.SetActive(false);
 
-            float maxBudgetMeters = meterMovement;
-
-            if (remainingMovement <= 0.05f)
-            {
-                Debug.Log($"No remaining movement: {remainingMovement}");
-                return;
-            }
+            movementInfo.GetComponent<TextMeshProUGUI>().text =
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat}\"";
 
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out hit, 100) &&
@@ -153,10 +148,8 @@ public class PlayerOperative : BaseOperativeClass
                 ResetMoveMarker();
             }
 
-            float totalSpentMeters = (maxBudgetMeters - remainingMovement) + _currentPathDistance;
-
             movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(totalSpentMeters * 39.37f / 10)}/{movementStat}\"";
+                $"{Math.Round(_currentPathDistance * 39.37f / 10)}/{movementStat}\"";
         }
     }
     
@@ -340,24 +333,9 @@ public class PlayerOperative : BaseOperativeClass
             Debug.Log("MoveMarker is invalid");
             return false;
         }
-        
+    
         _operativeAgent.destination = moveMarker.transform.position;
-
-        if (movementType == PlayerMovementType.Reposition)
-        {
-            remainingMovement -= _currentPathDistance;
-        }
-        
         _currentPathDistance = 0f;
-
-        if (transform.position == moveMarker.transform.position)
-        {
-            float spentSoFar = meterMovement - remainingMovement;
-            movementInfo.GetComponent<TextMeshProUGUI>().text =
-                $"{Math.Round(spentSoFar * 39.37f / 10)}/{movementStat}\"";
-            ResetMoveMarker();
-        }
-        
         return true;
     }
 

@@ -99,7 +99,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
         
         //Testing injured effects
-        TakeDamage(10);
+        //TakeDamage(10);
     }
 
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)

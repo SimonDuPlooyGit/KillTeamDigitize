@@ -141,5 +141,6 @@ public class MovementState : BaseState
         playerOp.ResetMoveMarker();
         Context.IsMovementConfirmed = true;
         MovementFinished = true;
+        _isExecutingMove = false;
     }
 }
