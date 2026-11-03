@@ -71,6 +71,7 @@ public class TargetingState : BaseState
     private void OnSelectPerformed(InputAction.CallbackContext ctx)
     {
         bool validTarget = true;
+        bool isInFight = false; //used to distinguish between the types of invalid shoots
         
         Debug.Log("OnSelectPerformed in TargetingState");
         if (!Context.CurrentlySelectedOperativeScript.selected) return;
@@ -151,7 +152,9 @@ public class TargetingState : BaseState
                 if (Context.CurrentlySelectedTargetScript.EnemyInControlRange)
                 {
                     validTarget = false;
+                    _menu.PopUp(_menu.fightTarget);
                     Debug.Log("Cannot target an operative engaged in a fight");
+                    isInFight = true;
                 }
 
                 if (validTarget)
@@ -170,7 +173,10 @@ public class TargetingState : BaseState
                 else
                 {
                     Context.ValidTargetShoot = false;
-                    _menu.PopUp(_menu.concTarget);
+                    if(!isInFight)
+                    {
+                        _menu.PopUp(_menu.concTarget);
+                    }
                     Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");
                 }
             }
