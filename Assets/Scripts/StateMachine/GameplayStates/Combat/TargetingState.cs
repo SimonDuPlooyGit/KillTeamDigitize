@@ -145,6 +145,7 @@ public class TargetingState : BaseState
                     Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
                     _menu.tutFlag6 = true; 
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
+                    SoundManager.PlaySound(7);
                     _menu.PopUp(_menu.invTarget);
                     validTarget = false;
                 }
@@ -152,6 +153,7 @@ public class TargetingState : BaseState
                 if (Context.CurrentlySelectedTargetScript.EnemyInControlRange)
                 {
                     validTarget = false;
+                    SoundManager.PlaySound(7);
                     _menu.PopUp(_menu.fightTarget);
                     Debug.Log("Cannot target an operative engaged in a fight");
                     isInFight = true;
@@ -175,6 +177,7 @@ public class TargetingState : BaseState
                     Context.ValidTargetShoot = false;
                     if(!isInFight)
                     {
+                        SoundManager.PlaySound(7);
                         _menu.PopUp(_menu.concTarget);
                     }
                     Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");

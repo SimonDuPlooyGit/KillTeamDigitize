@@ -76,7 +76,8 @@ public class WeaponSelectState : BaseState
     private void OnWeaponClicked(WeaponTemplate chosenWeapon)
     {
         Debug.Log($"Selected Weapon: {chosenWeapon.name}");
-
+        //Remember to ask how to detect melee rule to only play this sound for ranged
+        SoundManager.PlaySound(10, 1, true);
         var heavyRule = chosenWeapon.rules.OfType<WeaponRules.Heavy>().FirstOrDefault();
         PlayerOperative playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (heavyRule != null)
@@ -84,6 +85,7 @@ public class WeaponSelectState : BaseState
             if (playerOp.hasRepositionedThisActivation)
             {
                 Debug.Log("Can't shoot this weapon after reposition due to heavy weapon rule");
+                SoundManager.PlaySound(7);
                 _menu.PopUp(_menu.heavyPopup);
             }
             else

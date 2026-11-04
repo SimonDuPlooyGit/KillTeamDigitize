@@ -347,6 +347,7 @@ public class MeleeCombatState : BaseState
             if (targetUnit != null)
             {
                 Context.CurrentlySelectedOperativeScript._animator.SetTrigger("Strike");
+                SoundManager.PlaySound(12, 1, true);
                 _diceHandler.StartCoroutine(_diceHandler.MeleeMenuBlip());
                 targetUnit.TakeDamage(damage);
                 targetUnit.UpdateHealth(targetUnit.currentWounds, targetUnit.operativeData.wounds);

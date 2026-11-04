@@ -463,6 +463,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         _animator.SetTrigger("Die");
         yield return new WaitForSeconds(3.0f);
         deathParticles.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
+        SoundManager.PlaySound(13);
         deathParticles.Play();
         yield return null;
         unitUI.SetActive(false);

@@ -314,6 +314,7 @@ public class NonPlayerOperative : BaseOperativeClass
 
         Animator animator = gameObject.GetComponent<Animator>();
         animator.SetTrigger("Shoot");
+        SoundManager.PlaySound(11, 0.7f, true);
         gameObject.GetComponent<SmokeTrails>().SpawnSmoke(norm,gameObject.transform,target.transform);
         gameObject.GetComponent<SmokeTrails>().SpawnSmoke(crit, gameObject.transform, target.transform);
         Debug.Log($"{name} is hitting {target.name} for {norm} hits of {context.Weapon.dmgNorm} and {crit} hit of {context.Weapon.dmgCrit}");

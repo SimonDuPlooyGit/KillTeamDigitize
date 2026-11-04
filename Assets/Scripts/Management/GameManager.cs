@@ -322,6 +322,7 @@ public class GameManager : MonoBehaviour
     {
         if (movementState != null)
         {
+            SoundManager.PlaySound(9);
             movementState.ConfirmAndExecuteMovement();
         }
     }

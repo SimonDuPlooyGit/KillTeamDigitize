@@ -591,94 +591,6 @@ public class DiceHandler : MonoBehaviour
         return isAttack ? activeAttackDice : activeDefenseDice;
     }
 
-    //determines if a dice panel can be selected
-    /*public bool CanSelectDie(CombatRoll clickedDie, bool isAttacker)
-    {
-        bool isMeleeState = (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState);
-        //Uses current selection state to determine which panels you can select
-        if (currentSelectionMode == DiceSelectionMode.None)
-        {
-            //If not in melee state, block selection completely
-            if (!isMeleeState) return false;
-
-            //In Melee state with no reroll mode active, limit selection to exactly 1 die at a time
-            List<CombatRoll> meleeActiveList = GetActiveUIList(isAttacker);
-            int selectedCount = 0;
-            for (int i = 0; i < meleeActiveList.Count; i++)
-            {
-                if (meleeActiveList[i] != null && meleeActiveList[i].IsSelected) selectedCount++;
-            }
-            return selectedCount < 1;
-        }
-
-        //For when restricting the value of die that can be selected
-        if (clickedDie != null && !clickedDie.IsSelected)
-        {
-            int dieValue = clickedDie.GetValue();
-            if (dieValue < minSelectableDieValue || dieValue > maxSelectableDieValue)
-            {
-                return false;
-            }
-        }
-
-        // Mode restrictions (Attack, Defense, and Duplicates all enforce pool targeting)
-        if ((currentSelectionMode == DiceSelectionMode.Attack || currentSelectionMode == DiceSelectionMode.Duplicates || currentSelectionMode == DiceSelectionMode.Set) && !isAttacker) return false;
-        if (currentSelectionMode == DiceSelectionMode.Defense && isAttacker) return false;
-
-        List<CombatRoll> activeList = GetActiveUIList(isAttacker);
-
-        // If in Duplicate mode, count how many total matching dice exist in the pool
-        if (currentSelectionMode == DiceSelectionMode.Duplicates)
-        {
-            if (clickedDie == null) return false;
-            if (clickedDie.IsSelected) return true;
-
-            int targetValue = clickedDie.GetValue();
-            int groupSize = 0;
-
-            // Count every die in the pool that shares this face value
-            for (int i = 0; i < activeList.Count; i++)
-            {
-                if (activeList[i] != null && activeList[i].GetValue() == targetValue)
-                {
-                    groupSize++;
-                }
-            }
-
-            // Must have at least 2 matching dice to qualify as duplicates
-            if (groupSize < 2)
-            {
-                Debug.Log("[DiceHandler] Cannot select: No duplicate dice match this value.");
-                return false;
-            }
-
-            // Count currently selected dice
-            int totalSelected = 0;
-            for (int i = 0; i < activeList.Count; i++)
-            {
-                if (activeList[i] != null && activeList[i].IsSelected) totalSelected++;
-            }
-
-            // If selecting/deselecting, check against max allowed
-            if (!clickedDie.IsSelected && (totalSelected + groupSize) > maxAllowedSelections)
-            {
-                Debug.Log($"[DiceHandler] Cannot select: Duplicate group size ({groupSize}) exceeds max allowed selections ({maxAllowedSelections}).");
-                return false;
-            }
-
-            return true;
-        }
-
-        // Standard Attack/Defense single selection count
-        int currentSelectedCount = 0;
-        for (int i = 0; i < activeList.Count; i++)
-        {
-            if (activeList[i] != null && activeList[i].IsSelected) currentSelectedCount++;
-        }
-
-        return currentSelectedCount < maxAllowedSelections;
-    }*/
-
     //Alternative with trying to fix fighting
     public bool CanSelectMeleeDie(CombatRoll clickedDie, bool isAttacker)
     {
@@ -966,6 +878,7 @@ public class DiceHandler : MonoBehaviour
             StartCoroutine(MeleeMenuBlip());
             Animator animator = isPlayerAttacker? _context.CurrentlySelectedOperative.GetComponent<Animator>(): _context.CurrentlySelectedTargetScript.GetComponent<Animator>();
             animator.SetTrigger("Strike");
+            SoundManager.PlaySound(12, 1, true);
         }
         else
         {

@@ -176,6 +176,7 @@ public class ShootCombatState : BaseState
             Context.RetainedNormals = 0;
         }
 
+        SoundManager.PlaySound(11,0.7f,true);
         Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedNormals,Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
         Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedCrits, Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
         Context.CurrentlySelectedOperative.GetComponent<Animator>().SetTrigger("Shoot");

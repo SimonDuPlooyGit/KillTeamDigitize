@@ -91,6 +91,7 @@ public class UnitActivationState : BaseState
                 
                 _gameManager.mainCamera.ToggleCam();
                 Context.SetSelectedOperativesData(hit.collider.gameObject);
+                SoundManager.PlaySound(8);
                 Debug.Log("Selected Operative: " + Context.CurrentlySelectedOperativeSo.name);
                 Context.CurrentlySelectedOperativeScript.AddGlow();
                 Context.CurrentlySelectedOperativeScript.selected = true;
