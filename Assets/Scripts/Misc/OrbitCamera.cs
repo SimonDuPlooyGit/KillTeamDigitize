@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class OrbitCamera : MonoBehaviour
 {
     [Header("General Settings")]
@@ -21,15 +22,19 @@ public class OrbitCamera : MonoBehaviour
     private float mouseY = 0f;
     public bool switchOffForMenu = false;
 
+    private Rigidbody rb;
+
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true; // Ensure rotation is locked programmatically as well
         UpdateCursorLock();
     }
     
     private void Update()
     {
         // Toggle between Orbit and Freecam when the toggle key is pressed
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(toggleKey))
         {
             SetFreecam(!isFreecam);
         }
@@ -52,7 +57,9 @@ public class OrbitCamera : MonoBehaviour
         
         if (!isFreecam && lookAtTarget != null)
         {
-            transform.position = lookAtTarget.position - transform.forward * orbitRadius;
+            Vector3 targetPos = lookAtTarget.position - transform.forward * orbitRadius;
+            if (rb != null) rb.MovePosition(targetPos);
+            else transform.position = targetPos;
         }
     }
 
@@ -62,7 +69,7 @@ public class OrbitCamera : MonoBehaviour
         Cursor.visible = true;
     }
     
-    //Logic to use in update to handle orbiting movement
+    // Logic to use in update to handle orbiting movement
     private void HandleOrbitMovement()
     {
         if (!switchOffForMenu)
@@ -82,50 +89,68 @@ public class OrbitCamera : MonoBehaviour
             orbitRadius = Mathf.Clamp(orbitRadius, minimumDistance, maximumDistance);
 
             // Position camera relative to target
-            transform.position = lookAtTarget.position - transform.forward * orbitRadius;
+            Vector3 targetPos = lookAtTarget.position - transform.forward * orbitRadius;
+            if (rb != null) rb.MovePosition(targetPos);
+            else transform.position = targetPos;
         }
     }
 
-    //Logic to use in update for freecam movement
+    // Logic to use in update for freecam movement
     private void HandleFreecamMovement()
     {
         if (!switchOffForMenu)
         {
             if (Input.GetMouseButton(0))
             {
-                //Mouse Look Rotation
+                // Mouse Look Rotation
                 float mouseInputX = Input.GetAxis("Mouse X") * sensitivity;
                 float mouseInputY = Input.GetAxis("Mouse Y") * sensitivity;
         
                 transform.Rotate(-mouseInputY, mouseInputX, 0, Space.Self);
         
-                //Lock roll to prevent camera tilt
+                // Lock roll to prevent camera tilt
                 Vector3 eulerRotation = transform.rotation.eulerAngles;
                 transform.rotation = Quaternion.Euler(eulerRotation.x, eulerRotation.y, 0);
             }
             
-            //Keyboard Movement (WASD / Arrows)
+            // Keyboard Movement (WASD / Arrows)
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
             Vector3 moveInput = new Vector3(moveX, 0f, moveZ);
         
-            transform.Translate(moveInput * speed * Time.deltaTime, Space.Self);
+            if (moveInput.sqrMagnitude > 1f)
+            {
+                moveInput.Normalize();
+            }
+            
+            // Convert local movement vector to world space based on camera rotation
+            Vector3 worldMove = transform.TransformDirection(moveInput) * speed * Time.deltaTime;
 
             float moveY = 0f;
             if (Input.GetKey(KeyCode.Space)) moveY += 0.25f;
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) moveY -= 0.25f;
             
-            transform.position += Vector3.up * moveY * speed * Time.deltaTime;
+            worldMove += Vector3.up * moveY * speed * Time.deltaTime;
+
+            // Move via Rigidbody physics to respect colliders without force jitter
+            if (rb != null)
+            {
+                rb.MovePosition(rb.position + worldMove);
+            }
+            else
+            {
+                transform.position += worldMove;
+            }
         }
     }
 
-    //Taggle between freecam and orbit cam
+    // Toggle between freecam and orbit cam
     public void ToggleCam()
     {
         SetFreecam(!isFreecam);
     }
 
-    //Set to orbit cam and set a unit as the lookat target
+    // Set to orbit cam and set a unit as the lookat target
     public void SetOrbitTarget(Transform target)
     {
         lookAtTarget = target;
