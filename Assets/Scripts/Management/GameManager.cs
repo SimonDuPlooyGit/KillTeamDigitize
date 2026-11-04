@@ -266,6 +266,7 @@ public class GameManager : MonoBehaviour
     {
         if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
         {
+            SoundManager.PlaySound(2, 1, true);
             SharedContext.SelectedMovement = PlayerMovementType.Reposition;
             SharedContext.IsMovementRequested = true;
         }
@@ -279,6 +280,7 @@ public class GameManager : MonoBehaviour
     {
         if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
         {
+            SoundManager.PlaySound(2, 1, true);
             SharedContext.SelectedMovement = PlayerMovementType.Charge;
             SharedContext.IsMovementRequested = true;
         }
@@ -292,6 +294,7 @@ public class GameManager : MonoBehaviour
     {
         if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
         {
+            SoundManager.PlaySound(2, 1, true);
             SharedContext.SelectedMovement = PlayerMovementType.Dash;
             SharedContext.IsMovementRequested = true;
         }
@@ -305,6 +308,7 @@ public class GameManager : MonoBehaviour
     {
         if (SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
         {
+            SoundManager.PlaySound(2, 1, true);
             SharedContext.SelectedMovement = PlayerMovementType.Fallback;
             SharedContext.IsMovementRequested = true;
         }
@@ -326,6 +330,7 @@ public class GameManager : MonoBehaviour
     {
         if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
         {
+            SoundManager.PlaySound(3, 1, true);
             SharedContext.IsShootingRequested = true;
         }
         else
@@ -336,6 +341,7 @@ public class GameManager : MonoBehaviour
 
     public void OnFightButtonPressed()
     {
+        SoundManager.PlaySound(3, 1, true);
         SharedContext.IsFightingRequested = true;
     }
     
@@ -356,6 +362,7 @@ public class GameManager : MonoBehaviour
     {
         if (SharedContext.CurrentlySelectedOperativeScript != null)
         {
+            SoundManager.PlaySound(2, 1, true);
             SharedContext.CurrentlySelectedOperativeScript.acted = true;
             SharedContext.CurrentlySelectedOperativeScript.selected = false;
             SharedContext.CurrentlySelectedOperativeScript.TurnFinished();

@@ -51,6 +51,7 @@ public class MainMenu : MonoBehaviour
     private IEnumerator OpenBookSequence()
     {
         animator.SetBool(IsOpenHash, true);
+        SoundManager.PlaySound(0,1,true);
         canvasFront.gameObject.SetActive(false);
         yield return new WaitForSeconds(0.4f);
         canvasInside.gameObject.SetActive(true);
@@ -60,6 +61,7 @@ public class MainMenu : MonoBehaviour
     private IEnumerator OpenBookSequenceCredits()
     {
         animator.SetBool(IsOpenHash, true);
+        SoundManager.PlaySound(0,1,true);
         canvasFront.gameObject.SetActive(false);
         yield return new WaitForSeconds(0.4f);
         canvasCredits.gameObject.SetActive(true);
@@ -69,6 +71,7 @@ public class MainMenu : MonoBehaviour
     private IEnumerator CloseBookSequence()
     {
         animator.SetBool(IsOpenHash, false);
+        SoundManager.PlaySound(0,1,true);
         canvasInside.gameObject.SetActive(false);
         canvasInside2.gameObject.SetActive(false);
         canvasCredits.gameObject.SetActive(false);
@@ -79,6 +82,7 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
+        SoundManager.PlaySound(1);
         StartCoroutine(FadeRoutine(0f,1f));
     }
 

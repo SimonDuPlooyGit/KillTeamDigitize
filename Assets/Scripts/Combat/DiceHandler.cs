@@ -176,6 +176,7 @@ public class DiceHandler : MonoBehaviour
         //Assign prefab based on whether the attacker is an enemy or ally 
         GameObject atkDiceObj = isAlly? allyDicePhysical : enemyDicePhysical;
 
+        SoundManager.PlaySound(5, 1, true);
         //Instantiate/throw the attack dice
         for (int i = 0; i < numDice; i++)
         {
@@ -237,6 +238,7 @@ public class DiceHandler : MonoBehaviour
         }
         else
         {
+            SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.diceRollMenu);
             //If in attack then popup the balanced rule
             if(currentSelectionMode == DiceSelectionMode.Attack)
@@ -326,6 +328,7 @@ public class DiceHandler : MonoBehaviour
             Debug.Log($"[DiceHandler] Cover save active: 1 die pre-forced to success ({saveValue}), throwing remaining {diceToThrow} dice.");
         }
 
+        SoundManager.PlaySound(6, 1, true);
         for (int i = 0; i < diceToThrow; i++)
         {
             GameObject physDefDie = Instantiate(defDiceObj, diceThrowPoint.position, Random.rotation);
@@ -362,11 +365,13 @@ public class DiceHandler : MonoBehaviour
         yield return new WaitForSeconds(2f);
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
+            SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.meleeMenu);
             Debug.Log("Opened meleeMenu");
         }
         else
         {
+            SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.diceRollMenu);
         }
         
@@ -486,6 +491,7 @@ public class DiceHandler : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         //Instantiate and throw new dice
+        SoundManager.PlaySound(5, 1, true);
         List<DiceRoll> newPhysDice = new List<DiceRoll>();
         for (int i = 0; i < selectedDice.Count; i++)
         {
@@ -535,11 +541,13 @@ public class DiceHandler : MonoBehaviour
         //Update the menu
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
+            SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.meleeMenu);
             Debug.Log("Opened meleeMenu");
         }
         else
         {
+            SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.diceRollMenu);
         }
         bool isUIAlly = isAttackMode ? isAlly : !isAlly;
