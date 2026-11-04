@@ -368,6 +368,7 @@ public class GameManager : MonoBehaviour
 
     public void CheckGameEnd()
     {
+        Debug.Log("Check Game End called");
         int alivePlayerUnits = 0;
         int aliveNpoUnits = 0;
 
@@ -387,6 +388,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        Debug.Log($"There are {alivePlayerUnits} player operatives alive and {aliveNpoUnits} npo alive");
+        
         if (alivePlayerUnits == 0 || aliveNpoUnits == 0)
         {
             Debug.Log("Game is over");
