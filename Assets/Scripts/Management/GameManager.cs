@@ -264,20 +264,41 @@ public class GameManager : MonoBehaviour
 
     public void OnRepositionActionButtonPressed()
     {
-        SharedContext.SelectedMovement = PlayerMovementType.Reposition;
-        SharedContext.IsMovementRequested = true;
+        if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
+        {
+            SharedContext.SelectedMovement = PlayerMovementType.Reposition;
+            SharedContext.IsMovementRequested = true;
+        }
+        else
+        {
+            Debug.Log("Cannot reposition out of enemy control range");
+        }
     }
 
     public void OnChargeActionButtonPressed()
     {
-        SharedContext.SelectedMovement = PlayerMovementType.Charge;
-        SharedContext.IsMovementRequested = true;
+        if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
+        {
+            SharedContext.SelectedMovement = PlayerMovementType.Charge;
+            SharedContext.IsMovementRequested = true;
+        }
+        else
+        {
+            Debug.Log("Cannot charge out of enemy control range");
+        }
     }
 
     public void OnDashActionButtonPressed()
     {
-        SharedContext.SelectedMovement = PlayerMovementType.Dash;
-        SharedContext.IsMovementRequested = true;
+        if (!SharedContext.CurrentlySelectedOperativeScript)
+        {
+            SharedContext.SelectedMovement = PlayerMovementType.Dash;
+            SharedContext.IsMovementRequested = true;
+        }
+        else
+        {
+            Debug.Log("Cannot dash out of enemy control range");
+        }
     }
     
     public void OnConfirmMovementButtonPressed()
@@ -290,7 +311,14 @@ public class GameManager : MonoBehaviour
 
     public void OnShootingButtonPressed()
     {
-        SharedContext.IsShootingRequested = true;
+        if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
+        {
+            SharedContext.IsShootingRequested = true;
+        }
+        else
+        {
+            Debug.Log("Cannot shoot when engaged by enemy in control range");
+        }
     }
 
     public void OnFightButtonPressed()
