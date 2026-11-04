@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Need to know what kind of movement the player wants to make
-public enum PlayerMovementType {None, Dash, Reposition, Charge}
+public enum PlayerMovementType {None, Dash, Reposition, Charge, Fallback}
 
 //-----InformationPackage Class (Holds all the information that needs be kept/sent between states)-----
 public class InformationPackage

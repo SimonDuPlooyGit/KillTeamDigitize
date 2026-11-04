@@ -290,7 +290,7 @@ public class GameManager : MonoBehaviour
 
     public void OnDashActionButtonPressed()
     {
-        if (!SharedContext.CurrentlySelectedOperativeScript)
+        if (!SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
         {
             SharedContext.SelectedMovement = PlayerMovementType.Dash;
             SharedContext.IsMovementRequested = true;
@@ -298,6 +298,19 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Cannot dash out of enemy control range");
+        }
+    }
+
+    public void OnFallbackButtonPressed()
+    {
+        if (SharedContext.CurrentlySelectedOperativeScript.EnemyInControlRange)
+        {
+            SharedContext.SelectedMovement = PlayerMovementType.Fallback;
+            SharedContext.IsMovementRequested = true;
+        }
+        else
+        {
+            Debug.Log("Can only fallback out of enemy control range");
         }
     }
     

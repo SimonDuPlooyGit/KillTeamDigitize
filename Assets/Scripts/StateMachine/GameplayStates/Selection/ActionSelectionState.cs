@@ -52,11 +52,13 @@ public class ActionSelectionState : BaseState
         dashButton = _menu.actionMenu.transform.Find("Buttons").Find("DashButton").gameObject;
         shootButton = _menu.actionMenu.transform.Find("Buttons").Find("ShootButton").gameObject;
         fightButton = _menu.actionMenu.transform.Find("Buttons").Find("FightButton").gameObject;
+        fallBackButton = _menu.actionMenu.transform.Find("Buttons").Find("FallbackButton").gameObject;
         repositionCost = _menu.actionMenu.transform.Find("APLCosts").Find("RepositionAPL").gameObject;
         shootCost = _menu.actionMenu.transform.Find("APLCosts").Find("ShootAPL").gameObject;
         chargeCost = _menu.actionMenu.transform.Find("APLCosts").Find("ChargeAPL").gameObject;
         dashCost = _menu.actionMenu.transform.Find("APLCosts").Find("DashAPL").gameObject;
         fightCost = _menu.actionMenu.transform.Find("APLCosts").Find("FightAPL").gameObject;
+        fallBackCost = _menu.actionMenu.transform.Find("APLCosts").Find("FallbackAPL").gameObject;
 
         //tutorial panel
         if(_menu.tutFlag2)
@@ -126,6 +128,13 @@ public class ActionSelectionState : BaseState
             Debug.Log($"hasFoughtThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
             fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
             fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
+        }
+
+        if (fallBackButton != null)
+        {
+            Debug.Log($"hasFallenBackThisActivation: {playerOp.hasFallenBackThisActivation} && currentApl{playerOp.currentApl}");
+            fallBackButton.SetActive(!playerOp.hasFallenBackThisActivation && playerOp.currentApl > 1);
+            fallBackCost.SetActive(!playerOp.hasFallenBackThisActivation && playerOp.currentApl > 1);
         }
     }
 }

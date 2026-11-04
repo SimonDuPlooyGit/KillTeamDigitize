@@ -65,7 +65,7 @@ public class MeleeCombatState : BaseState
         
         if (Context.CurrentlySelectedOperativeScript is PlayerOperative)
         {
-            Context.CurrentlySelectedOperativeScript.UpdateApl();
+            Context.CurrentlySelectedOperativeScript.UpdateApl(1);
         }
         
         Context.CurrentlySelectedTargetScript.ForceUIOn(false);

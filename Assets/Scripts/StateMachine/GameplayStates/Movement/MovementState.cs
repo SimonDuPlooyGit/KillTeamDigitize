@@ -78,6 +78,7 @@ public class MovementState : BaseState
         switch (Context.SelectedMovement)
         {
             case PlayerMovementType.Reposition:
+            case PlayerMovementType.Fallback:    
                 playerOp.ClickToPathfindReposition();
                 break;
             case PlayerMovementType.Charge:
@@ -129,6 +130,9 @@ public class MovementState : BaseState
             case PlayerMovementType.Reposition:
                 playerOp.hasRepositionedThisActivation = true;
                 break;
+            case PlayerMovementType.Fallback:
+                playerOp.hasFallenBackThisActivation = true;
+                break;
             case PlayerMovementType.Dash:
                 playerOp.hasDashedThisActivation = true;
                 break;
@@ -136,8 +140,16 @@ public class MovementState : BaseState
                 playerOp.hasChargedThisActivation = true;
                 break;
         }
+
+        if (Context.SelectedMovement == PlayerMovementType.Fallback)
+        {
+            playerOp.UpdateApl(2);
+        }
+        else
+        {
+            playerOp.UpdateApl(1);
+        }
         
-        playerOp.UpdateApl();
         playerOp.ResetMoveMarker();
         Context.IsMovementConfirmed = true;
         MovementFinished = true;

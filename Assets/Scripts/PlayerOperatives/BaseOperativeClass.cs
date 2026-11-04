@@ -442,10 +442,11 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Update the APL marker on UI
-    public void UpdateApl()
+    public void UpdateApl(int cost)
     {
+        
         Debug.Log("UpdateApl called");
-        currentApl -= 1;
+        currentApl -= cost;
         SetApl(currentApl);
     }
     

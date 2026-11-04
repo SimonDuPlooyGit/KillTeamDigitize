@@ -53,6 +53,12 @@ public class OrbitCamera : MonoBehaviour
     private void SetFreecam(bool freecamState)
     {
         isFreecam = freecamState;
+
+        if (isFreecam)
+        {
+            rb.isKinematic = !isFreecam;
+        }
+        
         UpdateCursorLock();
         
         if (!isFreecam && lookAtTarget != null)
@@ -89,9 +95,7 @@ public class OrbitCamera : MonoBehaviour
             orbitRadius = Mathf.Clamp(orbitRadius, minimumDistance, maximumDistance);
 
             // Position camera relative to target
-            Vector3 targetPos = lookAtTarget.position - transform.forward * orbitRadius;
-            if (rb != null) rb.MovePosition(targetPos);
-            else transform.position = targetPos;
+            transform.position = lookAtTarget.position - transform.forward * orbitRadius;
         }
     }
 
