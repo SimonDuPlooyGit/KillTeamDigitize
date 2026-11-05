@@ -17,6 +17,7 @@ public class MenuPanel : MonoBehaviour
     public GameObject meleeMenu;
     public GameObject PauseScreen;
     public GameObject tpCounter, objective;
+    public GameObject winScreen, loseScreen;
     [Header("Pop ups")]
     public GameObject invTarget;
     public GameObject concTarget;

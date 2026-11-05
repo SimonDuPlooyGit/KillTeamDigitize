@@ -1650,6 +1650,8 @@ MonoBehaviour:
   soundList:
   - {fileID: 8300000, guid: 30a2844dcdf3c3e43a3608bd0713c8d7, type: 3}
   - {fileID: 8300000, guid: bb58421ad886e2b4c88222fe61246889, type: 3}
+  mainTrack: {fileID: 0}
+  ambiance: {fileID: 0}
 --- !u!4 &247262589
 Transform:
   m_ObjectHideFlags: 0
