@@ -273,6 +273,8 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Cannot reposition out of enemy control range");
+            SoundManager.PlaySound(7);
+            menu.PopUp(menu.inRange);
         }
     }
 
@@ -287,6 +289,8 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Cannot charge out of enemy control range");
+            SoundManager.PlaySound(7);
+            menu.PopUp(menu.inRange);
         }
     }
 
@@ -301,6 +305,8 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Cannot dash out of enemy control range");
+            SoundManager.PlaySound(7);
+            menu.PopUp(menu.inRange);
         }
     }
 
@@ -315,6 +321,8 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Can only fallback out of enemy control range");
+            SoundManager.PlaySound(7);
+            menu.PopUp(menu.invCharge);
         }
     }
     
@@ -322,7 +330,6 @@ public class GameManager : MonoBehaviour
     {
         if (movementState != null)
         {
-            SoundManager.PlaySound(9);
             movementState.ConfirmAndExecuteMovement();
         }
     }
@@ -337,6 +344,8 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("Cannot shoot when engaged by enemy in control range");
+            SoundManager.PlaySound(7);
+            menu.PopUp(menu.inRange);//dont know if in control range is the best way to phrase this not being available
         }
     }
 

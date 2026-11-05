@@ -23,6 +23,8 @@ public class MenuPanel : MonoBehaviour
     public GameObject invCharge;
     public GameObject fightTarget;
     public GameObject heavyPopup;
+    public GameObject tooClose;
+    public GameObject inRange;
     [SerializeField]
     private GameObject weaponTooltipHolder;
     [Header("Tutorial flags")]
