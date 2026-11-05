@@ -335,7 +335,7 @@ public class NonPlayerOperative : BaseOperativeClass
     public void PerformFallback()
     {
         Debug.Log($"{name} performs Fallback");
-        Debug.Log("Still need to implement fallback");
+        PerformRepositionM();
         currentApl -= 2;
         SetApl(currentApl);
         hasFallenBack = true;
@@ -345,10 +345,17 @@ public class NonPlayerOperative : BaseOperativeClass
     //Marksman reposition behaviour
     public void PerformRepositionM()
     {
-        Debug.Log($"{name} performs Marksman Reposition");
-        hasRepositioned = true;
-        currentApl -= 1;
-        SetApl(currentApl);
+        if (!hasFallenBack)
+        {
+            Debug.Log($"{name} performs Marksman Reposition");
+            hasRepositioned = true;
+            currentApl -= 1;
+            SetApl(currentApl);
+        }
+        else
+        {
+            Debug.Log("Doing reposition that started from fallback");
+        }
         
         float currentMoveBudget = GetCurrentRepositionBudget();
         NPOCoverNodes targetCover = FindBestMarksmanCoverNode(true, currentMoveBudget);

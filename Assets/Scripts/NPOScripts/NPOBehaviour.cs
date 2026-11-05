@@ -126,7 +126,6 @@ public class NPOBehaviour : MonoBehaviour
     {
         // 1. FALL BACK (Only if can shoot and needs fallback)
         var fallbackSequence = new Sequence("Fall Back Sequence", priority: 40);
-        fallbackSequence.AddChild(new Leaf("Can Shoot?", new Condition(itsOwnNpoScript.CanShoot)));
         fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(itsOwnNpoScript.Fallback)));
         fallbackSequence.AddChild(new Leaf("Do Fall Back", new AsyncActionStrategy(itsOwnNpoScript.PerformFallback, itsOwnNpoScript.MovementFinished))); //Also async for moving
         _treeRoot.AddChild(fallbackSequence);
