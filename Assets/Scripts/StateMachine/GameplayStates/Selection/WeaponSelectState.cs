@@ -22,16 +22,6 @@ public class WeaponSelectState : BaseState
         Debug.Log("WeaponSelectState entered");
         _menu.OpenMenu(_menu.shootMenuHolder);
         PopulateWeaponPanel(); //When this state starts we need to weapon panel to be populated with the appropriate weapons
-
-        //tutorial panel stuff
-        if (_menu.tutFlag2)
-        {
-            _menu.tutFlag2 = false; //prevents the action select tut panels from appearing
-        }
-        if(_menu.tutFlag5)
-        {
-            _menu.OpenMenu(_menu.tutShoot);
-        }
     }
 
     public override void Update()
@@ -47,9 +37,6 @@ public class WeaponSelectState : BaseState
         {
             _menu.shootMenuActualScript.ClearWeapons(); //We need the weapon menu to be cleared of weapons when this state is exited
         }
-        
-        _menu.CloseMenu(_menu.shootMenuHolder);
-        _menu.CloseMenu(_menu.tutShoot);
         _menu.ClearTooltipsBackup();
         //Context.StateFlagsReset();
     }

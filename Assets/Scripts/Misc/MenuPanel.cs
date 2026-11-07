@@ -28,19 +28,6 @@ public class MenuPanel : MonoBehaviour
     public GameObject inRange;
     [SerializeField]
     private GameObject weaponTooltipHolder;
-    [Header("Tutorial flags")]
-    public bool tutFlag1 = true; //flag to show the select unit tut panel
-    public bool tutFlag2 = true; //flag to show tut panels during action select 
-    public bool tutFlag3 = true; //flag to show reposition tut panel
-    public bool tutFlag4 = false; //flag to show prompt for clicking shoot in action select
-    public bool tutFlag4B = true; //I know its sloppy but flag to make sure Flag4 is only set to true once
-    public bool tutFlag5 = true; //flag for both shooting and targeting panels
-    public bool tutFlag6 = false; //Flag to disable targeting panel and enable invalid target panel
-    public bool tutFlag6B = true; //Flag to make sure invalid only pops up once
-    //Temporary for reset panel remove later
-    public bool tutFlag7 = false; //Flag for the temp panel for resetting the scene
-    public bool tutFlag7B = true; //You know the deal. its temporary anyway
-    public bool tutFlag8 = false; //flag to see if you entered combat (also temp)
     
     void Start()
     {

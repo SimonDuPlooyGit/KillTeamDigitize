@@ -32,17 +32,6 @@ public class ShootCombatState : BaseState
         Context.RetainedNormals = 0;
         Context.RetainedCritDefense = 0;
         Context.RetainedNormalDefense = 0;
-
-        //tutorial panel flags
-        _menu.tutFlag7B = true; //remove later
-        if(_menu.tutFlag5)
-        {
-            _menu.tutFlag5 = false;
-        }
-        if(_menu.tutFlag4)
-        {
-            _menu.tutFlag4 = false;
-        }
         
         _diceHandler.StartCoroutine(ResolveCombat());
         Context.CurrentlySelectedTargetScript.ForceUIOn(true);

@@ -23,27 +23,11 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Entered");
         _input.Controls.Select.performed += OnSelectPerformed;
-        
-        //Tutorial panels
-        if(_menu.tutFlag5)
-        {
-            _menu.OpenMenu(_menu.tutTarget);
-        }
     }
 
     public override void Update()
     {
-        if(_menu.tutFlag6 && _menu.tutFlag6B)
-        {
-            _menu.OpenMenu(_menu.tutInvalid);
-            _menu.CloseMenu(_menu.tutTarget);
-            _menu.tutFlag5 = false;
-            _menu.tutFlag4 = true;
-        }
-        else
-        {
-            _menu.CloseMenu(_menu.tutInvalid);
-        }
+        
     }
 
     public override void OnExit()
@@ -52,19 +36,6 @@ public class TargetingState : BaseState
         _input.Controls.Select.performed -= OnSelectPerformed;
         Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.validLine;
         Context.CurrentlySelectedOperativeScript.lineRenderer.enabled = false;
-        _menu.CloseMenu(_menu.tutTarget);
-        _menu.CloseMenu(_menu.tutInvalid);
-
-        //tutorial panels
-        if (_menu.tutFlag6)
-        {
-            _menu.tutFlag6 = false;
-            _menu.tutFlag6B = false;
-        }
-        else if (!_menu.tutFlag6 && _menu.tutFlag7B) //remove later
-        {
-            _menu.tutFlag7 = true;
-        }
     }
     
     //If you left-click shoot a raycast and see if you hit an enemy unit. If so give it to information package
@@ -143,7 +114,6 @@ public class TargetingState : BaseState
                 else if (distanceToEnemy > maxWeaponRange)
                 {
                     Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;
-                    _menu.tutFlag6 = true; 
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
                     SoundManager.PlaySound(7);
                     _menu.PopUp(_menu.invTarget);

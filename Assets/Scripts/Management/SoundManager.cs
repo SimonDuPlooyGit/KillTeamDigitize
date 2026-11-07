@@ -12,6 +12,11 @@ public class SoundManager : MonoBehaviour
     private AudioClip mainTrack;
     [SerializeField] 
     private AudioClip ambiance;
+    [SerializeField]
+    private float bgVolume1 = 0.4f;
+    [SerializeField]
+    private float bgVolume2 = 0.2f;
+
     private void Awake()
     {
         instance = this;
@@ -70,9 +75,9 @@ public class SoundManager : MonoBehaviour
         }
         else
         {
-            //default playing method
-            //instance.audioSource.pitch = 1f;
-            //instance.audioSource.PlayOneShot(clip, volume);
+            //default
+            instance.audioSource.pitch = 1f;
+            instance.audioSource.PlayOneShot(clip, volume);
         }
     }
 
@@ -84,7 +89,7 @@ public class SoundManager : MonoBehaviour
         {
             instance.bgmSource1.clip = instance.mainTrack;
             instance.bgmSource1.loop = true;
-            instance.bgmSource1.volume = 0.4f;
+            instance.bgmSource1.volume = instance.bgVolume1;
             instance.bgmSource1.Play();
         }
 
@@ -92,7 +97,7 @@ public class SoundManager : MonoBehaviour
         {
             instance.bgmSource2.clip = instance.ambiance;
             instance.bgmSource2.loop = true;
-            instance.bgmSource2.volume = 0.2f;
+            instance.bgmSource2.volume = instance.bgVolume2;
             instance.bgmSource2.Play();
         }
     }

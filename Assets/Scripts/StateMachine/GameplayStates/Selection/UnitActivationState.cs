@@ -30,22 +30,6 @@ public class UnitActivationState : BaseState
         _menu.OpenMenu(_menu.tpCounter);
         _menu.OpenMenu(_menu.objective);
         _menu.CloseMenu(_menu.meleeMenu);
-        //tutorial panel
-        if(_menu.tutFlag1)
-        {
-            _menu.OpenMenu(_menu.tutSelect);
-            _menu.tutFlag1 = false;
-        }
-        //temp for reset. remove later
-        if(_menu.tutFlag7)
-        {
-            _menu.OpenMenu(_menu.tutReset);
-            _menu.tutFlag7B = false;
-        }
-        if(!_menu.tutFlag8 && !_menu.tutFlag6B &&_menu.tutFlag7B)
-        {
-            _menu.OpenMenu(_menu.tutReset);
-        }
     }
 
     public override void Update()
@@ -58,13 +42,6 @@ public class UnitActivationState : BaseState
         Debug.Log("UnitActivationState exited");
         _input.Controls.Select.performed -= OnSelectPerformed;
         _input.Controls.Deselect.performed -= OnDeselectPerformed;
-        _menu.CloseMenu(_menu.tutSelect);
-        _menu.CloseMenu(_menu.tutReset);
-
-        if(_menu.tutFlag7)
-        {
-            _menu.tutFlag7 = false;
-        }
     }
     
     //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.

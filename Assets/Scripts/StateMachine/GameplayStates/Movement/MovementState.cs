@@ -29,17 +29,6 @@ public class MovementState : BaseState
         _menu.moveButton2.SetActive(true);
         MovementFinished = false;
         _isExecutingMove = false;
-        //You can activate move button here
-
-        //Tutorial panel stuff
-        if (_menu.tutFlag3)
-        {
-            _menu.OpenMenu(_menu.tutReposition);
-        }
-        if (_menu.tutFlag2)
-        {
-            _menu.tutFlag2 = false; //prevents the action select tut panels from appearing
-        }
        
     }
 
@@ -56,7 +45,6 @@ public class MovementState : BaseState
     {
         _input.Controls.Move.performed -= OnMoveInputPerformed;
         Debug.Log("MovementState exited");
-        _menu.CloseMenu(_menu.tutReposition);
         _menu.moveButton2?.SetActive(false);
         
         var playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;

@@ -59,16 +59,6 @@ public class ActionSelectionState : BaseState
         dashCost = _menu.actionMenu.transform.Find("APLCosts").Find("DashAPL").gameObject;
         fightCost = _menu.actionMenu.transform.Find("APLCosts").Find("FightAPL").gameObject;
         fallBackCost = _menu.actionMenu.transform.Find("APLCosts").Find("FallbackAPL").gameObject;
-
-        //tutorial panel
-        if(_menu.tutFlag2)
-        {
-            _menu.OpenMenu(_menu.tutAction);
-        }
-        if(_menu.tutFlag4 && _menu.tutFlag4B)
-        {
-            _menu.OpenMenu(_menu.tutRepoPrompt);
-        }
     }
 
     public override void Update()
@@ -80,10 +70,8 @@ public class ActionSelectionState : BaseState
     {
         Debug.Log("ActionSelectionState exited");
         _menu.CloseMenu(_menu.actionMenu);
-        _menu.CloseMenu(_menu.tutAction);
         _menu.CloseMenu(_menu.tpCounter);
         _menu.CloseMenu(_menu.objective);
-        _menu.CloseMenu(_menu.tutRepoPrompt);
         Context.IsPlayerActivationRequested = false;
     }
 
