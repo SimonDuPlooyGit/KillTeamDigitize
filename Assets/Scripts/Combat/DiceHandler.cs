@@ -153,7 +153,7 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws ATK Dice Physically]==========================================
     public IEnumerator ThrowAttackDice(int numDice, bool isAlly, InformationPackage context)
     {
-        Debug.Log($"Called and in ThrowAttackDice with (numdice:{numDice}, isAlly:{isAlly}, context)");
+        //Debug.Log($"Called and in ThrowAttackDice with (numdice:{numDice}, isAlly:{isAlly}, context)");
         //Move dice spawn point to active unit
         if (isAlly)
         {
@@ -234,7 +234,7 @@ public class DiceHandler : MonoBehaviour
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
             menu.OpenMenu(menu.meleeMenu);
-            Debug.Log("Opened meleeMenu");
+            //Debug.Log("Opened meleeMenu");
         }
         else
         {

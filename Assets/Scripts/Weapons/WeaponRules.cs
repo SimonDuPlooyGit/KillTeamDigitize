@@ -120,7 +120,7 @@ public class WeaponRules
         public void Execute(InformationPackage context)
         {
             Debug.Log("Checking hot effect");
-            int roll = UnityEngine.Random.Range(1, 7);
+            int roll = Random.Range(1, 7);
             if (roll < context.Weapon.hit)
             {
                 int selfDamage = roll * 2;

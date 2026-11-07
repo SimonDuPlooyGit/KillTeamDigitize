@@ -136,7 +136,7 @@ public class InformationPackage
     //Reset both Operatives data and also state flags
     public void FullReset()
     {
-        Debug.Log("InformationPackage FullReset");
+        //Debug.Log("InformationPackage FullReset");
         OperativesDataReset();
         StateFlagsReset();
         CombatReset();
@@ -156,7 +156,7 @@ public class InformationPackage
     //Only reset Operatives data
     public void OperativesDataReset()
     {
-        Debug.Log("InformationPackage OperativesDataReset");
+        //Debug.Log("InformationPackage OperativesDataReset");
         CurrentlySelectedOperative = null;
         CurrentlySelectedOperativeScript = null;
         CurrentlySelectedOperativeSo = null;
@@ -175,7 +175,7 @@ public class InformationPackage
     //Only reset StateFlags
     public void StateFlagsReset()
     {
-        Debug.Log("InformationPackage StateFlagsReset");
+        //Debug.Log("InformationPackage StateFlagsReset");
         IsPlayerActivationRequested = false;
         IsMovementConfirmed = false;
         IsShootingRequested = false;

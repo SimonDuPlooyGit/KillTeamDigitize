@@ -20,7 +20,10 @@ public class FlowLog : MonoBehaviour
 
     private void HandleLog(string logString, string stackTrace, LogType type)
     {
-        GameObject newLog = Instantiate(logPrefab, flowLogContent.transform);
-        newLog.GetComponent<TextMeshProUGUI>().text = logString;
+        if (type == LogType.Log)
+        {
+            GameObject newLog = Instantiate(logPrefab, flowLogContent.transform);
+            newLog.GetComponent<TextMeshProUGUI>().text = logString;
+        }
     }
 }

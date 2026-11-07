@@ -16,7 +16,7 @@ public class NPOManager : MonoBehaviour
     //Find the NPO to activate according the priority above
     public NonPlayerOperative GetNpoUnitToActivate()
     {
-        Debug.Log("GetNPOUnitToActivate called");
+        //Debug.Log("GetNPOUnitToActivate called");
         NonPlayerOperative candidate = FindBestCandidate(npoUnits);
         if (candidate != null)
         {
