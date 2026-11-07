@@ -18,9 +18,9 @@ public class FlowLog : MonoBehaviour
         Application.logMessageReceived -= HandleLog;
     }
 
-    private void HandleLog(string logString, string stackTrace, LogType type)
+    private void HandleLog(string logString, string stackTrace, LogType type) //You can call a Debug.LogException and then it will pop up in the gameplay flow UI
     {
-        if (type == LogType.Log)
+        if (type == LogType.Warning)
         {
             GameObject newLog = Instantiate(logPrefab, flowLogContent.transform);
             newLog.GetComponent<TextMeshProUGUI>().text = logString;

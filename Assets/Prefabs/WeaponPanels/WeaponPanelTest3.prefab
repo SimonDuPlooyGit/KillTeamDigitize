@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   selectButton: {fileID: 2797065998382095231}
-  name: {fileID: 331712774204633841}
+  wname: {fileID: 331712774204633841}
   atk: {fileID: 4671356056962135163}
   hit: {fileID: 3719472486661757946}
   dmg: {fileID: 5034015582234667485}

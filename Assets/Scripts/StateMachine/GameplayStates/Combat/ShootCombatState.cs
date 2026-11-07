@@ -130,12 +130,22 @@ public class ShootCombatState : BaseState
                     if (Context.AttackRolls[i] == 6)
                     {
                         Context.RetainedCrits += 1;
-                        Debug.Log("Number of crits: " + Context.RetainedCrits.ToString());
+                        Debug.Log("Number of crits: " + Context.RetainedCrits);
+
+                        if (Context.RetainedCrits > 0)
+                        {
+                            //Debug.LogWarning($"{Context.CurrentlySelectedOperative.name} rolled {Context.RetainedCrits} crits for {Context.Weapon.dmgCrit * Context.RetainedCrits} total dmg");
+                        }
                     }
                     else
                     {
                         Context.RetainedNormals += 1;
-                        Debug.Log("Number of normals: " + Context.RetainedNormals.ToString());
+                        Debug.Log("Number of normals: " + Context.RetainedNormals);
+                        
+                        if (Context.RetainedNormals > 0)
+                        {
+                            //Debug.LogWarning($"{Context.CurrentlySelectedOperative.name} rolled {Context.RetainedNormals} normals for {Context.Weapon.dmgNorm * Context.RetainedNormals} total dmg");
+                        }
                     }
                 }
             }
@@ -148,12 +158,22 @@ public class ShootCombatState : BaseState
                 if (Context.DefenseRolls[i] == 6)
                 {
                     Context.RetainedCritDefense += 1;
-                    Debug.Log("Number of crit saves: " + Context.RetainedCritDefense.ToString());
+                    Debug.Log("Number of crit saves: " + Context.RetainedCritDefense);
+
+                    if (Context.RetainedCritDefense > 0)
+                    {
+                        //Debug.LogWarning($"{Context.CurrentlySelectedTarget.name} rolled {Context.RetainedCritDefense} crit defenses");
+                    }
                 }
                 else
                 {
                     Context.RetainedNormalDefense += 1;
-                    Debug.Log("Number of normals saves: " + Context.RetainedNormalDefense.ToString());
+                    Debug.Log("Number of normals saves: " + Context.RetainedNormalDefense);
+                    
+                    if (Context.RetainedNormalDefense > 0)
+                    {
+                        //Debug.LogWarning($"{Context.CurrentlySelectedTarget.name} rolled {Context.RetainedNormalDefense} normal defenses");
+                    }
                 }
             }
         }
@@ -181,8 +201,18 @@ public class ShootCombatState : BaseState
         Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedCrits, Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);
         Context.CurrentlySelectedOperative.GetComponent<Animator>().SetTrigger("Shoot");
 
-        Debug.Log("Remaining crit attacks: " + Context.RetainedCrits.ToString());
-        Debug.Log("Remaining normal attacks: " + Context.RetainedNormals.ToString());
+        Debug.Log("Remaining crit attacks: " + Context.RetainedCrits);
+        Debug.Log("Remaining normal attacks: " + Context.RetainedNormals);
+
+        if (Context.RetainedCrits > 0)
+        {
+            //Debug.LogWarning($"{Context.RetainedCrits} crits pass defenses");
+        }
+
+        if (Context.RetainedNormals > 0)
+        {
+            //Debug.LogWarning($"{Context.RetainedNormals} normals pass defenses");
+        }
     }
 
     private void ApplyFinalDamage()
@@ -192,15 +222,17 @@ public class ShootCombatState : BaseState
         for (int i = 0; i < Context.RetainedCrits; i++)
         {
             totalDamage += Context.Weapon.dmgCrit;
+            //Debug.LogWarning($"{Context.CurrentlySelectedOperativeScript.name} dealt {Context.Weapon.dmgCrit} crit damage to {Context.CurrentlySelectedTarget.name}");
         }
 
         for (int i = 0; i < Context.RetainedNormals; i++)
         {
             totalDamage += Context.Weapon.dmgNorm;
+            //Debug.LogWarning($"{Context.CurrentlySelectedOperativeScript.name} dealt {Context.Weapon.dmgCrit} crit damage to {Context.CurrentlySelectedTarget.name}");
         }
         
         Context.CurrentlySelectedTargetScript.TakeDamage(totalDamage);
-
+        Debug.LogWarning($"{Context.CurrentlySelectedOperativeScript.name} shot {Context.CurrentlySelectedTarget.name} for {totalDamage} dmg");
         Context.CurrentlySelectedTargetScript.UpdateHealth(Context.CurrentlySelectedTargetScript.currentWounds, Context.CurrentlySelectedTargetScript.operativeData.wounds);
         
     }

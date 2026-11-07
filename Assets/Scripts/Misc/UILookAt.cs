@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class UILookAt : MonoBehaviour
 {
-    public Camera camera;
+    public Camera mcamera;
 
     private void Awake()
     {
-        camera = Camera.main;
+        mcamera = Camera.main;
     }
 
     void Update()
     {
-        transform.LookAt(camera.transform);
+        transform.LookAt(mcamera.transform);
         transform.Rotate(0,180,0);
     }
 }

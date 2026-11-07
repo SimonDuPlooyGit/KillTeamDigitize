@@ -4,7 +4,7 @@ using UnityEngine;
 public class DiceRoll : MonoBehaviour
 {
     private Rigidbody _rb;
-    private bool hasLanded = false;
+    //private bool hasLanded = false;
     [SerializeField]
     private float minForce, maxForce;
     private float _forceX, _forceY, _forceZ;

@@ -7,7 +7,7 @@ using System.Linq;
 public class WeaponPanel : MonoBehaviour
 {
     [SerializeField] private Button selectButton;
-    [SerializeField] public TextMeshProUGUI name;
+    [SerializeField] public TextMeshProUGUI wname;
     [SerializeField] public TextMeshProUGUI atk;
     [SerializeField] public TextMeshProUGUI hit;
     [SerializeField] public TextMeshProUGUI dmg;
@@ -22,7 +22,7 @@ public class WeaponPanel : MonoBehaviour
         _weapon = weapon;
         _onSelectedCallback = onSelected;
 
-        name.text = weapon.name;
+        wname.text = weapon.name;
         atk.text = weapon.atk.ToString();
         hit.text = weapon.hit.ToString();
         dmg.text = $"{weapon.dmgNorm}/{weapon.dmgCrit}";

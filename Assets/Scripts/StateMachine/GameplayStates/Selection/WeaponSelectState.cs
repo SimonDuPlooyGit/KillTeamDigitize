@@ -51,7 +51,7 @@ public class WeaponSelectState : BaseState
         _menu.CloseMenu(_menu.shootMenuHolder);
         _menu.CloseMenu(_menu.tutShoot);
         _menu.ClearTooltipsBackup();
-        Context.StateFlagsReset();
+        //Context.StateFlagsReset();
     }
 
     private void PopulateWeaponPanel() //Instantiate weapon panel prefabs into the shooting menu with the weapons that this unit has
@@ -74,6 +74,10 @@ public class WeaponSelectState : BaseState
                     {
                         _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
                     }
+                }
+                else
+                {
+                    Debug.Log("IsShootingRequested or IsFightingRequested is false");
                 }
                 
                 
