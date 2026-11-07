@@ -276,6 +276,11 @@ public class GameManager : MonoBehaviour
             SoundManager.PlaySound(7);
             menu.PopUp(menu.inRange);
         }
+
+        if(SceneManager.GetActiveScene().name == "Tut1" && !SharedContext.CurrentlySelectedOperativeScript.GetComponent<PlayerOperative>().hasRepositionedThisActivation)
+        {
+            TutEvents.AdvanceTutorial();
+        }
     }
 
     public void OnChargeActionButtonPressed()
@@ -307,6 +312,11 @@ public class GameManager : MonoBehaviour
             Debug.Log("Cannot dash out of enemy control range");
             SoundManager.PlaySound(7);
             menu.PopUp(menu.inRange);
+        }
+
+        if (SceneManager.GetActiveScene().name == "Tut1")
+        {
+            TutEvents.AdvanceTutorial();
         }
     }
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //-----ActionSelectionState (Where player can select an action from action menu)-----
 public class ActionSelectionState : BaseState
@@ -27,6 +28,9 @@ public class ActionSelectionState : BaseState
     private GameObject pickupCost;
     
     private GameManager _gameManager;
+
+    //Tutorial flags
+    private bool tutFlag1 = true;
 
     public ActionSelectionState(InformationPackage context, MenuPanel menu, GameManager gm) : base(context)
     {
@@ -59,6 +63,15 @@ public class ActionSelectionState : BaseState
         dashCost = _menu.actionMenu.transform.Find("APLCosts").Find("DashAPL").gameObject;
         fightCost = _menu.actionMenu.transform.Find("APLCosts").Find("FightAPL").gameObject;
         fallBackCost = _menu.actionMenu.transform.Find("APLCosts").Find("FallbackAPL").gameObject;
+
+        //Tutorial
+        if(SceneManager.GetActiveScene().name == "Tut1" && tutFlag1)
+        {
+            TutEvents.AdvanceTutorial();
+            tutFlag1 = false;
+        }
+
+
     }
 
     public override void Update()

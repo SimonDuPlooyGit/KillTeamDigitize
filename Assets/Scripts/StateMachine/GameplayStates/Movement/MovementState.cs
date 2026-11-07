@@ -1,6 +1,8 @@
 using System.Collections;
+using Unity.VectorGraphics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 //-----MovementState Class (Handles movement for the player in terms of UI and the confirm move button)-----
 public class MovementState : BaseState
@@ -13,6 +15,9 @@ public class MovementState : BaseState
     private readonly MonoBehaviour _coroutineRunner;
     public bool MovementFinished;
     private bool _isExecutingMove;
+    //Tutorial flags
+    private bool tutFlag1 = true;
+    private bool tutFlag2 = false;
 
     public MovementState(InformationPackage context, InputActions input, MenuPanel menu, MonoBehaviour coroutineRunner) : base(context) //Needs base(context) for sending context to the BaseState constructor first
     {
@@ -91,6 +96,17 @@ public class MovementState : BaseState
                 SoundManager.PlaySound(9);
                 playerOp.isInvalidCharge = false;
                 playerOp.isInvalidMove = false;
+
+                //Tutorial
+                if(SceneManager.GetActiveScene().name == "Tut1" && tutFlag1)
+                {
+                    TutEvents.AdvanceTutorial();
+                    tutFlag2 = true;
+                }
+                else if (SceneManager.GetActiveScene().name == "Tut1" && tutFlag2)
+                {
+                    TutEvents.AdvanceTutorial();
+                }
             }
             else if(!playerOp.validMoveMarkerPosition && playerOp.isInvalidCharge)
             {

@@ -31,12 +31,6 @@ public class UnitActivationState : BaseState
         _menu.OpenMenu(_menu.tpCounter);
         _menu.OpenMenu(_menu.objective);
         _menu.CloseMenu(_menu.meleeMenu);
-
-        //Tutorial
-        if(SceneManager.GetActiveScene().name == "Tut1")
-        {
-            TutEvents.AdvanceTutorial();
-        }
     }
 
     public override void Update()

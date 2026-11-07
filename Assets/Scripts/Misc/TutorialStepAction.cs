@@ -10,4 +10,6 @@ public class TutorialStepAction
     [Header("Panels to Enable/Disable")]
     public List<GameObject> panelsToEnable = new List<GameObject>();
     public List<GameObject> panelsToDisable = new List<GameObject>();
+    [Header("Optional Scene Transition")]
+    public string sceneToLoad = "";
 }
