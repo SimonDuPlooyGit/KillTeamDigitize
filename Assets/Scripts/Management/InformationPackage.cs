@@ -55,7 +55,7 @@ public class InformationPackage
     
     //Turning point tracking
     public int CurrentTurningPoint = 1;
-    public const int LastTurningPoint = 4;
+    public const int LastTurningPoint = 10;
     public bool PlayerTurn = true;
     
     //Melee tracking
@@ -68,48 +68,48 @@ public class InformationPackage
     //-----Three overloaded methods to be able to set selected operative data no matter which component of it is passed as the argument-----
     public void SetSelectedOperativesData(GameObject selectedOperative)
     {
-        Debug.Log("SetSelectedOperativesData called (GameObject version)");
+        //Debug.Log("SetSelectedOperativesData called (GameObject version)");
         CurrentlySelectedOperative = selectedOperative;
-        Debug.Log("CurrentlySelectedOperative is set (GameObject)");
+        //Debug.Log("CurrentlySelectedOperative is set (GameObject)");
         CurrentlySelectedOperativeScript = CurrentlySelectedOperative.GetComponent<PlayerOperative>();
-        Debug.Log("CurrentlySelectedOperativeScript is set (PlayerOperative script)");
+        //Debug.Log("CurrentlySelectedOperativeScript is set (PlayerOperative script)");
         CurrentlySelectedOperativeSo = CurrentlySelectedOperativeScript.operativeData;
-        Debug.Log("CurrentlySelectedOperativeSo is set (PlayerOperative's operativeData)");
+        //Debug.Log("CurrentlySelectedOperativeSo is set (PlayerOperative's operativeData)");
     }
 
     public void SetSelectedOperativesData(PlayerOperative selectedOperative)
     {
-        Debug.Log("SetSelectedOperativesData called (PlayerOperative version)");
+        //Debug.Log("SetSelectedOperativesData called (PlayerOperative version)");
         CurrentlySelectedOperativeScript = selectedOperative;
-        Debug.Log("CurrentlySelectedOperativeScript is set (PlayerOperative script)");
+        //Debug.Log("CurrentlySelectedOperativeScript is set (PlayerOperative script)");
         CurrentlySelectedOperative = selectedOperative.gameObject;
-        Debug.Log("CurrentlySelectedOperativeScript is set (GameObject)");
+        //Debug.Log("CurrentlySelectedOperativeScript is set (GameObject)");
         CurrentlySelectedOperativeSo = selectedOperative.operativeData;
-        Debug.Log("CurrentlySelectedOperativeSo is set (PlayerOperative's operativeData)");
+        //Debug.Log("CurrentlySelectedOperativeSo is set (PlayerOperative's operativeData)");
     }
     
     public void SetSelectedOperativesData(NonPlayerOperative selectedOperative)
     {
-        Debug.Log("SetSelectedOperativesData called (NonPlayerOperative version)");
+        //Debug.Log("SetSelectedOperativesData called (NonPlayerOperative version)");
         CurrentlySelectedOperativeScript = selectedOperative;
-        Debug.Log("CurrentlySelectedOperativeScript is set (NonPlayerOperative script)");
+        //Debug.Log("CurrentlySelectedOperativeScript is set (NonPlayerOperative script)");
         CurrentlySelectedOperative = selectedOperative.gameObject;
-        Debug.Log("CurrentlySelectedOperativeScript is set (GameObject)");
+        //Debug.Log("CurrentlySelectedOperativeScript is set (GameObject)");
         CurrentlySelectedOperativeSo = selectedOperative.operativeData;
-        Debug.Log("CurrentlySelectedOperativeSo is set (NonPlayerOperative's operativeData)");
+        //Debug.Log("CurrentlySelectedOperativeSo is set (NonPlayerOperative's operativeData)");
     }
 
     public void SetSelectedOperativesData(OperativeTemplate selectedOperative)
     {
-        Debug.Log("SetSelectedOperativesData called (OperativeTemplate version)");
+        //Debug.Log("SetSelectedOperativesData called (OperativeTemplate version)");
         CurrentlySelectedOperativeSo = selectedOperative;
-        Debug.Log("CurrentlySelectedOperativeSo is set (OperativeTemplate SO)");
+        //Debug.Log("CurrentlySelectedOperativeSo is set (OperativeTemplate SO)");
     }
     
     //-----Three overloaded methods to be able to set selected target data no matter which component of it is passed as the argument-----
     public void SetSelectedTarget(GameObject selectedTarget)
     {
-        Debug.Log("SetSelectedTarget called (GameObject version)");
+        //Debug.Log("SetSelectedTarget called (GameObject version)");
         CurrentlySelectedTarget = selectedTarget;
         CurrentlySelectedTargetScript = CurrentlySelectedTarget.GetComponent<BaseOperativeClass>();
         CurrentlySelectedTargetSo = CurrentlySelectedTargetScript.operativeData;
@@ -117,20 +117,20 @@ public class InformationPackage
 
     public void SetSelectedTarget(BaseOperativeClass selectedTarget)
     {
-        Debug.Log("SetSelectedTarget called (BaseOperativeClass version)");
+        //Debug.Log("SetSelectedTarget called (BaseOperativeClass version)");
         CurrentlySelectedTargetScript = selectedTarget;
-        Debug.Log("CurrentlySelectedTargetScript is set (BaseOperativeClass script)");
+        //Debug.Log("CurrentlySelectedTargetScript is set (BaseOperativeClass script)");
         CurrentlySelectedTarget = selectedTarget.gameObject;
-        Debug.Log("CurrentlySelectedTarget is set (GameObject)");
+        //Debug.Log("CurrentlySelectedTarget is set (GameObject)");
         CurrentlySelectedTargetSo = CurrentlySelectedTargetScript.operativeData;
-        Debug.Log("CurrentlySelectedTargetSo is set (BaseOperativeClass' operativeData)");
+        //Debug.Log("CurrentlySelectedTargetSo is set (BaseOperativeClass' operativeData)");
     }
 
     public void SetSelectedTarget(OperativeTemplate selectedTarget)
     {
-        Debug.Log("SetSelectedTarget called (OperativeTemplate version)");
+        //Debug.Log("SetSelectedTarget called (OperativeTemplate version)");
         CurrentlySelectedTargetSo = selectedTarget;
-        Debug.Log("CurrentlySelectedTargetSo is set (OperativeTemplate script)");
+        //Debug.Log("CurrentlySelectedTargetSo is set (OperativeTemplate script)");
     }
     
     //Reset both Operatives data and also state flags

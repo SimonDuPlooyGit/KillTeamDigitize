@@ -98,22 +98,22 @@ public class ActionSelectionState : BaseState
         if (repositionButton != null)
         {
             Debug.Log($"hasRepositionedThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            repositionButton.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
-            repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0);
+            repositionButton.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
+            repositionCost.SetActive(!playerOp.hasRepositionedThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
         }
 
         if (shootButton != null)
         {
             Debug.Log($"hasShotThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
-            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0);
+            shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
+            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
         }
 
         if (dashButton != null)
         {
             Debug.Log($"hasDashedThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            dashButton.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
-            dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0);
+            dashButton.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
+            dashCost.SetActive(!playerOp.hasDashedThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
         }
 
         if (chargeButton != null)
@@ -126,15 +126,15 @@ public class ActionSelectionState : BaseState
         if (fightButton != null)
         {
             Debug.Log($"hasFoughtThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
-            fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0);
+            fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0 && playerOp.hasChargedThisActivation);
+            fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0 && playerOp.hasChargedThisActivation);
         }
 
         if (fallBackButton != null)
         {
             Debug.Log($"hasFallenBackThisActivation: {playerOp.hasFallenBackThisActivation} && currentApl{playerOp.currentApl}");
-            fallBackButton.SetActive(!playerOp.hasFallenBackThisActivation && playerOp.currentApl > 1);
-            fallBackCost.SetActive(!playerOp.hasFallenBackThisActivation && playerOp.currentApl > 1);
+            fallBackButton.SetActive(!playerOp.hasFallenBackThisActivation && playerOp.currentApl > 1 && playerOp.EnemyInControlRange);
+            fallBackCost.SetActive(!playerOp.hasFallenBackThisActivation && playerOp.currentApl > 1 && playerOp.EnemyInControlRange);
         }
     }
 }

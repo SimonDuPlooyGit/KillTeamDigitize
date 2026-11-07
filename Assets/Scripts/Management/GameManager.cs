@@ -374,6 +374,17 @@ public class GameManager : MonoBehaviour
         {
             SoundManager.PlaySound(2, 1, true);
             SharedContext.CurrentlySelectedOperativeScript.acted = true;
+
+            if (SharedContext.CurrentlySelectedOperativeScript.currentOrder == OrderState.Engage)
+            {
+                SharedContext.CurrentlySelectedOperativeScript.engageSymbol.SetActive(false);
+                SharedContext.CurrentlySelectedOperativeScript.engageSymbolSpent.SetActive(true);
+            } else if (SharedContext.CurrentlySelectedOperativeScript.currentOrder == OrderState.Conceal)
+            {
+                SharedContext.CurrentlySelectedOperativeScript.concealSymbol.SetActive(false);
+                SharedContext.CurrentlySelectedOperativeScript.concealSymbolSpent.SetActive(true);
+            }
+            
             SharedContext.CurrentlySelectedOperativeScript.selected = false;
             SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
         }

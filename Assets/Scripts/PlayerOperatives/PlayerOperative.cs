@@ -130,7 +130,7 @@ public class PlayerOperative : BaseOperativeClass
                 selected && hit.transform.CompareTag("Board"))
             {
                 NavMeshHit navMeshHit;
-                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.01f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.14f, NavMesh.AllAreas))
                 {
                     Debug.Log("Clicked on a valid navmesh position");
                     Vector3 rawDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
@@ -181,7 +181,7 @@ public class PlayerOperative : BaseOperativeClass
                 selected && hit.transform.CompareTag("Board"))
             {
                 NavMeshHit navMeshHit;
-                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.01f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.14f, NavMesh.AllAreas))
                 {
                     Debug.Log("Clicked on a valid navmesh position");
                     Vector3 finalDestination = LimitPathDistance(hit.point, chargeDistanceScaled, out _limitedPoints, out _currentPathDistance);
@@ -235,7 +235,7 @@ public class PlayerOperative : BaseOperativeClass
                 selected && hit.transform.CompareTag("Board"))
             {
                 NavMeshHit navMeshHit;
-                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.01f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 0.14f, NavMesh.AllAreas))
                 {
                     Debug.Log("Clicked on a valid navmesh position");
                     Vector3 rawDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
@@ -346,7 +346,21 @@ public class PlayerOperative : BaseOperativeClass
         remainingMovement = GetCurrentRepositionBudget();
         hasRepositionedThisActivation = false;
         hasShotThisActivation = false;
+        hasDashedThisActivation = false;
+        hasChargedThisActivation = false;
+        hasFallenBackThisActivation = false;
+        hasFoughtThisActivation = false;
         ResetMoveMarker();
+
+        if (currentOrder == OrderState.Engage)
+        {
+            engageSymbol.SetActive(true);
+            engageSymbolSpent.SetActive(false);
+        } else if (currentOrder == OrderState.Conceal)
+        {
+            concealSymbol.SetActive(true);
+            concealSymbolSpent.SetActive(false);
+        }
     }
     
     public override void TurnFinished()
@@ -380,6 +394,7 @@ public class PlayerOperative : BaseOperativeClass
     //Only allow safe pathfinding outside control ranges
     private Vector3 GetControlRangeSafeDestination(Vector3 destination)
     {
+        Debug.Log("GetControlRangeSafeDestination for reposition/dash called");
         float controlRange = 0.414f;
         float minSafeDistance = 0.6f;
         

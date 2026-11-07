@@ -44,6 +44,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject aplCount;
     public GameObject concealSymbol;
     public GameObject engageSymbol;
+    public GameObject concealSymbolSpent;
+    public GameObject engageSymbolSpent;
     public GameObject injuredSymbol;
     public GameObject concealInCoverSymbol;
     public GameObject damagePopOut;
@@ -105,11 +107,11 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
     protected virtual void Update()
     {
-        if (currentOrder == OrderState.Engage)
+        if (currentOrder == OrderState.Engage && !acted)
         {
             engageSymbol.SetActive(true);
             concealSymbol.SetActive(false);
-        } else if (currentOrder == OrderState.Conceal)
+        } else if (currentOrder == OrderState.Conceal && !acted)
         {
             engageSymbol.SetActive(false);
             concealSymbol.SetActive(true);
@@ -547,6 +549,17 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public virtual void TurnFinished()
     {
         Debug.Log($"{gameObject.name}'s turn is over");
+
+        var hasPlayerScript = GetComponent<PlayerOperative>();
+        if (hasPlayerScript != null)
+        {
+            if (!hasPlayerScript.hasFoughtThisActivation && !hasPlayerScript.hasShotThisActivation &&
+                !hasPlayerScript.hasChargedThisActivation)
+            {
+                currentOrder = OrderState.Conceal; //Turn back to conceal if the unit hasn't shot, fought or charged this acivation
+            }
+        }
+        
         acted = true;
         Deselect();
     }

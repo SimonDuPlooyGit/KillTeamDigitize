@@ -6907,6 +6907,8 @@ MonoBehaviour:
   aplCount: {fileID: 8215639158211220109}
   concealSymbol: {fileID: 4896400574242412389}
   engageSymbol: {fileID: 5001128376997696393}
+  concealSymbolSpent: {fileID: 1397884765926506399}
+  engageSymbolSpent: {fileID: 1547398708679187002}
   injuredSymbol: {fileID: 8953074488598929113}
   concealInCoverSymbol: {fileID: 3720882771788012080}
   damagePopOut: {fileID: 2207886363201068217}
@@ -6916,6 +6918,7 @@ MonoBehaviour:
   statusHoverHolder: {fileID: 0}
   fogEffect: {fileID: 3249404380935832136}
   glow: {fileID: 2100000, guid: 1a1683306b78c6d419efbd4f5ab2c7c0, type: 2}
+  injured: 0
   deathParticles: {fileID: 3381858293456355160}
   _animator: {fileID: 0}
   agent: {fileID: 0}
@@ -6923,12 +6926,16 @@ MonoBehaviour:
   remainingMovement: 0
   movementInfo: {fileID: 0}
   moveMarkerUI: {fileID: 7924557211065084260}
+  menu: {fileID: 0}
   hasFoughtThisActivation: 0
   hasRepositionedThisActivation: 0
   hasDashedThisActivation: 0
   hasChargedThisActivation: 0
   hasShotThisActivation: 0
   validMoveMarkerPosition: 1
+  hasFallenBackThisActivation: 0
+  isInvalidCharge: 0
+  isInvalidMove: 0
 --- !u!120 &3577167626324735336
 LineRenderer:
   serializedVersion: 3

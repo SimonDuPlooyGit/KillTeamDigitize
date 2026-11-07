@@ -71,8 +71,8 @@ public class SoundManager : MonoBehaviour
         else
         {
             //default playing method
-            instance.audioSource.pitch = 1f;
-            instance.audioSource.PlayOneShot(clip, volume);
+            //instance.audioSource.pitch = 1f;
+            //instance.audioSource.PlayOneShot(clip, volume);
         }
     }
 

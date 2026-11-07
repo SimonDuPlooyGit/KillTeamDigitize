@@ -6380,6 +6380,8 @@ MonoBehaviour:
   aplCount: {fileID: 6236903750796841253}
   concealSymbol: {fileID: 2015722719575890863}
   engageSymbol: {fileID: 6102584820753464424}
+  concealSymbolSpent: {fileID: 1331249226893945103}
+  engageSymbolSpent: {fileID: 2182302046881155281}
   injuredSymbol: {fileID: 6129740112626608296}
   concealInCoverSymbol: {fileID: 4513460434168829879}
   damagePopOut: {fileID: 2512070335018532520}
@@ -6389,7 +6391,9 @@ MonoBehaviour:
   statusHoverHolder: {fileID: 0}
   fogEffect: {fileID: 3681392821243835701}
   glow: {fileID: 2100000, guid: a2ff2e93a79c10f48a1dac3ab7e2288c, type: 2}
+  injured: 0
   deathParticles: {fileID: 4660242697195336866}
+  _animator: {fileID: 0}
   agent: {fileID: 0}
   currentCoverSpot: {fileID: 0}
   npoAgent: {fileID: 0}
