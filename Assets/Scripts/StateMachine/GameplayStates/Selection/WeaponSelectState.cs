@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //-----WeaponSelectState (When the player selects weapons from the weapon menu)-----
@@ -61,7 +62,21 @@ public class WeaponSelectState : BaseState
         {
             foreach (WeaponTemplate weapon in Context.CurrentlySelectedOperativeSo.weapons) //Loop through the unit's weapons and tell the UI to create a panel for each
             {
-                _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
+                if (Context.IsShootingRequested)
+                {
+                    //Debug.Log("Only populating ranged weapons");
+                    if (weapon.rules.OfType<WeaponRules.Melee>().Any()) continue;
+                    _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
+                } else if (Context.IsFightingRequested)
+                {
+                    //Debug.Log("Only populating melee weapons");
+                    if (weapon.rules.OfType<WeaponRules.Melee>().Any())
+                    {
+                        _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
+                    }
+                }
+                
+                
                 //^ Call AddWeaponPanel on the shootMenu script with the currently iterated weapon as a parameter
                 //Send OnWeaponClicked as a delegate to AddWeaponPanel (Top of a 3 part callback down to WeaponPanel)
             }

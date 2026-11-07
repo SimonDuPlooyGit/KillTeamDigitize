@@ -329,6 +329,11 @@ public class PlayerOperative : BaseOperativeClass
     //Move the player operative the move marker
     public bool MoveOperativeToMarker(PlayerMovementType movementType)
     {
+        if (movementType == PlayerMovementType.Charge)
+        {
+            currentOrder = OrderState.Engage;
+        }
+        
         if (!validMoveMarkerPosition)
         {
             Debug.Log("MoveMarker is invalid");

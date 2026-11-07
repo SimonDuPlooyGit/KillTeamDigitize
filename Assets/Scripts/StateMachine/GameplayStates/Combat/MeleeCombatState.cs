@@ -137,6 +137,7 @@ public class MeleeCombatState : BaseState
                     Debug.Log("Unit defeated. Ending melee sequence early. Closing menu");
                     _menu.CloseMenu(_menu.meleeMenu);
                     _diceHandler.ClearDiceRolls();
+                    _diceHandler.ClearAllDice();
                     break;
                 }
                 

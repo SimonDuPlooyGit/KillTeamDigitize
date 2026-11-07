@@ -117,6 +117,7 @@ public class NonPlayerOperative : BaseOperativeClass
         {
             BaseOperativeClass target = enemiesInControlRange[0];
             Debug.Log($"{name} is fighting {target.name}");
+            SetOrderState(OrderState.Engage);
             
             Context.SetSelectedOperativesData(this);
             Context.SetSelectedTarget(target);
@@ -144,6 +145,7 @@ public class NonPlayerOperative : BaseOperativeClass
 
         if (targetPlayer != null)
         {
+            SetOrderState(OrderState.Engage);
             hasCharged = true;
             UpdateApl(1);
 
@@ -662,9 +664,9 @@ public class NonPlayerOperative : BaseOperativeClass
     public bool IsValidTarget(BaseOperativeClass target)
     {
         //Debug.Log("IsValidTarget called");
-        if (target == null || target.dead || !target.gameObject.activeInHierarchy)
+        if (target == null || target.dead || !target.gameObject.activeInHierarchy || target.EnemyInControlRange)
         {
-            Debug.Log("The checked target is dead or doesn't exist");
+            Debug.Log("The checked target is dead or is in engage in control range");
             return false;
         }
 
