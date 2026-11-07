@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine.AI;
 
 public enum OrderState {Engage, Conceal}
@@ -310,6 +311,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
                     if (CheckLineObstruction(startSp, targetSp2))
                     {
+                        attacker.DrawTemporaryLine(startSp, targetSp1, attacker.validLine, 2.0f);
+                        attacker.DrawTemporaryLine(startSp, targetSp2, attacker.validLine, 2.0f);
+                        
                         Debug.DrawLine(startSp, targetSp1, Color.cyan, 1f);
                         Debug.DrawLine(startSp, targetSp2, Color.cyan, 1f);
                         return true;
@@ -367,6 +371,27 @@ public abstract class BaseOperativeClass : MonoBehaviour
         }
         Debug.DrawLine(start, end, Color.green, 1f);
         return true;
+    }
+    
+    //Helper function to draw temporary lines ingame for player
+    public void DrawTemporaryLine(Vector3 start, Vector3 end, Material mat, float duration)
+    {
+        StartCoroutine(TemporaryLineCoroutine(start, end, mat, duration));
+    }
+
+    private IEnumerator TemporaryLineCoroutine(Vector3 start, Vector3 end, Material mat, float duration)
+    {
+        GameObject line  = new GameObject("TemporaryLine");
+        LineRenderer lr = line.AddComponent<LineRenderer>();
+        lr.material = mat != null ? mat : validLine;
+        lr.startWidth = 0.03f;
+        lr.endWidth = 0.03f;
+        lr.positionCount = 2;
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+        
+        yield return new WaitForSeconds(duration);
+        Destroy(line);
     }
 
     //Do damage communication and effects in here
@@ -565,7 +590,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
     
     //Call this when you unselect a unit by transitioning back to UnitActivationState when you haven't performed any actions on CurrentlySelectedOperative
-    public virtual void Deselect()
+    public void Deselect()
     {
         Debug.Log($"{gameObject.name} has been deselected");
         selected = false;

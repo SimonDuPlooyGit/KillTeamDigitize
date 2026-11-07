@@ -34,6 +34,7 @@ public class NonPlayerOperative : BaseOperativeClass
     private GameManager _gm;
     private DiceHandler _diceHandler;
     private InformationPackage _context;
+    public OrbitCamera _mainCamera;
 
     //Context seems to be null when we call getUnitToActivate so we need to find if earlier
     private InformationPackage Context
@@ -105,6 +106,7 @@ public class NonPlayerOperative : BaseOperativeClass
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
         acted = false;
+        //_mainCamera = _context.MainCameraScript;
     }
 
     //Action implementations
@@ -267,6 +269,7 @@ public class NonPlayerOperative : BaseOperativeClass
         shootCount++;
         currentApl -= 1;
         SetApl(currentApl);
+        _mainCamera = _context.MainCameraScript;
         CheckTurnEnd();
         currentShootTarget = null;
         IsShootingComplete = true;

@@ -72,10 +72,32 @@ public class ShootCombatState : BaseState
         }
         Debug.Log("ResolveCombat");
         
+        Context.MainCameraScript.SetOrbitTarget(Context.CurrentlySelectedTarget.transform);
+        
+        if (Context.CurrentlySelectedOperativeScript.lineRenderer != null)
+        {
+            LineRenderer lr = Context.CurrentlySelectedOperativeScript.lineRenderer;
+            lr.positionCount = 2;
+            lr.SetPosition(0, Context.CurrentlySelectedOperativeScript.losStart.position);
+            lr.SetPosition(1, Context.CurrentlySelectedTargetScript.losStart.position);
+            lr.material = Context.CurrentlySelectedOperativeScript.validLine;
+            lr.enabled = true;
+        }
+        
+        if (Context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal &&
+            Context.CurrentlySelectedTargetScript.closeToCover)
+        {
+            Context.CurrentlySelectedOperativeScript.CheckTargetingLines(
+                Context.CurrentlySelectedOperativeScript, Context.CurrentlySelectedTargetScript);
+        }
+        
+        yield return new WaitForSeconds(2.0f);
+        
         //Pre-Roll
         ExecuteRulesInThisStep(AttackTimings.PreRoll);
         
         //Roll Attack Dice and defense dice
+        Context.MainCameraScript.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
         yield return _diceHandler.StartCoroutine(_diceHandler.ThrowAttackDice(Context.Weapon.atk, true, Context));
         
         //After attack roll
