@@ -209,7 +209,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
             {
                 isBlocked = true;
                 blockedPoint = hit.point;
-                Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance} (From Unit Call)");
+                Debug.Log($"LOS Blocked by {hit.collider.name}. Total range to target: {distance}");
                 break;
             }
         }
@@ -224,7 +224,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             lineRenderer.material = validLine;
             lineRenderer.SetPosition(1, losEnd.position);
-            Debug.Log($"LOS Clear. Total range to target: {distance} (From Unit Call)");
+            Debug.Log($"LOS Clear. Total range to target: {distance}");
         }
 
         lineRenderer.enabled = true;

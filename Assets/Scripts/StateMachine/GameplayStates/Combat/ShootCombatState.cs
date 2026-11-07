@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 //-----CombatState Class (Handles all of combat)-----
@@ -86,6 +85,7 @@ public class ShootCombatState : BaseState
         
         yield return new WaitForSeconds(2f);
 
+        Context.MainCameraScript.SetOrbitTarget(Context.CurrentlySelectedTarget.transform);
         yield return _diceHandler.StartCoroutine(_diceHandler.ThrowDefenseDice(Context.NumDefenseDiceRoll, true, Context));
         
         //Attack Evaluation
@@ -97,6 +97,7 @@ public class ShootCombatState : BaseState
         ApplyFinalDamage();
         
         yield return new WaitForSeconds(1.5f);
+        Context.MainCameraScript.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
         _diceHandler.ClearDiceRolls();
         Context.CurrentlySelectedOperativeScript.lineRenderer.enabled = false;
         Context.IsShootingConfirmed = true;

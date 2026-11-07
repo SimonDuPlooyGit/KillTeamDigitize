@@ -251,6 +251,8 @@ public class NonPlayerOperative : BaseOperativeClass
             _context.RetainedNormals = 0;
 
             yield return StartCoroutine(_diceHandler.ThrowAttackDice(chosenWeapon.atk, false, _context));
+            
+            Context.MainCameraScript.SetOrbitTarget(Context.CurrentlySelectedTarget.transform);
             yield return StartCoroutine(_diceHandler.ThrowDefenseDice(_context.NumDefenseDiceRoll, false, _context));
             EvaluateNpoCombatHitsAndSaves(_context, currentShootTarget);
         }
@@ -260,6 +262,7 @@ public class NonPlayerOperative : BaseOperativeClass
         }
 
         yield return new WaitForSeconds(0.5f);
+        Context.MainCameraScript.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
         currentShootTarget.ForceUIOn(false);
         shootCount++;
         currentApl -= 1;
