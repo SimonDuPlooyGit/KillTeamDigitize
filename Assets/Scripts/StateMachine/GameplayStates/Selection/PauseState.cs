@@ -33,6 +33,6 @@ public class PauseState : BaseState
 
     private void OnPausePerformed(InputAction.CallbackContext ctx)
     {
-        _stateMachine.GoToPreviousState();
+        //_stateMachine.GoToPreviousState();
     }
 }

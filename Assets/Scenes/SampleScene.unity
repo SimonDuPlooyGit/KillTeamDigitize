@@ -1546,6 +1546,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2eeaa71c05688cc4284fa5044b18b41c, type: 3}
   mainTrack: {fileID: 8300000, guid: 7a1ecbc07abeb0f4dacaa42f0867b2f0, type: 3}
   ambiance: {fileID: 8300000, guid: 5dfa82c2f1a784643a9d773f0ff325f9, type: 3}
+  bgVolume1: 0.4
+  bgVolume2: 0.2
 --- !u!4 &100958374
 Transform:
   m_ObjectHideFlags: 0
@@ -10663,7 +10665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7650863346373353224, guid: 5dfea045455e71f4eac055d7e14094f1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.997
+      value: -1.776
       objectReference: {fileID: 0}
     - target: {fileID: 7650863346373353224, guid: 5dfea045455e71f4eac055d7e14094f1, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10671,7 +10673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7650863346373353224, guid: 5dfea045455e71f4eac055d7e14094f1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.733
+      value: 0.084
       objectReference: {fileID: 0}
     - target: {fileID: 7650863346373353224, guid: 5dfea045455e71f4eac055d7e14094f1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11773,7 +11775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7510767729299967080, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.461
+      value: -1.559
       objectReference: {fileID: 0}
     - target: {fileID: 7510767729299967080, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_LocalPosition.y
@@ -11781,7 +11783,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7510767729299967080, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.707
+      value: -1.734
       objectReference: {fileID: 0}
     - target: {fileID: 7510767729299967080, guid: 069dfee48249cda4eac7c2c64bd9b281, type: 3}
       propertyPath: m_LocalRotation.w
@@ -27177,17 +27179,6 @@ MonoBehaviour:
   tooClose: {fileID: 666655156}
   inRange: {fileID: 636135546}
   weaponTooltipHolder: {fileID: 0}
-  tutFlag1: 1
-  tutFlag2: 1
-  tutFlag3: 1
-  tutFlag4: 0
-  tutFlag4B: 1
-  tutFlag5: 1
-  tutFlag6: 0
-  tutFlag6B: 1
-  tutFlag7: 0
-  tutFlag7B: 1
-  tutFlag8: 0
 --- !u!4 &1700968725
 Transform:
   m_ObjectHideFlags: 0
@@ -28877,7 +28868,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.584
+      value: -1.411
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalPosition.y
@@ -28885,7 +28876,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.082
+      value: -2.501
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalRotation.w
