@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using UnityEngine.SceneManagement;
 using static DiceHandler;
 
 public class MeleeCombatState : BaseState
@@ -77,6 +78,11 @@ public class MeleeCombatState : BaseState
         if (Context.CurrentlySelectedOperativeScript is NonPlayerOperative)
         {
             Context.CurrentlySelectedOperativeScript.ForceUIOn(false);
+        }
+
+        if(SceneManager.GetActiveScene().name == "Tut3")
+        {
+            TutEvents.AdvanceTutorial();
         }
     }
 

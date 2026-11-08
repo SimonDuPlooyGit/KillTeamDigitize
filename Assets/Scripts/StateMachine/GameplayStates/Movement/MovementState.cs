@@ -107,6 +107,11 @@ public class MovementState : BaseState
                 {
                     TutEvents.AdvanceTutorial();
                 }
+
+                if (SceneManager.GetActiveScene().name == "Tut3")
+                {
+                    TutEvents.AdvanceTutorial();
+                }
             }
             else if(!playerOp.validMoveMarkerPosition && playerOp.isInvalidCharge)
             {

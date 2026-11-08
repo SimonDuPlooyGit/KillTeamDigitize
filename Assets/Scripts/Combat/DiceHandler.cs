@@ -95,8 +95,6 @@ public class DiceHandler : MonoBehaviour
     public bool isWaitingForParry = false;
     private CombatRoll _savedParryPlayerDie = null;
     public bool isFirstMeleeSelect = true; //used to change the melee guide text only on the first time you select it
-    //Tutflags
-    public bool tutFlagBack = false;
     private void Start()
     {
         currentSelectionMode = DiceSelectionMode.None;
@@ -296,6 +294,11 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
+        if (SceneManager.GetActiveScene().name == "Tut3")
+        {
+            Debug.Log("AAAAAAAAAAAAAAA WHYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+            TutEvents.AdvanceTutorial();
+        }
         Debug.Log($"Called and in ThrowDefenseDice with numdice:{numDice}, isAlly:{isAlly}");
         diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
             context.CurrentlySelectedTarget.transform.position.y + 0.4f,
@@ -375,6 +378,8 @@ public class DiceHandler : MonoBehaviour
         {
             SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.meleeMenu);
+
+
             Debug.Log("Opened meleeMenu");
         }
         else
@@ -413,7 +418,7 @@ public class DiceHandler : MonoBehaviour
             }
             FilterDiceList(context, false, context.opponentWeapon.hit);
         }
-        
+
         //Display whether the dice blocked or not by updating the sprite
         foreach (CombatRoll dieSprite in activeDefenseDice)
         {

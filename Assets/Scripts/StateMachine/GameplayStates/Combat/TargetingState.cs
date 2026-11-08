@@ -72,6 +72,11 @@ public class TargetingState : BaseState
                     {
                         Context.ValidTargetFight = true;
                         Debug.Log($"Valid melee target selected: {selectedTargetOp.name}");
+
+                        if (SceneManager.GetActiveScene().name == "Tut3")
+                        {
+                            TutEvents.AdvanceTutorial();
+                        }
                     }
                     else
                     {

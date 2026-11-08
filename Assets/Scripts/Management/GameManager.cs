@@ -178,6 +178,11 @@ public class GameManager : MonoBehaviour
                     return false;
                 }
 
+                if (SceneManager.GetActiveScene().name == "Tut3")
+                {
+                    return false;
+                }
+
                 onBackTransition?.Invoke();
                 return true;
             }
