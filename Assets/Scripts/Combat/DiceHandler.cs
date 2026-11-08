@@ -294,11 +294,6 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
-        if (SceneManager.GetActiveScene().name == "Tut3")
-        {
-            Debug.Log("AAAAAAAAAAAAAAA WHYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
-            TutEvents.AdvanceTutorial();
-        }
         Debug.Log($"Called and in ThrowDefenseDice with numdice:{numDice}, isAlly:{isAlly}");
         diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
             context.CurrentlySelectedTarget.transform.position.y + 0.4f,
