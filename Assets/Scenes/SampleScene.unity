@@ -2975,6 +2975,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoomScaledUp Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4284505618689966743, guid: 2b208f6d2d676644f87802766aac0169, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4545034758191697586, guid: 2b208f6d2d676644f87802766aac0169, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.01
