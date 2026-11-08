@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine.UIElements;
 using Image = UnityEngine.UI.Image;
+using UnityEngine.SceneManagement;
 
 //-----DiceHandler Class-----
 public class DiceHandler : MonoBehaviour
@@ -94,7 +95,8 @@ public class DiceHandler : MonoBehaviour
     public bool isWaitingForParry = false;
     private CombatRoll _savedParryPlayerDie = null;
     public bool isFirstMeleeSelect = true; //used to change the melee guide text only on the first time you select it
-
+    //Tutflags
+    public bool tutFlagBack = false;
     private void Start()
     {
         currentSelectionMode = DiceSelectionMode.None;
@@ -240,6 +242,12 @@ public class DiceHandler : MonoBehaviour
         {
             SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.diceRollMenu);
+
+            if(SceneManager.GetActiveScene().name == "Tut2")
+            {
+                TutEvents.AdvanceTutorial();
+            }
+
             //If in attack then popup the balanced rule
             if(currentSelectionMode == DiceSelectionMode.Attack)
             {
@@ -373,6 +381,11 @@ public class DiceHandler : MonoBehaviour
         {
             SoundManager.PlaySound(4, 1, true);
             menu.OpenMenu(menu.diceRollMenu);
+
+            if (SceneManager.GetActiveScene().name == "Tut2")
+            {
+                TutEvents.AdvanceTutorial();
+            }
         }
         
         SpawnDice(activePhysAttackDice, true, isAlly);
@@ -421,6 +434,11 @@ public class DiceHandler : MonoBehaviour
             Destroy(balancedObject);
         }
         menu.CloseMenu(menu.diceRollMenu);
+
+        if (SceneManager.GetActiveScene().name == "Tut2")
+        {
+            TutEvents.AdvanceTutorial();
+        }
         Debug.Log("ThrowDefenseDice Coroutine has finished");
     }
     //==================[End throw defense coroutine]=======================

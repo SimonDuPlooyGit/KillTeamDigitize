@@ -32,8 +32,11 @@ public class GameManager : MonoBehaviour
     //NPO states
     private NPOSelection npoSelectState;
     private NPOActionSelect npoTurnPerformState;
-    
+
     //public PauseState pauseState;
+    //Tutorial flags
+    private bool tutFlagShoot = true;
+    private bool tutFlagRepo = true;
 
     private void Awake()
     {
@@ -164,7 +167,17 @@ public class GameManager : MonoBehaviour
                 {
                     return false;
                 }
-                
+
+                if(SceneManager.GetActiveScene().name == "Tut1")
+                {
+                    return false;
+                }
+
+                if (SceneManager.GetActiveScene().name == "Tut2" && !menu.tutFlagBack)
+                {
+                    return false;
+                }
+
                 onBackTransition?.Invoke();
                 return true;
             }
@@ -267,6 +280,12 @@ public class GameManager : MonoBehaviour
             SoundManager.PlaySound(2, 1, true);
             SharedContext.SelectedMovement = PlayerMovementType.Reposition;
             SharedContext.IsMovementRequested = true;
+
+            if(SceneManager.GetActiveScene().name == "Tut2" && tutFlagRepo)
+            {
+                TutEvents.AdvanceTutorial();
+                tutFlagRepo = false;
+            }
         }
         else
         {
@@ -348,6 +367,12 @@ public class GameManager : MonoBehaviour
         {
             SoundManager.PlaySound(3, 1, true);
             SharedContext.IsShootingRequested = true;
+
+            if(SceneManager.GetActiveScene().name == "Tut2" && tutFlagShoot)
+            {
+                TutEvents.AdvanceTutorial();
+                tutFlagShoot = false;
+            }
         }
         else
         {

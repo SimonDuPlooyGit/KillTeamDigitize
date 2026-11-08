@@ -28,7 +28,9 @@ public class MenuPanel : MonoBehaviour
     public GameObject inRange;
     [SerializeField]
     private GameObject weaponTooltipHolder;
-    
+    //Tutflags
+    public bool tutFlagBack = false;
+
     void Start()
     {
         shootMenuActualScript = shootMenuHolder.GetComponentInChildren<ShootMenu>();

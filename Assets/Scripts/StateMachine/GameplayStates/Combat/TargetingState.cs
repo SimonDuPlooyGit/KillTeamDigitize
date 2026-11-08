@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 //-----TargetingState Class (When you have picked a weapon on your unit and you want to click an NPO to shoot)-----
 public class TargetingState : BaseState
@@ -10,7 +11,10 @@ public class TargetingState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private MenuPanel _menu; //Needs access to the menu from GameManager
-    
+    //Tutorial flags
+    private bool tutFlagTarget = true;
+    private bool tutFlagInvalid = true;
+
     public TargetingState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
     {
         _input = input;
@@ -21,6 +25,12 @@ public class TargetingState : BaseState
     {
         Debug.Log("Targeting State Entered");
         _input.Controls.Select.performed += OnSelectPerformed;
+
+        if (SceneManager.GetActiveScene().name == "Tut2" && tutFlagTarget)
+        {
+            TutEvents.AdvanceTutorial();
+            tutFlagTarget = false;
+        }
     }
 
     public override void Update()
@@ -116,6 +126,13 @@ public class TargetingState : BaseState
                     SoundManager.PlaySound(7);
                     _menu.PopUp(_menu.invTarget);
                     validTarget = false;
+
+                    if(SceneManager.GetActiveScene().name == "Tut2" && tutFlagInvalid)
+                    {
+                        TutEvents.AdvanceTutorial();
+                        tutFlagInvalid = false;
+                        _menu.tutFlagBack = true;
+                    }
                 }
 
                 if (Context.CurrentlySelectedTargetScript.EnemyInControlRange)
@@ -148,6 +165,14 @@ public class TargetingState : BaseState
                         SoundManager.PlaySound(7);
                         _menu.PopUp(_menu.concTarget);
                     }
+
+                    if (SceneManager.GetActiveScene().name == "Tut2" && tutFlagInvalid)
+                    {
+                        TutEvents.AdvanceTutorial();
+                        tutFlagInvalid = false;
+                        _menu.tutFlagBack = true;
+                    }
+
                     Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");
                 }
             }
