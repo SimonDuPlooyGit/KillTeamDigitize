@@ -79,7 +79,7 @@ public class NonPlayerOperative : BaseOperativeClass
     public bool CanDash() => !isPerformingAnAction && !hasDashed && !hasCharged && currentApl > 0;
     public bool CanFight() => !isPerformingAnAction && !hasFought && InControlRange() && currentApl > 0;
     public bool CanCharge() => !isPerformingAnAction && !hasCharged && !hasRepositioned && PossibleChargeTarget() && currentApl > 0;
-    public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman;
+    public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman && currentApl > 1;
 
     /*public bool CanCharge()
     {
@@ -129,6 +129,7 @@ public class NonPlayerOperative : BaseOperativeClass
 
             hasFought = true;
             Context.IsFightingRequested = true;
+            UpdateApl(1);
         }
         else
         {
@@ -342,11 +343,11 @@ public class NonPlayerOperative : BaseOperativeClass
     //Marksman fallback behaviour
     public void PerformFallback()
     {
+        hasFallenBack = true;
         Debug.Log($"{name} performs Fallback");
         PerformRepositionM();
         currentApl -= 2;
         SetApl(currentApl);
-        hasFallenBack = true;
         CheckTurnEnd();
     }
 

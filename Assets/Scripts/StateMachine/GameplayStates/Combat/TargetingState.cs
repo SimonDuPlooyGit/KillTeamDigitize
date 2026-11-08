@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
 
 //-----TargetingState Class (When you have picked a weapon on your unit and you want to click an NPO to shoot)-----
 public class TargetingState : BaseState
