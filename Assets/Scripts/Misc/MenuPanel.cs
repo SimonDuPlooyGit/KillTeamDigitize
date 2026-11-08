@@ -58,6 +58,7 @@ public class MenuPanel : MonoBehaviour
 
     public void OpenMenu(GameObject menu)
     {
+        //Debug.Log($"Opening menu: {menu.name}");
         if (menu.transform.localScale == Vector3.zero)
         {
             menu.transform.localScale = Vector3.one;

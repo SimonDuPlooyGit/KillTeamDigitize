@@ -37,6 +37,7 @@ public class WeaponSelectState : BaseState
         {
             _menu.shootMenuActualScript.ClearWeapons(); //We need the weapon menu to be cleared of weapons when this state is exited
         }
+        _menu.CloseMenu(_menu.shootMenuHolder);
         _menu.ClearTooltipsBackup();
         //Context.StateFlagsReset();
     }
