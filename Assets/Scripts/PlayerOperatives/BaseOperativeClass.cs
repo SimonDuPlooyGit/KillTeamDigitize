@@ -48,7 +48,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public GameObject concealSymbolSpent;
     public GameObject engageSymbolSpent;
     public GameObject injuredSymbol;
-    public GameObject concealInCoverSymbol;
+    public GameObject inCoverSymbol;
     public GameObject damagePopOut;
     public TextMeshProUGUI nameText;
     public GameObject unitBase;
@@ -116,6 +116,15 @@ public abstract class BaseOperativeClass : MonoBehaviour
         {
             engageSymbol.SetActive(false);
             concealSymbol.SetActive(true);
+        }
+
+        if (closeToCover)
+        {
+            inCoverSymbol.SetActive(true);
+        }
+        else
+        {
+            inCoverSymbol.SetActive(false);
         }
         
         SampleCollidersInControlRange(transform.position);
@@ -504,12 +513,10 @@ public abstract class BaseOperativeClass : MonoBehaviour
     {
         if (closeToCover && unitUI != null && currentOrder == OrderState.Conceal)
         {
-            concealInCoverSymbol.SetActive(true);
             fogEffect.SetActive(true);
         }
         else
         {
-            concealInCoverSymbol.SetActive(false);
             fogEffect.SetActive(false);
         }
     }

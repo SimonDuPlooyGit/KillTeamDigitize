@@ -990,7 +990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bfda115335f7a4e8a645980299837a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  camera: {fileID: 0}
+  mcamera: {fileID: 0}
 --- !u!225 &3990602642800622905
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6383,7 +6383,7 @@ MonoBehaviour:
   concealSymbolSpent: {fileID: 1331249226893945103}
   engageSymbolSpent: {fileID: 2182302046881155281}
   injuredSymbol: {fileID: 6129740112626608296}
-  concealInCoverSymbol: {fileID: 4513460434168829879}
+  inCoverSymbol: {fileID: 4513460434168829879}
   damagePopOut: {fileID: 2512070335018532520}
   nameText: {fileID: 7362769743932105703}
   unitBase: {fileID: 2063543643037542596}
@@ -6407,6 +6407,7 @@ MonoBehaviour:
   canShootTwice: 0
   npoManager: {fileID: 0}
   archetype: 1
+  _mainCamera: {fileID: 0}
 --- !u!95 &3347268323279254911
 Animator:
   serializedVersion: 7

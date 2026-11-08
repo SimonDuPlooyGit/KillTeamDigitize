@@ -554,7 +554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bfda115335f7a4e8a645980299837a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  camera: {fileID: 0}
+  mcamera: {fileID: 0}
 --- !u!225 &7016336925121987207
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6662,7 +6662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bfda115335f7a4e8a645980299837a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UILookAt
-  camera: {fileID: 0}
+  mcamera: {fileID: 0}
 --- !u!1 &5885098838852894865
 GameObject:
   m_ObjectHideFlags: 0
@@ -6910,7 +6910,7 @@ MonoBehaviour:
   concealSymbolSpent: {fileID: 1397884765926506399}
   engageSymbolSpent: {fileID: 1547398708679187002}
   injuredSymbol: {fileID: 8953074488598929113}
-  concealInCoverSymbol: {fileID: 3720882771788012080}
+  inCoverSymbol: {fileID: 3720882771788012080}
   damagePopOut: {fileID: 2207886363201068217}
   nameText: {fileID: 8004231822574503436}
   unitBase: {fileID: 4948545270696065821}
