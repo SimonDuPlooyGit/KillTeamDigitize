@@ -15,9 +15,17 @@ public class NPOSelection : BaseState
     {
         Debug.Log("NPOSelection OnEnter");
         NonPlayerOperative npoToActivate = _npoManager.GetNpoUnitToActivate();
-        Context.SetSelectedOperativesData(npoToActivate);
-        _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
-        npoToActivate.ResetActionFlags();
+        
+        if (npoToActivate == null)
+        {
+            Debug.Log("NPOSelection OnEnter: npoToActivate == null");
+        }
+        else
+        {
+            Context.SetSelectedOperativesData(npoToActivate);
+            _gameManager.mainCamera.SetOrbitTarget(Context.CurrentlySelectedOperative.transform);
+            npoToActivate.ResetActionFlags();
+        }
     }
 
     public override void Update()
