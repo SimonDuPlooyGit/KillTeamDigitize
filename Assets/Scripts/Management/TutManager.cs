@@ -128,4 +128,10 @@ public class TutManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
     }
+
+    public void StartTutButton()
+    {
+        SoundManager.PlaySound(1);
+        TutEvents.AdvanceTutorial();
+    }
 }

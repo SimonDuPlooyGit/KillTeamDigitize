@@ -111,7 +111,7 @@ public class MainMenu : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("Tut1");
 
     }
 

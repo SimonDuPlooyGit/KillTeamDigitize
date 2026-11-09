@@ -14,6 +14,7 @@ public class TargetingState : BaseState
     //Tutorial flags
     private bool tutFlagTarget = true;
     private bool tutFlagInvalid = true;
+    private bool tutFlagHiding = true;
 
     public TargetingState(InformationPackage context, InputActions input, MenuPanel menu) : base(context)
     {
@@ -180,6 +181,12 @@ public class TargetingState : BaseState
                         TutEvents.AdvanceTutorial();
                         tutFlagInvalid = false;
                         _menu.tutFlagBack = true;
+                    }
+
+                    if (SceneManager.GetActiveScene().name == "Tut4" && tutFlagHiding)
+                    {
+                        TutEvents.AdvanceTutorial();
+                        tutFlagHiding = false;
                     }
 
                     Debug.Log($"{Context.CurrentlySelectedTargetSo.name} is not a valid shoot target");

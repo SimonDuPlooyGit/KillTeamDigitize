@@ -14234,7 +14234,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.046666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 74a562f3ac544f846afae48517badab0, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: f85d01270880ffe45898bb413a3ae30a, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &792535545
 Transform:
@@ -23583,6 +23583,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f31554b5d9fcd394e88ee3e33112cfbc, type: 3}
   - {fileID: 8300000, guid: 8e8b64f1618459f45825b74b9019ea14, type: 3}
   - {fileID: 8300000, guid: 2eeaa71c05688cc4284fa5044b18b41c, type: 3}
+  - {fileID: 8300000, guid: 978044cc0d48eea4d9a1b4d9be504179, type: 3}
   mainTrack: {fileID: 8300000, guid: 7a1ecbc07abeb0f4dacaa42f0867b2f0, type: 3}
   ambiance: {fileID: 8300000, guid: 5dfa82c2f1a784643a9d773f0ff325f9, type: 3}
   bgVolume1: 0
@@ -32216,6 +32217,10 @@ PrefabInstance:
     - target: {fileID: 4284505618689966743, guid: 2b208f6d2d676644f87802766aac0169, type: 3}
       propertyPath: m_Name
       value: RoomScaledUp Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4284505618689966743, guid: 2b208f6d2d676644f87802766aac0169, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4545034758191697586, guid: 2b208f6d2d676644f87802766aac0169, type: 3}
       propertyPath: m_LocalPosition.x

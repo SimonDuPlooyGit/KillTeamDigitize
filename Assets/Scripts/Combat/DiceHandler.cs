@@ -222,10 +222,10 @@ public class DiceHandler : MonoBehaviour
         }
         else
         {
-            xToHit.text = $"{context.Weapon.hit} to hit";
+            xToHit.text = $"{context.Weapon.hit} or greater to hit";
         }
         
-        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
+        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} or greater to save";
         //Stops the sequence here if in melee state
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
@@ -294,6 +294,10 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
+        if (SceneManager.GetActiveScene().name == "Tut3")
+        {
+            TutEvents.AdvanceTutorial();
+        }
         Debug.Log($"Called and in ThrowDefenseDice with numdice:{numDice}, isAlly:{isAlly}");
         diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
             context.CurrentlySelectedTarget.transform.position.y + 0.4f,
@@ -739,8 +743,8 @@ public class DiceHandler : MonoBehaviour
         }
 
         ClearAllDice();
-        xToHit.text = "X to hit";
-        xToSave.text = "X to save";
+        xToHit.text = "X or greater to hit";
+        xToSave.text = "X or greater to save";
     }
 
     //Makes the reroll button appear when a panel is selected
@@ -1049,10 +1053,9 @@ public class DiceHandler : MonoBehaviour
         {
             if (bottomAnim != null) bottomAnim.SetTrigger("ClashBottom");
         }
-        
 
+        SoundManager.PlaySound(14);
         yield return new WaitForSeconds(0.5f);
-
         if (topDie != null) Destroy(topDie.gameObject);
         if (bottomDie != null) Destroy(bottomDie.gameObject);
     }
