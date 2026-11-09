@@ -20027,7 +20027,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: X to hit
+  m_text: X or greater to hit
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
   m_sharedMaterial: {fileID: 3261361728455733759, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
@@ -25445,7 +25445,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: X to save
+  m_text: X or greater to save
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
   m_sharedMaterial: {fileID: 3261361728455733759, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
@@ -27187,6 +27187,7 @@ MonoBehaviour:
   tooClose: {fileID: 666655156}
   inRange: {fileID: 636135546}
   weaponTooltipHolder: {fileID: 0}
+  tutFlagBack: 0
 --- !u!4 &1700968725
 Transform:
   m_ObjectHideFlags: 0

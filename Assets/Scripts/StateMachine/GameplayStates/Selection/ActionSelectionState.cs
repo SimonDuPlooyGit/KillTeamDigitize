@@ -31,6 +31,7 @@ public class ActionSelectionState : BaseState
 
     //Tutorial flags
     private bool tutFlag1 = true;
+    private bool tutFlag2 = true;   
 
     public ActionSelectionState(InformationPackage context, MenuPanel menu, GameManager gm) : base(context)
     {
@@ -69,6 +70,12 @@ public class ActionSelectionState : BaseState
         {
             TutEvents.AdvanceTutorial();
             tutFlag1 = false;
+        }
+
+        if (SceneManager.GetActiveScene().name == "Tut4" && tutFlag2)
+        {
+            TutEvents.AdvanceTutorial();
+            tutFlag2 = false;
         }
 
 
