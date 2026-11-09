@@ -2502,7 +2502,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -404, y: 79}
+  m_AnchoredPosition: {x: -404, y: 86}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &188052557
@@ -30074,7 +30074,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -533, y: 401}
-  m_SizeDelta: {x: 814.8, y: 220.9}
+  m_SizeDelta: {x: 814.8, y: 250.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1733440494
 MonoBehaviour:
@@ -34240,7 +34240,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -435.62988, y: 3}
+  m_AnchoredPosition: {x: -435.62988, y: 25}
   m_SizeDelta: {x: -92.792, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1923413302
@@ -34264,7 +34264,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: The enemy rolled their defense dice. This determines how many of your successful
-    attacks they will block.
+    attacks they will block. Once HP reaches 0 that operative dies.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
   m_sharedMaterial: {fileID: 3261361728455733759, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}

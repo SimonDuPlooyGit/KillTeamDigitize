@@ -1053,10 +1053,9 @@ public class DiceHandler : MonoBehaviour
         {
             if (bottomAnim != null) bottomAnim.SetTrigger("ClashBottom");
         }
-        
 
+        SoundManager.PlaySound(14);
         yield return new WaitForSeconds(0.5f);
-
         if (topDie != null) Destroy(topDie.gameObject);
         if (bottomDie != null) Destroy(bottomDie.gameObject);
     }
