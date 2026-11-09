@@ -35,6 +35,12 @@ public class NonPlayerOperative : BaseOperativeClass
     private DiceHandler _diceHandler;
     private InformationPackage _context;
     public OrbitCamera _mainCamera;
+    
+    //Variables for charge checking in a safe way
+    private const float radiusFromTarget = 0.33f;
+    private const float maxDistanceFromTarget = 0.38f;
+    private const float distFromAlly = 0.34f;
+    private const int ringSamples = 16;
 
     //Context seems to be null when we call getUnitToActivate so we need to find if earlier
     private InformationPackage Context
@@ -78,7 +84,9 @@ public class NonPlayerOperative : BaseOperativeClass
     public bool CanReposition() => !isPerformingAnAction && !hasRepositioned && !hasCharged && currentApl > 0;
     public bool CanDash() => !isPerformingAnAction && !hasDashed && !hasCharged && currentApl > 0;
     public bool CanFight() => !isPerformingAnAction && !hasFought && InControlRange() && currentApl > 0;
-    public bool CanCharge() => !isPerformingAnAction && !hasCharged && !hasRepositioned && PossibleChargeTarget() && currentApl > 0;
+    public bool CanCharge() => !isPerformingAnAction && !hasCharged && !hasRepositioned && currentApl > 0 && PossibleChargeTarget();
+    
+    private bool PossibleChargeTarget() => TryFindChargeDestination(out _, out _);
     public bool Fallback() => !isPerformingAnAction && !hasFallenBack && InControlRange() && archetype == UnitArchetype.Marksman && currentApl > 1;
 
     /*public bool CanCharge()
@@ -141,7 +149,31 @@ public class NonPlayerOperative : BaseOperativeClass
     }
 
     //Brawler charge action
+    
     public void PerformCharge()
+    {
+        Debug.Log($"{name} performs Charge");
+
+        if (!TryFindChargeDestination(out PlayerOperative targetPlayer, out Vector3 chargeSpot))
+        {
+            //Shouldn't happen since CanCharge checks the same thing, but never let the tree loop on a failed charge
+            Debug.LogWarning($"{name} attempted to charge, but no valid charge spot was found!");
+            hasCharged = true;
+            CheckTurnEnd();
+            return;
+        }
+
+        SetOrderState(OrderState.Engage);
+        hasCharged = true;
+        UpdateApl(1);
+
+        npoAgent.SetDestination(chargeSpot);
+        Debug.Log($"{name} charging into control range of {targetPlayer.name}");
+
+        CheckTurnEnd();
+    }
+    
+    /*public void PerformCharge()
     {
         Debug.Log($"{name} performs Charge");
         PlayerOperative targetPlayer = GetClosestChargeTarget();
@@ -164,9 +196,9 @@ public class NonPlayerOperative : BaseOperativeClass
         }
         
         CheckTurnEnd();
-    }
+    }*/
 
-    private PlayerOperative GetClosestChargeTarget()
+    /*private PlayerOperative GetClosestChargeTarget()
     {
         PlayerOperative closest = null;
         float minDistance = float.MaxValue;
@@ -210,8 +242,112 @@ public class NonPlayerOperative : BaseOperativeClass
         }
 
         return chargeCandidate;
+    }*/
+
+    private static float FlatDistance(Vector3 a, Vector3 b)
+    {
+        a.y = 0;
+        b.y = 0;
+        return Vector3.Distance(a, b);
     }
 
+    private bool TryFindChargeDestination(out PlayerOperative bestTarget, out Vector3 bestSpot)
+    {
+        bestTarget = null;
+        bestSpot = Vector3.zero;
+
+        if (Context == null || Context.AllPlayerUnits == null || npoAgent == null) return false;
+        float budget = chargeDistanceScaled;
+        
+        var targets = Context.AllPlayerUnits
+            .Where(p => p != null && !p.dead && p.gameObject.activeInHierarchy)
+            .Where(p => FlatDistance(transform.position, p.transform.position) <= budget + radiusFromTarget)
+            .OrderBy(p => FlatDistance(transform.position, p.transform.position));
+
+        foreach (var player in targets)
+        {
+            if (TryFindEngagementSpot(player, budget, out Vector3 spot))
+            {
+                bestTarget = player;
+                bestSpot = spot;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    private bool TryFindEngagementSpot(PlayerOperative target, float budget, out Vector3 bestSpot)
+    {
+        bestSpot = Vector3.zero;
+        Vector3 targetPos = target.transform.position;
+        Vector3 towardNpo = transform.position - targetPos;
+        towardNpo.y = 0;
+        
+        if (towardNpo.sqrMagnitude < 0.001f) towardNpo = Vector3.forward;
+        towardNpo = towardNpo.normalized;
+        
+        float bestPathDistance = float.MaxValue;
+        bool found = false;
+        float step = 360f / ringSamples;
+
+        for (int i = 0; i < ringSamples; i++)
+        {
+            Vector3 direction = Quaternion.Euler(0f, step * i, 0f) * towardNpo;
+            Vector3 candidate = targetPos + direction * radiusFromTarget;
+
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 0.1f, npoAgent.areaMask)) continue;
+            Vector3 spot = hit.position;
+            
+            if (FlatDistance(spot, targetPos) > maxDistanceFromTarget) continue;
+            if (IsSpotOccupied(spot, target)) continue;
+            if (!TryGetPathDistance(transform.position, spot, out float pathDistance)) continue;
+            if (pathDistance > budget) continue;
+
+            if (pathDistance < bestPathDistance)
+            {
+                bestPathDistance = pathDistance;
+                bestSpot = spot;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
+    private bool IsSpotOccupied(Vector3 spot, PlayerOperative target)
+    {
+        foreach (var npo in Context.AllNpoUnits)
+        {
+            if (npo == null || npo == this || npo.dead || !npo.gameObject.activeInHierarchy) continue;
+            if (FlatDistance(spot, npo.transform.position) < distFromAlly) return true;
+        }
+
+        foreach (var player in Context.AllPlayerUnits)
+        {
+            if (player == null || player == target || player.dead || !player.gameObject.activeInHierarchy) continue;
+            if (FlatDistance(spot, player.transform.position) < distFromAlly) return true;
+        }
+        
+        return false;
+    }
+
+    private bool TryGetPathDistance(Vector3 start, Vector3 end, out float distance)
+    {
+        distance = 0f;
+        NavMeshPath path = new NavMeshPath();
+        
+        if (!NavMesh.CalculatePath(start, end, npoAgent.areaMask, path)) return false;
+        if (path.status != NavMeshPathStatus.PathComplete || path.corners.Length < 1) return false;
+
+        for (int i = 0; i < path.corners.Length - 1; i++)
+        {
+            distance += Vector3.Distance(path.corners[i], path.corners[i + 1]);
+        }
+
+        return true;
+    }
+    
     //Called in behaviour tree to start ExecuteNpoShoot coroutine
     public void PerformShoot()
     {
@@ -701,23 +837,9 @@ public class NonPlayerOperative : BaseOperativeClass
     //Check logic of the LOS check
     private bool HasLineOfSight(BaseOperativeClass target)
     {
-        //Debug.Log("HasLineOfSight called");
+        if (target == null) return false;
         Vector3 start = losStart != null ? losStart.position : transform.position;
-        Vector3 targetPos = target.losStart != null ? target.losStart.position : target.transform.position;
-        Vector3 direction = (targetPos - start).normalized;
-        float distance = Vector3.Distance(start, targetPos);
-
-        if (Physics.Raycast(start, direction, out RaycastHit hit, distance))
-        {
-            if (hit.collider.CompareTag("Terrain"))
-            {
-                //Debug.Log($"LOS blocked by: {hit.collider.name}");
-                //Debug.Log("HasLineOfSight returning false");
-                return false;
-            }
-        }
-        //Debug.Log("HasLineOfSight returning true");
-        return true;
+        return HasLineOfSight(start, target);
     }
     
     //Overloaded LOS check from a project position
@@ -750,7 +872,7 @@ public class NonPlayerOperative : BaseOperativeClass
     }
 
     //For a brawler to check if a player unit is in range for charging a player unit
-    private bool PossibleChargeTarget()
+    /*private bool PossibleChargeTarget()
     {
         foreach (var player in Context.AllPlayerUnits)
         {
@@ -764,7 +886,7 @@ public class NonPlayerOperative : BaseOperativeClass
         }
         Debug.Log($"{name} has no charge targets");
         return false;
-    }
+    }*/
 
     //Check for an NPO on whether they have taken damage and are in the open
     private bool InDanger()

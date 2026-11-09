@@ -110,20 +110,24 @@ public class TargetingState : BaseState
                             Debug.Log("Targeting lines rule can't see the enemy and weapon lacks Seek rule.");
                             validTarget = false;
                         }
-                        
                     }
                 }
                 
                 float distanceToEnemy = Context.CurrentlySelectedOperativeScript.DetermineLosAndDistance(Context.CurrentlySelectedTargetScript.losStart);
                 float maxWeaponRange = Mathf.Infinity;
                 var rangeRule = Context.Weapon.rules.OfType<WeaponRules.Range>().FirstOrDefault();
-                
                 if (rangeRule != null) maxWeaponRange = rangeRule.range; 
                 
                 if (distanceToEnemy < maxWeaponRange && distanceToEnemy != 0f)
                 {
                     Debug.Log($"Target in range of: {maxWeaponRange}");
-                } 
+                } else if (distanceToEnemy == 0f) //When terrain is hit the distance is zero
+                {
+                    Debug.Log("Target is not in line of sight");
+                    SoundManager.PlaySound(7);
+                    _menu.PopUp(_menu.invTarget);
+                    validTarget = false;
+                }
                 else if (distanceToEnemy > maxWeaponRange)
                 {
                     Context.CurrentlySelectedOperativeScript.lineRenderer.material = Context.CurrentlySelectedOperativeScript.invalidLine;

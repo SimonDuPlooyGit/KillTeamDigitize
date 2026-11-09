@@ -97,13 +97,35 @@ public class GameManager : MonoBehaviour
         AddT(meleeCombatState, npoTurnPerformState, new FuncPredicate(() => SharedContext.FightSequenceOver && SharedContext.CurrentlySelectedOperativeScript is NonPlayerOperative));
         AddT(meleeCombatState, actionSelectionState, new FuncPredicate(() => SharedContext.FightSequenceOver && SharedContext.CurrentlySelectedOperativeScript is PlayerOperative));
         
-
-
+        //Player ended their turn but it's still the player's turn (NPOs have nobody left, or new turning point)
+        AddT(actionSelectionState, unitActivationState,
+            new FuncPredicate(() => SharedContext.PlayerTurn && SharedContext.CurrentlySelectedOperativeScript == null));
+        
+        //Players have nobody left to act but NPOs do (e.g. after an NPO finishes and CheckTurningPointEnd flips PlayerTurn)
+        AddT(unitActivationState, npoSelectState,
+            new FuncPredicate(() => !SharedContext.PlayerTurn));
+        
         //AddT for pressing a pass turn button
         _stateMachine.SetState(unitActivationState);
-
+        
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState,
+            () =>
+            {
+                var op = SharedContext.CurrentlySelectedOperativeScript;
+                if (op == null) return false;
+                if (op.currentApl == op.operativeData.apl) return true;
+                Debug.Log("Can't swap from this unit because it made an action already");
+                return false;
+            },
+            () =>
+            {
+                SharedContext.CurrentlySelectedOperativeScript.Deselect();
+                SharedContext.FullReset();
+            }
+        );
+        
+        /*GoBackAState(actionSelectionState, unitActivationState,
             () =>
             {
                 if (SharedContext.CurrentlySelectedOperativeScript.currentApl ==
@@ -122,7 +144,7 @@ public class GameManager : MonoBehaviour
             SharedContext.CurrentlySelectedOperativeScript.Deselect();
             SharedContext.FullReset();
             }
-        );
+        );*/
 
         GoBackAState(movementState, actionSelectionState,()=>true,() =>
         {

@@ -121,7 +121,7 @@ public class NPOManager : MonoBehaviour
 
             foreach (var player in playerUnits)
             {
-                if (player != null || !player.dead)
+                if (player != null && !player.dead)
                 {
                     float distance = Vector3.Distance(npo.transform.position, player.transform.position);
 
@@ -132,6 +132,12 @@ public class NPOManager : MonoBehaviour
                     }
                 }
             }
+        }
+
+        if (closestNpo == null)
+        {
+            Debug.Log("FindClosestNpo couldn't find any npo");
+            return null;
         }
         if (closestNpo != null) Debug.Log("FindClosestNPO found: " + closestNpo.name);
         closestNpo.AddGlow();
