@@ -36,6 +36,16 @@ public class NonPlayerOperative : BaseOperativeClass
     private InformationPackage _context;
     public OrbitCamera _mainCamera;
     
+    [Header("Pacing and telegraphing")]
+    [SerializeField] private float thinkDelay = 0.75f;      //Beat before an action so the player sees who is acting
+    [SerializeField] private float movePreviewDelay = 1.0f; //How long the path preview shows before walking
+    [SerializeField] private float aimDelay = 2.0f;         //How long the LOS/targeting lines show before shooting
+    [SerializeField] private float shotResultDelay = 1.5f;  //Time to look at the damage before moving on
+    [SerializeField] private float postActionDelay = 0.75f; //Beat after an action before the next one is picked
+    [SerializeField] private float walkSpeed = 1.0f;
+    private const float MaxMoveTime = 15f;                  //Safety so a stuck agent can't hang the turn
+    private bool _actionFinished = true;
+    
     //Variables for charge checking in a safe way
     private const float radiusFromTarget = 0.33f;
     private const float maxDistanceFromTarget = 0.38f;
@@ -113,6 +123,7 @@ public class NonPlayerOperative : BaseOperativeClass
         allCoverNodes = FindObjectsByType<NPOCoverNodes>(FindObjectsSortMode.None);
         npoManager = GetComponentInParent<NPOManager>();
         npoAgent = GetComponent<NavMeshAgent>();
+        if (npoAgent != null && walkSpeed > 0f) npoAgent.speed = walkSpeed;
         acted = false;
         //_mainCamera = _context.MainCameraScript;
     }
@@ -823,7 +834,7 @@ public class NonPlayerOperative : BaseOperativeClass
         {
             //Debug.Log("The checked target is concealed in cover");
             //Debug.Log($"The targeting line rule returned: {CheckTargetingLines(target)}");
-            return CheckTargetingLines(target);
+            return CheckTargetingLines(target, false);
         }
 
         if (target.EnemyInControlRange)
@@ -939,6 +950,8 @@ public class NonPlayerOperative : BaseOperativeClass
         hasFallenBack = false;
         shootCount = 0;
         currentShootTarget = null;
+        isPerformingAnAction = false;
+        _actionFinished = true;
     }
 
     //Find the best cover for a marksman NPO
