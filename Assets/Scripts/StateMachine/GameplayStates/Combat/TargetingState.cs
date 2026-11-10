@@ -11,6 +11,7 @@ public class TargetingState : BaseState
     
     private readonly InputActions _input; //Needs to use the input system from GameManager
     private MenuPanel _menu; //Needs access to the menu from GameManager
+    private bool isOutOfRange = false;
     //Tutorial flags
     private bool tutFlagTarget = true;
     private bool tutFlagInvalid = true;
@@ -52,7 +53,7 @@ public class TargetingState : BaseState
     {
         bool validTarget = true;
         bool isInFight = false; //used to distinguish between the types of invalid shoots
-        
+        isOutOfRange = false;
         Debug.Log("OnSelectPerformed in TargetingState");
         if (!Context.CurrentlySelectedOperativeScript.selected) return;
         
@@ -135,6 +136,7 @@ public class TargetingState : BaseState
                     Debug.Log($"Target out of range of: {maxWeaponRange}");
                     SoundManager.PlaySound(7);
                     _menu.PopUp(_menu.invTarget);
+                    isOutOfRange = true;
                     validTarget = false;
 
                     if(SceneManager.GetActiveScene().name == "Tut2" && tutFlagInvalid)
@@ -170,7 +172,7 @@ public class TargetingState : BaseState
                 else
                 {
                     Context.ValidTargetShoot = false;
-                    if(!isInFight)
+                    if(!isInFight && !isOutOfRange)
                     {
                         SoundManager.PlaySound(7);
                         _menu.PopUp(_menu.concTarget);

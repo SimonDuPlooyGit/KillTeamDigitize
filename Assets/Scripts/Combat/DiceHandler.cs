@@ -311,6 +311,10 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
+        if(SceneManager.GetActiveScene().name == "Tut3")
+        {
+            TutEvents.AdvanceTutorial();
+        }
         Debug.Log($"Called and in ThrowDefenseDice with numdice:{numDice}, isAlly:{isAlly}");
         diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
             context.CurrentlySelectedTarget.transform.position.y + 0.4f,
@@ -1063,8 +1067,8 @@ public class DiceHandler : MonoBehaviour
         {
             if (bottomAnim != null) bottomAnim.SetTrigger("ClashBottom");
         }
-        
 
+        SoundManager.PlaySound(14);
         yield return new WaitForSeconds(0.5f);
 
         if (topDie != null) Destroy(topDie.gameObject);

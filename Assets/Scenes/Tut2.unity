@@ -6981,12 +6981,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1565943566}
-  - {fileID: 1801538325}
   - {fileID: 685310664}
   - {fileID: 2121766998}
   - {fileID: 784537670}
   - {fileID: 1157685104}
   - {fileID: 1565619490}
+  - {fileID: 1801538325}
   m_Father: {fileID: 1109434116}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -33694,6 +33694,7 @@ MonoBehaviour:
   mainCamera: {fileID: 971711313}
   npoManager: {fileID: 1897319623}
   setup: {fileID: 1943955073}
+  isGameOver: 0
 --- !u!4 &1901610879
 Transform:
   m_ObjectHideFlags: 0

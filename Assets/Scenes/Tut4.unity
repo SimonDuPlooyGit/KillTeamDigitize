@@ -11133,11 +11133,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1919943752469107512, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.584
+      value: -1.466
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalPosition.y
@@ -11145,7 +11145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.082
+      value: -0.27
       objectReference: {fileID: 0}
     - target: {fileID: 4377590644783877810, guid: 3b176f315038a44418bc7f23044a80ff, type: 3}
       propertyPath: m_LocalRotation.w
@@ -24686,6 +24686,7 @@ MonoBehaviour:
   mainCamera: {fileID: 528647019}
   npoManager: {fileID: 462837552}
   setup: {fileID: 1265338453}
+  isGameOver: 0
 --- !u!4 &1161630574
 Transform:
   m_ObjectHideFlags: 0
@@ -30349,6 +30350,10 @@ PrefabInstance:
     - target: {fileID: 7097763740930996023, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
       propertyPath: m_Name
       value: SpaceMarineCaptain
+      objectReference: {fileID: 0}
+    - target: {fileID: 7097763740930996023, guid: 4a07e48babc1d524eb39563cda37d2e7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

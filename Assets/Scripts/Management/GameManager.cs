@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -479,6 +480,7 @@ public class GameManager : MonoBehaviour
 
             SharedContext.CurrentTurningPoint++;
             menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().text = SharedContext.CurrentTurningPoint.ToString();
+            StartCoroutine(AnimateTP());
             Debug.Log($"Starting turning point {SharedContext.CurrentTurningPoint}");
 
             foreach (var unit in SharedContext.AllPlayerUnits) unit.ResetForNewTurningPoint();
@@ -577,5 +579,33 @@ public class GameManager : MonoBehaviour
             return false;
 
         return SharedContext.CurrentlySelectedOperativeScript == unitScript;
+    }
+
+    private IEnumerator AnimateTP()
+    {
+        GameObject tpText = menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().gameObject;
+        Vector3 originalScale = tpText.transform.localScale;
+        Vector3 targetScale = new Vector3(1.8f, 1.8f, 1.8f);
+        float lerpTime = 0.1f;
+        float elapsedTimeA = 0;
+        float elapsedTimeB = 0;
+        yield return new WaitForSeconds(0.3f);
+        tpText.GetComponent<TextMeshProUGUI>().color = Color.white;
+        while (elapsedTimeA < lerpTime)
+        {
+            elapsedTimeA += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTimeA / lerpTime);
+            tpText.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.35f);
+        tpText.GetComponent<TextMeshProUGUI>().color = Color.black;
+        while (elapsedTimeB < lerpTime)
+        {
+            elapsedTimeB += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTimeB / lerpTime);
+            tpText.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
+            yield return null;
+        }
     }
 }
