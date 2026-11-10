@@ -296,12 +296,12 @@ public abstract class BaseOperativeClass : MonoBehaviour
     }
 
     //Three overloaded CheckTargetingLines rule checks based on how and where you want to call them
-    public bool CheckTargetingLines(BaseOperativeClass target) //Call it with just giving a target
+    public bool CheckTargetingLines(BaseOperativeClass target, bool draw = true) //Call it with just giving a target
     {
-        return CheckTargetingLines(this, target);
+        return CheckTargetingLines(this, target, draw);
     }
 
-    public bool CheckTargetingLines(BaseOperativeClass attacker, BaseOperativeClass target) //Call it with giving an attacker and target
+    public bool CheckTargetingLines(BaseOperativeClass attacker, BaseOperativeClass target, bool draw = true) //Call it with giving an attacker and target
     {
         //Debug.Log("CheckTargetingLines called");
         if (attacker.samplingPoints.Count == 0 || target.samplingPoints.Count == 0) return false;
@@ -320,11 +320,14 @@ public abstract class BaseOperativeClass : MonoBehaviour
 
                     if (CheckLineObstruction(startSp, targetSp2))
                     {
-                        attacker.DrawTemporaryLine(startSp, targetSp1, attacker.validLine, 2.0f);
-                        attacker.DrawTemporaryLine(startSp, targetSp2, attacker.validLine, 2.0f);
+                        if (draw)
+                        {
+                            attacker.DrawTemporaryLine(startSp, targetSp1, attacker.validLine, 2.0f);
+                            attacker.DrawTemporaryLine(startSp, targetSp2, attacker.validLine, 2.0f);
                         
-                        Debug.DrawLine(startSp, targetSp1, Color.cyan, 1f);
-                        Debug.DrawLine(startSp, targetSp2, Color.cyan, 1f);
+                            Debug.DrawLine(startSp, targetSp1, Color.cyan, 1f);
+                            Debug.DrawLine(startSp, targetSp2, Color.cyan, 1f);
+                        }
                         return true;
                     }
                 }
