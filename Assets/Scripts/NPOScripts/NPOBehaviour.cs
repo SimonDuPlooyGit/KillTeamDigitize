@@ -89,26 +89,26 @@ public class NPOBehaviour : MonoBehaviour
         //1. FIGHT
         var fightSequence = new Sequence("Fight Sequence", priority: 40);
         fightSequence.AddChild(new Leaf("Can Fight?", new Condition(itsOwnNpoScript.CanFight)));
-        fightSequence.AddChild(new Leaf("Do Fight", new ActionStrategy(itsOwnNpoScript.PerformFightB))); //Change to async
+        fightSequence.AddChild(new Leaf("Do Fight", new AsyncActionStrategy(itsOwnNpoScript.PerformFightB, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(fightSequence);
-        
+    
         //2. CHARGE
         var chargeSequence = new Sequence("Charge Sequence", priority: 30);
         chargeSequence.AddChild(new Leaf("Can Charge?", new Condition(itsOwnNpoScript.CanCharge)));
-        chargeSequence.AddChild(new Leaf("Do Fight", new AsyncActionStrategy(itsOwnNpoScript.PerformCharge, itsOwnNpoScript.MovementFinished)));
+        chargeSequence.AddChild(new Leaf("Do Charge", new AsyncActionStrategy(itsOwnNpoScript.PerformCharge, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(chargeSequence);
-        
-        // 3. CONCEAL & REPOSITION
+    
+        //3. CONCEAL & REPOSITION
         var concealRepositionSequence = new Sequence("Conceal & Reposition", priority: 20);
         concealRepositionSequence.AddChild(new Leaf("Can Reposition?", new Condition(itsOwnNpoScript.CanReposition)));
         concealRepositionSequence.AddChild(new Leaf("Set Conceal", new ActionStrategy(() => itsOwnNpoScript.SetOrderState(OrderState.Conceal))));
-        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformRepositionB, itsOwnNpoScript.MovementFinished)));
+        concealRepositionSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformRepositionB, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(concealRepositionSequence);
 
-        // 4. DASH
+        //4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
         dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDashB, itsOwnNpoScript.MovementFinished)));
+        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDashB, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(dashSequence);
     }
     
@@ -124,28 +124,24 @@ public class NPOBehaviour : MonoBehaviour
     
     private void BuildMarksmanTree()
     {
-        // 1. FALL BACK (Only if can shoot and needs fallback)
         var fallbackSequence = new Sequence("Fall Back Sequence", priority: 40);
         fallbackSequence.AddChild(new Leaf("Should Fallback?", new Condition(itsOwnNpoScript.Fallback)));
-        fallbackSequence.AddChild(new Leaf("Do Fall Back", new AsyncActionStrategy(itsOwnNpoScript.PerformFallback, itsOwnNpoScript.MovementFinished))); //Also async for moving
+        fallbackSequence.AddChild(new Leaf("Do Fall Back", new AsyncActionStrategy(itsOwnNpoScript.PerformFallback, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(fallbackSequence);
 
-        // 2. SHOOT
         var shootSequence = new Sequence("Shoot Sequence", priority: 30);
         shootSequence.AddChild(new Leaf("Can Shoot?", new Condition(itsOwnNpoScript.CanShoot)));
-        shootSequence.AddChild(new Leaf("Do Shoot", new AsyncActionStrategy(itsOwnNpoScript.PerformShoot, itsOwnNpoScript.IsShootingFinished)));
+        shootSequence.AddChild(new Leaf("Do Shoot", new AsyncActionStrategy(itsOwnNpoScript.PerformShoot, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(shootSequence);
 
-        // 3. REPOSITION
         var repoSequence = new Sequence("Reposition Sequence", priority: 20);
         repoSequence.AddChild(new Leaf("Can Reposition?", new Condition(itsOwnNpoScript.CanReposition)));
-        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformRepositionM, itsOwnNpoScript.MovementFinished)));
+        repoSequence.AddChild(new Leaf("Do Reposition", new AsyncActionStrategy(itsOwnNpoScript.PerformRepositionM, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(repoSequence);
 
-        // 4. DASH
         var dashSequence = new Sequence("Dash Sequence", priority: 10);
         dashSequence.AddChild(new Leaf("Can Dash?", new Condition(itsOwnNpoScript.CanDash)));
-        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDashM, itsOwnNpoScript.MovementFinished)));
+        dashSequence.AddChild(new Leaf("Do Dash", new AsyncActionStrategy(itsOwnNpoScript.PerformDashM, itsOwnNpoScript.IsActionFinished)));
         _treeRoot.AddChild(dashSequence);
     }
 
@@ -173,6 +169,7 @@ public class NPOBehaviour : MonoBehaviour
     public void TickTurn()
     {
         if (!IsRunning || _treeRoot == null) return;
+        if (itsOwnNpoScript.isPerformingAnAction) return;
 
         if (itsOwnNpoScript.acted || itsOwnNpoScript.currentApl <= 0)
         {

@@ -142,6 +142,7 @@ public class NPOManager : MonoBehaviour
         if (closestNpo != null) Debug.Log("FindClosestNPO found: " + closestNpo.name);
         closestNpo.AddGlow();
         closestNpo.selected = true;
+        closestNpo.SetGameManager();
         return closestNpo;
     }
 }

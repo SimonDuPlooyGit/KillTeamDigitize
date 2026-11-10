@@ -311,7 +311,7 @@ public class DiceHandler : MonoBehaviour
         //Instantiate/throw the defense dice with or without guaranteed cover save
         bool applyCoverSave = false;
         bool isConcealedInCover = (context.CurrentlySelectedTargetScript.currentOrder == OrderState.Conceal && context.CurrentlySelectedTargetScript.closeToCover);
-        bool targetingLinesBlocked = !context.CurrentlySelectedOperativeScript.CheckTargetingLines(context.CurrentlySelectedOperativeScript, context.CurrentlySelectedTargetScript);
+        bool targetingLinesBlocked = isConcealedInCover && !context.CurrentlySelectedOperativeScript.CheckTargetingLines(context.CurrentlySelectedOperativeScript, context.CurrentlySelectedTargetScript, false);
         bool weaponHasSaturate = context.Weapon != null && context.Weapon.rules.OfType<WeaponRules.Saturate>().Any();
 
         if (isConcealedInCover && targetingLinesBlocked && !weaponHasSaturate)
