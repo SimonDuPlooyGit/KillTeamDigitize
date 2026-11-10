@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
     private bool tutFlagShoot = true;
     private bool tutFlagRepo = true;
 
+    public bool isGameOver;
+
     private void Awake()
     {
         SharedContext = new InformationPackage();
@@ -104,7 +106,9 @@ public class GameManager : MonoBehaviour
         //Players have nobody left to act but NPOs do (e.g. after an NPO finishes and CheckTurningPointEnd flips PlayerTurn)
         AddT(unitActivationState, npoSelectState,
             new FuncPredicate(() => !SharedContext.PlayerTurn));
-        
+        AddT(unitActivationState, npoSelectState, new FuncPredicate(() => !SharedContext.PlayerTurn));
+        AddT(actionSelectionState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn && SharedContext.CurrentlySelectedOperativeScript == null));
+        AddT(npoSelectState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn)); //Only if no NPO could be activated
         //AddT for pressing a pass turn button
         _stateMachine.SetState(unitActivationState);
         
@@ -224,6 +228,8 @@ public class GameManager : MonoBehaviour
             Scene currentScene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(currentScene.buildIndex);
         }
+
+        if (isGameOver) return;
 
         _stateMachine.Update(); //Keep the state machine updating
         if (_stateMachine.CurrentState == weaponSelectState)
@@ -415,8 +421,17 @@ public class GameManager : MonoBehaviour
         SharedContext.IsFightingRequested = true;
     }
     
-    private void OnEnable() => _input.Enable();
-    private void OnDisable() => _input.Disable();
+    private void OnEnable()
+    {
+        BaseOperativeClass.OnOperativeDied += HandleOperativeDied;
+        _input.Enable();
+    }
+
+    private void OnDisable()
+    {
+        BaseOperativeClass.OnOperativeDied -= HandleOperativeDied;
+        _input.Disable();
+    }
 
     public void Quit()
     {
@@ -434,21 +449,10 @@ public class GameManager : MonoBehaviour
         {
             SoundManager.PlaySound(2, 1, true);
             SharedContext.CurrentlySelectedOperativeScript.acted = true;
-
-            if (SharedContext.CurrentlySelectedOperativeScript.currentOrder == OrderState.Engage)
-            {
-                SharedContext.CurrentlySelectedOperativeScript.engageSymbol.SetActive(false);
-                SharedContext.CurrentlySelectedOperativeScript.engageSymbolSpent.SetActive(true);
-            } else if (SharedContext.CurrentlySelectedOperativeScript.currentOrder == OrderState.Conceal)
-            {
-                SharedContext.CurrentlySelectedOperativeScript.concealSymbol.SetActive(false);
-                SharedContext.CurrentlySelectedOperativeScript.concealSymbolSpent.SetActive(true);
-            }
-            
             SharedContext.CurrentlySelectedOperativeScript.selected = false;
             SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
         }
-        
+
         SharedContext.FullReset();
         SharedContext.PlayerTurn = false;
         CheckTurningPointEnd();
@@ -456,31 +460,30 @@ public class GameManager : MonoBehaviour
 
     public void CheckTurningPointEnd()
     {
-        bool playerUnitsLeft = SharedContext.AllPlayerUnits.Exists(u => !u.dead && !u.acted);
-        bool nposLeft = SharedContext.AllNpoUnits.Exists(n => !n.dead && !n.acted);
+        if (isGameOver) return;
+
+        bool playerUnitsLeft = SharedContext.AllPlayerUnits.Exists(u => u != null && !u.dead && !u.acted);
+        bool nposLeft = SharedContext.AllNpoUnits.Exists(n => n != null && !n.dead && !n.acted);
+        Debug.Log($"Turning point end check: TP {SharedContext.CurrentTurningPoint}, player activations left: {playerUnitsLeft}, NPO activations left: {nposLeft}, PlayerTurn: {SharedContext.PlayerTurn}");
 
         if (!playerUnitsLeft && !nposLeft)
         {
-            SharedContext.CurrentTurningPoint++;
-            menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().text = SharedContext.CurrentTurningPoint.ToString();
-            if (SharedContext.CurrentTurningPoint > InformationPackage.LastTurningPoint)
+            Debug.Log($"Turning point {SharedContext.CurrentTurningPoint} ended");
+
+            if (SharedContext.CurrentTurningPoint >= InformationPackage.LastTurningPoint)
             {
                 Debug.Log("Last turning point ended");
+                EndGame(true);
                 return;
             }
-            
+
+            SharedContext.CurrentTurningPoint++;
+            menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().text = SharedContext.CurrentTurningPoint.ToString();
             Debug.Log($"Starting turning point {SharedContext.CurrentTurningPoint}");
 
-            foreach (var unit in SharedContext.AllPlayerUnits)
-            {
-                unit.ResetForNewTurningPoint();
-            }
+            foreach (var unit in SharedContext.AllPlayerUnits) unit.ResetForNewTurningPoint();
+            foreach (var npo in SharedContext.AllNpoUnits) npo.ResetForNewTurningPoint();
 
-            foreach (var npo in SharedContext.AllNpoUnits)
-            {
-                npo.ResetForNewTurningPoint();
-            }
-            
             SharedContext.PlayerTurn = true;
             CheckGameEnd();
             return;
@@ -495,33 +498,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void HandleOperativeDied(BaseOperativeClass op)
+    {
+        Debug.Log($"{op.name} died, checking for game end");
+        CheckGameEnd();
+    }
+    
     public void CheckGameEnd()
     {
-        Debug.Log("Check Game End called");
+        if (isGameOver) return;
+
         int alivePlayerUnits = 0;
         int aliveNpoUnits = 0;
+        foreach (var unit in SharedContext.AllPlayerUnits) if (unit != null && !unit.dead) alivePlayerUnits++;
+        foreach (var unit in SharedContext.AllNpoUnits) if (unit != null && !unit.dead) aliveNpoUnits++;
 
-        foreach (var unit in SharedContext.AllPlayerUnits)
+        Debug.Log($"Check game end: {alivePlayerUnits} player operatives alive and {aliveNpoUnits} NPOs alive");
+
+        if (alivePlayerUnits == 0) EndGame(false); //If both sides are wiped out at once the player loses
+        else if (aliveNpoUnits == 0) EndGame(true);
+    }
+
+    public void HandleOperativeDeath()
+    {
+        if (isGameOver) return;
+
+        int alivePlayerUnits = 0;
+        int aliveNpoUnits = 0;
+        foreach (var unit in SharedContext.AllPlayerUnits) if (unit != null && !unit.dead) alivePlayerUnits++;
+        foreach (var unit in SharedContext.AllNpoUnits) if (unit != null && !unit.dead) aliveNpoUnits++;
+
+        Debug.Log($"Check game end: {alivePlayerUnits} player operatives alive and {aliveNpoUnits} NPOs alive");
+
+        if (alivePlayerUnits == 0) EndGame(false); //If both sides are wiped out at once the player loses
+        else if (aliveNpoUnits == 0) EndGame(true);
+    }
+
+    private void EndGame(bool playerWin)
+    {
+        if (playerWin)
         {
-            if (!unit.dead)
-            {
-                alivePlayerUnits++;
-            }
+            Debug.LogWarning("Player Wins!");
         }
-
-        foreach (var unit in SharedContext.AllNpoUnits)
+        else
         {
-            if (!unit.dead)
-            {
-                aliveNpoUnits++;
-            }
-        }
-
-        Debug.Log($"There are {alivePlayerUnits} player operatives alive and {aliveNpoUnits} npo alive");
-        
-        if (alivePlayerUnits == 0 || aliveNpoUnits == 0)
-        {
-            Debug.Log("Game is over");
+            Debug.LogWarning("Player Losses!");
         }
     }
 

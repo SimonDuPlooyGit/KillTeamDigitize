@@ -211,6 +211,7 @@ public class NPOBehaviour : MonoBehaviour
     private void EndNpoTurn(string reason)
     {
         IsRunning = false;
+        if (!itsOwnNpoScript.acted) itsOwnNpoScript.ApplyEndOfActivationOrder();
         itsOwnNpoScript.acted = true;
         itsOwnNpoScript.RemoveGlow();
         itsOwnNpoScript.selected = false;
@@ -228,48 +229,4 @@ public class NPOBehaviour : MonoBehaviour
         itsOwnNpoScript._mainCamera.transform.eulerAngles = new Vector3(27.4f, 90f, 0f);
         //itsOwnNpoScript.CheckTurnEnd();
     }
-    
-    /*public void TickTurn()
-    {
-        if (!IsRunning || _treeRoot == null) return;
-
-        if (itsOwnNpoScript.acted || itsOwnNpoScript.currentApl <= 0)
-        {
-            IsRunning = false;
-            itsOwnNpoScript.RemoveGlow();
-            itsOwnNpoScript.selected = false;
-            Debug.Log($"{itsOwnNpoScript.name} turn ended (No APL or already acted).");
-            itsOwnNpoScript.acted = true;
-            gameManagerReference.SharedContext.PlayerTurn = true;
-            return;
-        }
-        
-        Node.Status status = _treeRoot.Process();
-
-        if (status == Node.Status.Running)
-        {
-            return;
-        }
-        
-        if (status == Node.Status.Success)
-        {
-            Debug.Log($"{itsOwnNpoScript.name} action completed. Re-evaluate priority action");
-
-            if (itsOwnNpoScript.currentApl > 0 && !itsOwnNpoScript.acted)
-            {
-                _treeRoot.Reset();
-            }
-            else
-            {
-                IsRunning = false;
-                Debug.Log($"{itsOwnNpoScript.name} Turn ended since APL depleted");
-                gameManagerReference.SharedContext.PlayerTurn = true;
-            }
-        }
-        else if (status == Node.Status.Failure)
-        {
-            IsRunning = false;
-            Debug.Log($"{itsOwnNpoScript.name} Turn ended since Tree returned failure: no valid actions found");
-        }
-    }*/
 }
