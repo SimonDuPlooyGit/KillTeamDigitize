@@ -61,7 +61,7 @@ public class MeleeCombatState : BaseState
         if (_diceHandler != null)
         {
             _diceHandler.StopAllCoroutines();
-            _diceHandler.ClearAllDice();
+            _diceHandler.ClearDiceRolls();
         }
         
         if (Context.CurrentlySelectedOperativeScript is PlayerOperative)
@@ -191,11 +191,11 @@ public class MeleeCombatState : BaseState
             Debug.Log("All dice used");
             Debug.Log("Fight sequence is finished");
             _menu.CloseMenu(_menu.meleeMenu);
-            Context.FightSequenceOver = true;
-            
+
             yield return new WaitForSeconds(1.0f);
             _diceHandler.ClearDiceRolls();
             Context.IsFightingRequested = false;
+            Context.FightSequenceOver = true;
         }
     }
 

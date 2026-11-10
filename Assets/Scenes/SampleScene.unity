@@ -2753,7 +2753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4080635701298272917, guid: 0ad585995e6d6194fa5af86f597f2dd5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.404
+      value: -1.38
       objectReference: {fileID: 0}
     - target: {fileID: 4080635701298272917, guid: 0ad585995e6d6194fa5af86f597f2dd5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2761,7 +2761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4080635701298272917, guid: 0ad585995e6d6194fa5af86f597f2dd5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.81
+      value: 1.818
       objectReference: {fileID: 0}
     - target: {fileID: 4080635701298272917, guid: 0ad585995e6d6194fa5af86f597f2dd5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -31319,6 +31319,7 @@ MonoBehaviour:
   mainCamera: {fileID: 330585548}
   npoManager: {fileID: 1588116391}
   setup: {fileID: 2049304883}
+  isGameOver: 0
 --- !u!4 &1921963952
 Transform:
   m_ObjectHideFlags: 0

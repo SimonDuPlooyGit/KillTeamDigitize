@@ -37,13 +37,13 @@ public class NonPlayerOperative : BaseOperativeClass
     public OrbitCamera _mainCamera;
     
     [Header("Pacing and telegraphing")]
-    [SerializeField] private float thinkDelay = 0.75f;      //Beat before an action so the player sees who is acting
+    [SerializeField] private float thinkDelay = 0.75f; //Beat before an action so the player sees who is acting
     [SerializeField] private float movePreviewDelay = 1.0f; //How long the path preview shows before walking
-    [SerializeField] private float aimDelay = 2.0f;         //How long the LOS/targeting lines show before shooting
-    [SerializeField] private float shotResultDelay = 1.5f;  //Time to look at the damage before moving on
+    [SerializeField] private float aimDelay = 2.0f; //How long the LOS/targeting lines show before shooting
+    [SerializeField] private float shotResultDelay = 1.5f; //Time to look at the damage before moving on
     [SerializeField] private float postActionDelay = 0.75f; //Beat after an action before the next one is picked
     [SerializeField] private float walkSpeed = 1.0f;
-    private const float MaxMoveTime = 15f;                  //Safety so a stuck agent can't hang the turn
+    private const float MaxMoveTime = 15f; //Safety so a stuck agent can't hang the turn
     private bool _actionFinished = true;
     
     //Variables for charge checking in a safe way
@@ -51,6 +51,8 @@ public class NonPlayerOperative : BaseOperativeClass
     private const float maxDistanceFromTarget = 0.38f;
     private const float distFromAlly = 0.34f;
     private const int ringSamples = 16;
+    
+    protected override bool HasEngagedThisActivation => shootCount > 0 || hasFought || hasCharged;
 
     //Context seems to be null when we call getUnitToActivate so we need to find if earlier
     private InformationPackage Context
@@ -1152,7 +1154,7 @@ private IEnumerator BrawlerMoveRoutine(float maxDistance, string verb)
                         //Verify if this candidate point is on the NavMesh and free of teammates
                         if (NavMesh.SamplePosition(candidatePoint, out NavMeshHit hit, 0.5f, npoAgent.areaMask))
                         {
-                            if (!IsBlockedByTeammate(hit.position))
+                            if (!IsBlockedByTeammate(hit.position) && !IsPointInEnemyControlRange(hit.position, 0.03f))
                             {
                                 return hit.position; //Found a clear spot
                             }
@@ -1160,58 +1162,6 @@ private IEnumerator BrawlerMoveRoutine(float maxDistance, string verb)
                     }
                 }
             }
-            return finalPoint;
-        }
-        return destination;
-    }
-    
-    //Filter method for a destination to make sure it isn't in control range of a player unit
-    private Vector3 GetControlRangeSafeDestination(Vector3 destination)
-    {
-        float controlRange = 0.414f; //Control range threshold
-        float minSafeDistance = 0.6f; //Combined base radius buffer + control range distance
-
-        NavMeshPath path = new NavMeshPath();
-        if (NavMesh.CalculatePath(transform.position, destination, npoAgent.areaMask, path) && path.corners.Length > 0)
-        {
-            Vector3 finalPoint = path.corners[path.corners.Length - 1];
-            foreach (var player in npoManager.playerUnits)
-            {
-                if (player == null || player.dead || !player.gameObject.activeInHierarchy) continue;
-
-                Vector3 playerPos = player.unitBase != null
-                    ? player.unitBase.transform.position
-                    : player.transform.position;
-                float distance = Vector3.Distance(finalPoint, playerPos);
-
-                if (distance < controlRange)
-                {
-                    Debug.Log(
-                        $"{name}'s destination {finalPoint} ends within control range of {player.name}. Adjusting to stay outside control range");
-
-                    //Direction from player to the destination point
-                    Vector3 awayFromPlayer = (finalPoint - playerPos);
-                    awayFromPlayer.y = 0;
-
-                    //Fallback: If destination is directly on top of the player, push away back toward the NPO's starting position
-                    if (awayFromPlayer.sqrMagnitude < 0.001f)
-                    {
-                        awayFromPlayer = (transform.position - playerPos);
-                        awayFromPlayer.y = 0;
-                    }
-
-                    awayFromPlayer = awayFromPlayer.normalized;
-
-                    // Position the candidate safely outside the control range
-                    Vector3 safeCandidate = playerPos + (awayFromPlayer * minSafeDistance);
-
-                    if (NavMesh.SamplePosition(safeCandidate, out NavMeshHit hit, 1.0f, npoAgent.areaMask))
-                    {
-                        return hit.position;
-                    }
-                }
-            }
-
             return finalPoint;
         }
         return destination;

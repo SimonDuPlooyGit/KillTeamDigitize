@@ -34,6 +34,8 @@ public class PlayerOperative : BaseOperativeClass
     //used to specify if the invalid marker position is because of charge rules or dash rules
     public bool isInvalidCharge;
     public bool isInvalidMove;
+    
+    protected override bool HasEngagedThisActivation => hasShotThisActivation || hasFoughtThisActivation || hasChargedThisActivation;
 
     protected override void Awake()
     {
@@ -57,8 +59,9 @@ public class PlayerOperative : BaseOperativeClass
 
     protected override void Update()
     {
-        if (currentApl == 0)
+        if (currentApl == 0 && !acted)
         {
+            ApplyEndOfActivationOrder();
             acted = true;
         }
         
@@ -133,7 +136,7 @@ public class PlayerOperative : BaseOperativeClass
                 {
                     Debug.Log("Clicked on a valid navmesh position");
                     Vector3 rawDestination = LimitPathDistance(hit.point, remainingMovement, out _limitedPoints, out _currentPathDistance);
-                    Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
+                    Vector3 finalDestination = ApplyControlRangeSafety(rawDestination, remainingMovement);
                     _moveMarkerAgent.destination = finalDestination;
                 }
                 else
@@ -238,7 +241,7 @@ public class PlayerOperative : BaseOperativeClass
                 {
                     Debug.Log("Clicked on a valid navmesh position");
                     Vector3 rawDestination = LimitPathDistance(hit.point, dashDistanceScaled, out _limitedPoints, out _currentPathDistance);
-                    Vector3 finalDestination = GetControlRangeSafeDestination(rawDestination);
+                    Vector3 finalDestination = ApplyControlRangeSafety(rawDestination, dashDistanceScaled);
                     _moveMarkerAgent.destination = finalDestination;
                 }
                 else
@@ -355,16 +358,6 @@ public class PlayerOperative : BaseOperativeClass
         hasFallenBackThisActivation = false;
         hasFoughtThisActivation = false;
         ResetMoveMarker();
-
-        if (currentOrder == OrderState.Engage)
-        {
-            engageSymbol.SetActive(true);
-            engageSymbolSpent.SetActive(false);
-        } else if (currentOrder == OrderState.Conceal)
-        {
-            concealSymbol.SetActive(true);
-            concealSymbolSpent.SetActive(false);
-        }
     }
     
     public override void TurnFinished()
@@ -395,52 +388,6 @@ public class PlayerOperative : BaseOperativeClass
         _pathDrawn = false;
     }
     
-    //Only allow safe pathfinding outside control ranges
-    private Vector3 GetControlRangeSafeDestination(Vector3 destination)
-    {
-        Debug.Log("GetControlRangeSafeDestination for reposition/dash called");
-        float controlRange = 0.414f;
-        float minSafeDistance = 0.6f;
-        
-        NavMeshPath path = new NavMeshPath();
-        if (NavMesh.CalculatePath(transform.position, destination, _operativeAgent.areaMask, path) &&
-            path.corners.Length > 0)
-        {
-            Vector3 finalPoint = path.corners[path.corners.Length - 1];
-
-            foreach (var npo in FindFirstObjectByType<GameManager>().SharedContext.AllNpoUnits)
-            {
-                if (npo == null || npo.dead || !npo.gameObject.activeInHierarchy) continue;
-                Vector3 npoPos = npo.transform.position;
-                float distance = Vector3.Distance(finalPoint, npoPos);
-
-                if (distance < controlRange)
-                {
-                    Debug.Log($"{name}'s movement destination ends inside control range of {npo.name}. Adjusting to stay safe");
-
-                    Vector3 awayFromNpo = (finalPoint - npoPos);
-                    awayFromNpo.y = 0;
-
-                    if (awayFromNpo.magnitude < 0.001f)
-                    {
-                        awayFromNpo = (transform.position - npoPos);
-                        awayFromNpo.y = 0;
-                    }
-                    
-                    awayFromNpo = awayFromNpo.normalized;
-                    Vector3 safeCandidate = npoPos + (awayFromNpo * minSafeDistance);
-                    
-                    if (NavMesh.SamplePosition(safeCandidate, out NavMeshHit hit, 1.0f, _operativeAgent.areaMask))
-                    {
-                        return hit.position;
-                    }
-                }
-            }
-            return finalPoint;
-        }
-        return destination;
-    }
-    
     //Override of movement stats for remaining movement changes
     public override void UpdateMovementStats()
     {
@@ -457,5 +404,15 @@ public class PlayerOperative : BaseOperativeClass
     public void Reset()
     {
         TurnFinished();
+    }
+    
+    private Vector3 ApplyControlRangeSafety(Vector3 rawDestination, float maxDistance)
+    {
+        Vector3 safe = GetControlRangeSafeDestination(rawDestination);
+        if ((safe - rawDestination).sqrMagnitude > 0.0001f)
+        {
+            LimitPathDistance(safe, maxDistance, out _limitedPoints, out _currentPathDistance);
+        }
+        return safe;
     }
 }

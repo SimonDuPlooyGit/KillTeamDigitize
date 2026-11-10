@@ -146,8 +146,25 @@ public class DiceHandler : MonoBehaviour
     {
         activeAttackDice.Clear();
         activeDefenseDice.Clear();
-        foreach (Transform child in attackDiceHolder.transform) Destroy(child.gameObject);
-        foreach (Transform child in defenseDiceHolder.transform) Destroy(child.gameObject);
+        ClearHolder(attackDiceHolder);
+        ClearHolder(defenseDiceHolder);
+        ClearHolder(meleeAttackHolder);
+        ClearHolder(meleeDefenseHolder);
+    }
+    
+    private void ClearHolder(GameObject holder)
+    {
+        if (holder == null) return;
+        foreach (Transform child in holder.transform) Destroy(child.gameObject);
+    }
+    
+    private void DestroyPhysicalDice(List<DiceRoll> dice)
+    {
+        foreach (DiceRoll die in dice)
+        {
+            if (die != null) Destroy(die.gameObject);
+        }
+        dice.Clear();
     }
 
     //======================[Throws ATK Dice Physically]==========================================
@@ -168,7 +185,7 @@ public class DiceHandler : MonoBehaviour
                 context.CurrentlySelectedOperative.transform.position.z);
         }
         //clear tempPhysAttackDice to keep track of attack dice. this is used to populate the dice roll menu in throwDefenseDice coroutine
-        activePhysAttackDice.Clear();
+        DestroyPhysicalDice(activePhysAttackDice);
         _context = context;
         
         List<DiceRoll> thrownDice= new List<DiceRoll>();
@@ -222,10 +239,10 @@ public class DiceHandler : MonoBehaviour
         }
         else
         {
-            xToHit.text = $"{context.Weapon.hit} or greater to hit";
+            xToHit.text = $"{context.Weapon.hit} to hit";
         }
         
-        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} or greater to save";
+        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
         //Stops the sequence here if in melee state
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
@@ -294,15 +311,11 @@ public class DiceHandler : MonoBehaviour
     //======================[Throws DEF Dice Physically]=========================================
     public IEnumerator ThrowDefenseDice(int numDice, bool isAlly, InformationPackage context) 
     {
-        if (SceneManager.GetActiveScene().name == "Tut3")
-        {
-            TutEvents.AdvanceTutorial();
-        }
         Debug.Log($"Called and in ThrowDefenseDice with numdice:{numDice}, isAlly:{isAlly}");
         diceThrowPoint.position = new Vector3(context.CurrentlySelectedTarget.transform.position.x,
             context.CurrentlySelectedTarget.transform.position.y + 0.4f,
             context.CurrentlySelectedTarget.transform.position.z);
-        activePhysDefenseDice.Clear();
+        DestroyPhysicalDice(activePhysDefenseDice);
         _context = context;
 
         //Assign prefab based on whether the attacker is an enemy or ally 
@@ -730,21 +743,18 @@ public class DiceHandler : MonoBehaviour
     public void ClearDiceRolls()
     {
         currentSelectionMode = DiceSelectionMode.None;
-        _context.AttackRolls.Clear();
-        _context.DefenseRolls.Clear();
-        foreach(DiceRoll die in activePhysAttackDice)
+        if (_context != null)
         {
-            Destroy(die.gameObject);
+            _context.AttackRolls.Clear();
+            _context.DefenseRolls.Clear();
         }
 
-        foreach (DiceRoll die in activePhysDefenseDice)
-        {
-            Destroy(die.gameObject);
-        }
-
+        DestroyPhysicalDice(activePhysAttackDice);
+        DestroyPhysicalDice(activePhysDefenseDice);
         ClearAllDice();
-        xToHit.text = "X or greater to hit";
-        xToSave.text = "X or greater to save";
+
+        if (xToHit != null) xToHit.text = "X to hit";
+        if (xToSave != null) xToSave.text = "X to save";
     }
 
     //Makes the reroll button appear when a panel is selected
@@ -1053,9 +1063,10 @@ public class DiceHandler : MonoBehaviour
         {
             if (bottomAnim != null) bottomAnim.SetTrigger("ClashBottom");
         }
+        
 
-        SoundManager.PlaySound(14);
         yield return new WaitForSeconds(0.5f);
+
         if (topDie != null) Destroy(topDie.gameObject);
         if (bottomDie != null) Destroy(bottomDie.gameObject);
     }
