@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -15,6 +16,9 @@ public class OrbitCamera : MonoBehaviour
 
     [Header("Freecam Settings")]
     [SerializeField] private float speed = 10f;
+
+    [Header("References")]
+    [SerializeField] private TextMeshProUGUI camText;
 
     // State Tracking
     public bool isFreecam = false;
@@ -48,6 +52,8 @@ public class OrbitCamera : MonoBehaviour
         {
             HandleOrbitMovement();
         }
+
+        camText.text = isFreecam ? "Free cam" : "Orbit cam";
     }
 
     private void SetFreecam(bool freecamState)
@@ -152,6 +158,15 @@ public class OrbitCamera : MonoBehaviour
     public void ToggleCam()
     {
         SetFreecam(!isFreecam);
+
+        if(isFreecam)
+        {
+            camText.text = "Free cam";
+        }
+        else
+        {
+            camText.text = "Orbit cam";
+        }
     }
 
     // Set to orbit cam and set a unit as the lookat target
