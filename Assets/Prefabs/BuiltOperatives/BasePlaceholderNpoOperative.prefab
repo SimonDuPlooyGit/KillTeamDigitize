@@ -6408,6 +6408,12 @@ MonoBehaviour:
   npoManager: {fileID: 0}
   archetype: 1
   _mainCamera: {fileID: 0}
+  thinkDelay: 0.1
+  movePreviewDelay: 0.5
+  aimDelay: 1
+  shotResultDelay: 1
+  postActionDelay: 0.25
+  walkSpeed: 1
 --- !u!95 &3347268323279254911
 Animator:
   serializedVersion: 7
