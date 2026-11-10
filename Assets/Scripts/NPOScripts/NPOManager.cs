@@ -114,35 +114,28 @@ public class NPOManager : MonoBehaviour
         Debug.Log("FindClosestNPO called");
         NonPlayerOperative closestNpo = null;
         float closestDistance = float.MaxValue;
-
+        
         foreach (var npo in npoUnits)
         {
             if (npo == null || npo.dead || npo.acted) continue;
+            if (closestNpo == null) closestNpo = npo; //Fallback so there's always a candidate, even if no player is alive
 
             foreach (var player in playerUnits)
             {
-                if (player != null && !player.dead)
+                if (player == null || player.dead) continue;
+                float distance = Vector3.Distance(npo.transform.position, player.transform.position);
+                if (distance < closestDistance)
                 {
-                    float distance = Vector3.Distance(npo.transform.position, player.transform.position);
-
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestNpo = npo;
-                    }
+                    closestDistance = distance;
+                    closestNpo = npo;
                 }
             }
         }
-
-        if (closestNpo == null)
-        {
-            Debug.Log("FindClosestNpo couldn't find any npo");
-            return null;
-        }
-        if (closestNpo != null) Debug.Log("FindClosestNPO found: " + closestNpo.name);
+        
+        if (closestNpo == null) return null;
         closestNpo.AddGlow();
-        closestNpo.selected = true;
         closestNpo.SetGameManager();
+        closestNpo.selected = true;
         return closestNpo;
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public enum OrderState {Engage, Conceal}
 
@@ -37,6 +38,9 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public bool AllyInControlRange;
     public bool EnemyInControlRange;
     public List<BaseOperativeClass> enemiesInControlRange = new List<BaseOperativeClass>();
+    public const float ControlRange = 0.414f;
+    private const float ControlRangeSafetyMargin = 0.03f;
+    private static readonly Collider[] ControlRangeBuffer = new Collider[32];
 
     [Header("UI References")] 
     public GameObject unitUI;
@@ -69,6 +73,12 @@ public abstract class BaseOperativeClass : MonoBehaviour
     
     [Header("Navmesh and Movement")]
     public NavMeshAgent agent;
+
+    private bool _symbolsInitialised;
+    private OrderState _shownOrder;
+    private bool _shownActed;
+    
+    public static event System.Action<BaseOperativeClass> OnOperativeDied;
     
     protected virtual void Awake()
     {
@@ -108,15 +118,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Keep checking if the operative is near terrain (may later change this to only check at start and end of turn)
     protected virtual void Update()
     {
-        if (currentOrder == OrderState.Engage && !acted)
-        {
-            engageSymbol.SetActive(true);
-            concealSymbol.SetActive(false);
-        } else if (currentOrder == OrderState.Conceal && !acted)
-        {
-            engageSymbol.SetActive(false);
-            concealSymbol.SetActive(true);
-        }
+        RefreshOrderSymbols();
 
         if (closeToCover)
         {
@@ -129,6 +131,32 @@ public abstract class BaseOperativeClass : MonoBehaviour
         
         SampleCollidersInControlRange(transform.position);
         FogEffectAndCoverToggle();
+    }
+    
+    private void RefreshOrderSymbols()
+    {
+        if (_symbolsInitialised && _shownOrder == currentOrder && _shownActed == acted) return;
+        _symbolsInitialised = true;
+        _shownOrder = currentOrder;
+        _shownActed = acted;
+
+        bool engage = currentOrder == OrderState.Engage;
+        SetSymbol(engageSymbol, engage && !acted);
+        SetSymbol(engageSymbolSpent, engage && acted);
+        SetSymbol(concealSymbol, !engage && !acted);
+        SetSymbol(concealSymbolSpent, !engage && acted);
+    }
+    
+    private static void SetSymbol(GameObject symbol, bool active)
+    {
+        if (symbol != null) symbol.SetActive(active);
+    }
+    
+    protected abstract bool HasEngagedThisActivation { get; }
+    
+    public void ApplyEndOfActivationOrder()
+    {
+        if (!HasEngagedThisActivation) currentOrder = OrderState.Conceal;
     }
     
     //Calculate a path to destination and clamp the path distance according to max a distance
@@ -411,8 +439,8 @@ public abstract class BaseOperativeClass : MonoBehaviour
     {
         currentWounds -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage. Current health: {currentWounds}");
-        
-        if(_animator != null && damage>0)
+
+        if (_animator != null && damage > 0)
         {
             if (currentWounds <= (int)Mathf.Ceil((float)operativeData.wounds / 2))
             {
@@ -428,18 +456,24 @@ public abstract class BaseOperativeClass : MonoBehaviour
             damagePopOut.GetComponent<TextMeshProUGUI>().text = damage.ToString();
             damagePopOut.SetActive(true);
         }
-        else if(damage == 0)
+        else if (damage == 0)
         {
             damagePopOut.GetComponent<TextMeshProUGUI>().text = "Miss";
             damagePopOut.SetActive(true);
         }
-        
+
         if (currentWounds <= 0)
         {
             currentWounds = 0;
-            dead = true;
-            HandleDeath();
+            if (!dead)
+            {
+                dead = true;
+                HandleDeath();
+            }
         }
+
+        //Every damage source (shooting, melee, hot, devastating) now updates the health bar
+        UpdateHealth(currentWounds, operativeData.wounds);
     }
     
     //Set up the healthbar
@@ -493,6 +527,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public void HandleDeath()
     {
         StartCoroutine(DeathSequence());
+        OnOperativeDied?.Invoke(this);
     }
     
     //Handle effects for when an Operative dies
@@ -584,17 +619,7 @@ public abstract class BaseOperativeClass : MonoBehaviour
     public virtual void TurnFinished()
     {
         Debug.Log($"{gameObject.name}'s turn is over");
-
-        var hasPlayerScript = GetComponent<PlayerOperative>();
-        if (hasPlayerScript != null)
-        {
-            if (!hasPlayerScript.hasFoughtThisActivation && !hasPlayerScript.hasShotThisActivation &&
-                !hasPlayerScript.hasChargedThisActivation)
-            {
-                currentOrder = OrderState.Conceal; //Turn back to conceal if the unit hasn't shot, fought or charged this acivation
-            }
-        }
-        
+        ApplyEndOfActivationOrder();
         acted = true;
         Deselect();
     }
@@ -707,13 +732,6 @@ public abstract class BaseOperativeClass : MonoBehaviour
     //Helper for when reposition budget changes due to injured
     public float GetCurrentRepositionBudget()
     {
-        float twoInchesScaled = (2f / 39.37f) * 10;
-
-        if (injured)
-        {
-            return Mathf.Max(0f, meterMovement - twoInchesScaled);
-        }
-        
         return meterMovement;
     }
     
@@ -726,4 +744,53 @@ public abstract class BaseOperativeClass : MonoBehaviour
         meterMovement = (movementStat / 39.37f) * 10;
         chargeDistanceScaled = meterMovement + (2f / 39.37f) * 10;
     }
+    
+    public bool IsPointInEnemyControlRange(Vector3 point, float extraRadius = 0f)
+    {
+        int count = Physics.OverlapSphereNonAlloc(point, ControlRange + extraRadius, ControlRangeBuffer);
+        for (int i = 0; i < count; i++)
+        {
+            Collider col = ControlRangeBuffer[i];
+            if (col.CompareTag("Terrain") || col.CompareTag("Board")) continue;
+
+            BaseOperativeClass other = col.GetComponentInParent<BaseOperativeClass>();
+            if (other == null || other == this || other.dead || !other.gameObject.activeInHierarchy) continue;
+            if (other.CompareTag(gameObject.tag)) continue;
+            return true;
+        }
+        return false;
+    }
+    
+    protected Vector3 GetControlRangeSafeDestination(Vector3 destination)
+    {
+        NavMeshPath path = new NavMeshPath();
+        if (agent == null || !NavMesh.CalculatePath(transform.position, destination, agent.areaMask, path) || path.corners.Length == 0)
+        {
+            return destination;
+        }
+
+        Vector3[] corners = path.corners;
+        Vector3 end = corners[corners.Length - 1];
+        if (!IsPointInEnemyControlRange(end, ControlRangeSafetyMargin)) return end;
+
+        const float step = 0.02f;
+        for (int i = corners.Length - 1; i > 0; i--)
+        {
+            Vector3 from = corners[i];
+            Vector3 to = corners[i - 1];
+            float segmentLength = Vector3.Distance(from, to);
+
+            for (float travelled = step; travelled < segmentLength; travelled += step)
+            {
+                Vector3 point = Vector3.MoveTowards(from, to, travelled);
+                if (!IsPointInEnemyControlRange(point, ControlRangeSafetyMargin)) return point;
+            }
+
+            if (!IsPointInEnemyControlRange(to, ControlRangeSafetyMargin)) return to;
+        }
+
+        return transform.position; //Nowhere along the path is safe, so don't move
+    }
+    
+    
 }

@@ -48,6 +48,8 @@ public class UnitActivationState : BaseState
     //If you left-click shoot a raycast and see if hit a friendly unit. If so give it to information package.
     private void OnSelectPerformed(InputAction.CallbackContext ctx)
     {
+        if (_gameManager.isGameOver) return;
+        
         if (!Context.PlayerTurn)
         {
             Debug.Log("OnSelectPerformed in UnitActivationState but it's not player's turn");
