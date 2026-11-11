@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseScreen : MonoBehaviour
 {
@@ -23,12 +24,17 @@ public class PauseScreen : MonoBehaviour
         if (gameObject.transform.localScale == Vector3.zero)
         {
             menu.OpenMenu(menu.PauseScreen);
-            Time.timeScale = 0f;
+            SoundManager.SetMusicVolumes(0.15f, 0.05f);
         }
         else if (gameObject.transform.localScale == Vector3.one)
         {
             menu.CloseMenu(menu.PauseScreen);
-            Time.timeScale = 1f;
+            SoundManager.SetMusicVolumes(0.4f, 0.2f);
         }
+    }
+
+    public void GoToScene(string name)
+    {
+        SceneManager.LoadScene(name);
     }
 }

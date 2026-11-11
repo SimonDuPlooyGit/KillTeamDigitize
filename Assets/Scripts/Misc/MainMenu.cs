@@ -20,9 +20,20 @@ public class MainMenu : MonoBehaviour
     [SerializeField]
     private Image fadeImage;
     private float fadeDuration = 1.0f;
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     void Start()
     {
-       fadeImage.color = new Color32(0, 0, 0, 255);
+       fadeImage.color = new Color(0f, 0f, 0f, 1f);
        animator = GetComponent<Animator>();
        CloseBook(); 
        StartCoroutine(IntroFade(1f,0f));
@@ -122,7 +133,7 @@ public class MainMenu : MonoBehaviour
         Color color = fadeImage.color;
         fadeImage.raycastTarget = true;
 
-        Color startColor = new Color(color.r, color.g, color.b, startAlpha);
+        Color startColor = new Color(0f, 0f, 0f, startAlpha);
         Color targetColor = new Color(color.r, color.g, color.b, targetAlpha);
 
         while (elapsedTime < fadeDuration)
@@ -136,6 +147,30 @@ public class MainMenu : MonoBehaviour
 
         fadeImage.color = targetColor;
         fadeImage.raycastTarget = false;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Main Menu")
+        {
+            RunIntroSequence();
+        }
+    }
+
+    public void RunIntroSequence()
+    {
+        StopAllCoroutines();
+        Time.timeScale = 1f; // Ensure time isn't paused from previous scene
+
+        if (fadeImage != null)
+        {
+            fadeImage.color = new Color(0f, 0f, 0f, 1f);
+            fadeImage.raycastTarget = true;
+        }
+
+        animator = GetComponent<Animator>();
+        CloseBook();
+        StartCoroutine(IntroFade(1f, 0f));
     }
 
 
