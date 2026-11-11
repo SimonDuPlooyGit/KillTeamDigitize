@@ -6219,7 +6219,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
+  - {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6252,8 +6252,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.02350998
-        value: 0.104587555
+        time: 0.016796019
+        value: 0.019073995
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6265,8 +6265,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 0, b: 0, a: 1}
-      key1: {r: 1, g: 0, b: 0, a: 1}
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -6369,7 +6369,7 @@ MonoBehaviour:
   samplingPoints: []
   losStart: {fileID: 1309909487491554290}
   lineRenderer: {fileID: 1443869018041154187}
-  validLine: {fileID: 2100000, guid: 5b2442b69b50f6b46868d821c55978bd, type: 2}
+  validLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
   invalidLine: {fileID: 2100000, guid: 052ed1773c4bdf3449c4112946f6227e, type: 2}
   AllyInControlRange: 0
   EnemyInControlRange: 0
