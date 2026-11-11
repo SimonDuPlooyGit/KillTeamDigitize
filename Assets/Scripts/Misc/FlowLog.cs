@@ -1,13 +1,17 @@
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FlowLog : MonoBehaviour
 {
     [SerializeField]
     public GameObject flowLogContent;
     public GameObject logPrefab;
-    
+    [SerializeField] 
+    private ScrollRect scrollRect;
+
     private void OnEnable()
     {
         Application.logMessageReceived += HandleLog;
@@ -24,6 +28,18 @@ public class FlowLog : MonoBehaviour
         {
             GameObject newLog = Instantiate(logPrefab, flowLogContent.transform);
             newLog.GetComponent<TextMeshProUGUI>().text = logString;
+            StartCoroutine(ScrollToBottom());
+        }
+    }
+
+    private IEnumerator ScrollToBottom()
+    {
+        yield return new WaitForEndOfFrame();
+
+        //sets scroll rect to bottom
+        if (scrollRect != null)
+        {
+            scrollRect.verticalNormalizedPosition = 0f;
         }
     }
 }

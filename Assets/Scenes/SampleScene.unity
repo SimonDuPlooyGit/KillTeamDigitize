@@ -25092,6 +25092,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlowLog
   flowLogContent: {fileID: 1756530846}
   logPrefab: {fileID: 6848960150895498723, guid: 23d4e4a62fb309a4ba6c12821847a839, type: 3}
+  scrollRect: {fileID: 1598433696}
 --- !u!1 &1512981564
 GameObject:
   m_ObjectHideFlags: 0
@@ -29010,7 +29011,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 20
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
