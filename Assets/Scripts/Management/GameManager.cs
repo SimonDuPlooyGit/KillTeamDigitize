@@ -585,12 +585,16 @@ public class GameManager : MonoBehaviour
     {
         GameObject tpText = menu.tpCounter.GetComponentInChildren<TextMeshProUGUI>().gameObject;
         Vector3 originalScale = tpText.transform.localScale;
-        Vector3 targetScale = new Vector3(1.8f, 1.8f, 1.8f);
+        Vector3 originalPos = tpText.transform.localPosition;
+        Vector3 targetPos = new Vector3(originalPos.x,originalPos.y -450,originalPos.z);
+        Vector3 targetScale = new Vector3(4f, 4f, 4f);
         float lerpTime = 0.1f;
         float elapsedTimeA = 0;
         float elapsedTimeB = 0;
+        float elapsedTimeC = 0;
         yield return new WaitForSeconds(0.3f);
         tpText.GetComponent<TextMeshProUGUI>().color = Color.white;
+        tpText.transform.localPosition = targetPos;
         while (elapsedTimeA < lerpTime)
         {
             elapsedTimeA += Time.deltaTime;
@@ -599,7 +603,6 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
         yield return new WaitForSeconds(0.35f);
-        tpText.GetComponent<TextMeshProUGUI>().color = Color.black;
         while (elapsedTimeB < lerpTime)
         {
             elapsedTimeB += Time.deltaTime;
@@ -607,5 +610,13 @@ public class GameManager : MonoBehaviour
             tpText.transform.localScale = Vector3.Lerp(targetScale, originalScale, t);
             yield return null;
         }
+        while (elapsedTimeC < lerpTime)
+        {
+            elapsedTimeC += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTimeC / lerpTime);
+            tpText.transform.localPosition = Vector3.Lerp(targetPos, originalPos, t);
+            yield return null;
+        }
+        tpText.GetComponent<TextMeshProUGUI>().color = Color.black;
     }
 }
