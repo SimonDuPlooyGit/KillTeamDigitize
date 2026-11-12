@@ -24,12 +24,18 @@ public class PauseScreen : MonoBehaviour
         if (gameObject.transform.localScale == Vector3.zero)
         {
             menu.OpenMenu(menu.PauseScreen);
-            SoundManager.SetMusicVolumes(0.15f, 0.05f);
+            if(SceneManager.GetActiveScene().name == "Sample Scene")
+            {
+                SoundManager.SetMusicVolumes(0.15f, 0.05f);
+            }
         }
         else if (gameObject.transform.localScale == Vector3.one)
         {
             menu.CloseMenu(menu.PauseScreen);
-            SoundManager.SetMusicVolumes(0.4f, 0.2f);
+            if (SceneManager.GetActiveScene().name == "Sample Scene")
+            {
+                SoundManager.SetMusicVolumes(0.4f, 0.2f);
+            }
         }
     }
 

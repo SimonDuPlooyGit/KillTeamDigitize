@@ -40,7 +40,7 @@ public class GameSetup : MonoBehaviour
 
     public void InitialiseSetup()
     {
-        orbitCamera.ToggleCam();
+        //orbitCamera.ToggleCam();
         terrainData = new PositionData[terrainObjects.Length];
         unitData = new PositionData[unitObjects.Length];
 
@@ -189,6 +189,6 @@ public class GameSetup : MonoBehaviour
         }
 
         setupDone = true;
-        orbitCamera.ToggleCam();
+        //orbitCamera.ToggleCam();
     }
 }
