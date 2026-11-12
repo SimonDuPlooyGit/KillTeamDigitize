@@ -89,7 +89,7 @@ public class WeaponSelectState : BaseState
         PlayerOperative playerOp = Context.CurrentlySelectedOperativeScript as PlayerOperative;
         if (heavyRule != null)
         {
-            if (playerOp.hasRepositionedThisActivation)
+            if (playerOp.hasRepositionedThisActivation || playerOp.hasFallenBackThisActivation)
             {
                 Debug.Log("Can't shoot this weapon after reposition due to heavy weapon rule");
                 SoundManager.PlaySound(7);

@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
             }
         );*/
 
-        GoBackAState(movementState, actionSelectionState,()=>true,() =>
+        GoBackAState(movementState, actionSelectionState,()=>!movementState._isExecutingMove,() =>
         {
             SharedContext.IsMovementRequested = false;
             SharedContext.SelectedMovement = PlayerMovementType.None;

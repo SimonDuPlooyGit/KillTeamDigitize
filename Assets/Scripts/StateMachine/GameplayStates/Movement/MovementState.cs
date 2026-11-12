@@ -14,7 +14,7 @@ public class MovementState : BaseState
     private readonly MenuPanel _menu;
     private readonly MonoBehaviour _coroutineRunner;
     public bool MovementFinished;
-    private bool _isExecutingMove;
+    public bool _isExecutingMove;
     //Tutorial flags
     private bool tutFlag1 = true;
     private bool tutFlag2 = false;
@@ -92,6 +92,7 @@ public class MovementState : BaseState
         {
             if (playerOp.MoveOperativeToMarker(Context.SelectedMovement))
             {
+                _menu.moveButton2.SetActive(false);
                 _coroutineRunner.StartCoroutine(ConfirmAndExecuteMovement(playerOp));
                 SoundManager.PlaySound(9);
                 playerOp.isInvalidCharge = false;

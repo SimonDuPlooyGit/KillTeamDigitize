@@ -57,7 +57,6 @@ public class ShootCombatState : BaseState
         if (heavyRule != null)
         {
             playerOp.hasRepositionedThisActivation = true; //Take reposition away if you start a shoot with a heavy weapon
-            playerOp.hasChargedThisActivation = true; //Take charge away if you have started a shoot witha heavy weapon
         }
         Debug.Log("ResolveCombat");
         

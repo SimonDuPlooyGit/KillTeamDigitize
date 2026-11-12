@@ -67,6 +67,25 @@ public class WeaponRules
 
     //Rule logics
     
+    private static int CountCritsFromRolls(InformationPackage context)
+    {
+        int hitNeeded = context.Weapon.hit;
+        if (context.CurrentlySelectedOperativeScript != null && context.CurrentlySelectedOperativeScript.injured) hitNeeded += 1;
+
+        int critNeeded = 6;
+        foreach (IWeaponRule rule in context.Weapon.rules)
+        {
+            if (rule is Lethal lethal) critNeeded = Mathf.Min(critNeeded, lethal.lethalX);
+        }
+
+        int crits = 0;
+        foreach (int roll in context.AttackRolls)
+        {
+            if (roll >= hitNeeded && roll >= critNeeded) crits++;
+        }
+        return crits;
+    }
+    
     [System.Serializable]
     public class Balanced : IWeaponRule
     {
@@ -213,12 +232,9 @@ public class WeaponRules
 
         public void Execute(InformationPackage context)
         {
-            if (context.RetainedCrits >= pCritX)
+            if (CountCritsFromRolls(context) > 0)
             {
-                context.NumDefenseDiceRoll -= pCritX;
-            } else if (context.RetainedCrits < pCritX && context.RetainedCrits > 0)
-            {
-                context.NumDefenseDiceRoll -= context.RetainedCrits;
+                context.NumDefenseDiceRoll = Mathf.Max(0, context.NumDefenseDiceRoll - pCritX);
             }
         }
         
