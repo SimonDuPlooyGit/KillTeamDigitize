@@ -32,6 +32,7 @@ public class ShootCombatState : BaseState
         Context.RetainedNormals = 0;
         Context.RetainedCritDefense = 0;
         Context.RetainedNormalDefense = 0;
+        Context.BlastTargetsHit.Clear();
         
         _diceHandler.StartCoroutine(ResolveCombat());
         Context.CurrentlySelectedTargetScript.ForceUIOn(true);
@@ -247,6 +248,11 @@ public class ShootCombatState : BaseState
         _diceHandler.ClearAllDice();
         Context.CurrentlySelectedOperativeScript.UpdateApl(1);
         Context.CurrentlySelectedTargetScript.ForceUIOn(false);
+        foreach (var op in Context.BlastTargetsHit)
+        {
+            if (op != null) op.ForceUIOn(false);
+        }
+        Context.BlastTargetsHit.Clear();
     }
     
     private void ExecuteRulesInThisStep(AttackTimings currentStep)

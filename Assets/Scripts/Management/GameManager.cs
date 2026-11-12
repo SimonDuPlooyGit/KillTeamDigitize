@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
         AddT(actionSelectionState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn && SharedContext.CurrentlySelectedOperativeScript == null));
         AddT(npoSelectState, unitActivationState, new FuncPredicate(() => SharedContext.PlayerTurn)); //Only if no NPO could be activated
         //AddT for pressing a pass turn button
-        _stateMachine.SetState(unitActivationState);
+        _stateMachine.SetState(introductionState);
         
         //Backwards transitions
         GoBackAState(actionSelectionState, unitActivationState,

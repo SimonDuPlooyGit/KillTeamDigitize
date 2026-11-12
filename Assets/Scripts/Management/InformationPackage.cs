@@ -35,6 +35,8 @@ public class InformationPackage
     public bool CanReroll;
     public bool IgnoreCover;
     
+    public List<BaseOperativeClass> BlastTargetsHit = new();
+    
     //Flags for state completion
     public bool IsPlayerActivationRequested;
     public bool IsMovementRequested;

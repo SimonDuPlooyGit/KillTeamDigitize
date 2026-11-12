@@ -1,5 +1,6 @@
 //-----WeaponRules Class (all of the weapon rules)-----
 
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.LowLevelPhysics2D;
 
@@ -332,10 +333,128 @@ public class WeaponRules
 
         public int blastX;
         
+        private const float InchesToUnits = 10f / 39.37f;
+        private const float BaseRadius = 0.16f;
+        private const int BaseDefenseDice = 3;
+        
         public void Execute(InformationPackage context)
         {
             //Attack another visible unit with another roll within x inches of initial target
+            BaseOperativeClass shooter = context.CurrentlySelectedOperativeScript;
+            BaseOperativeClass primary = context.CurrentlySelectedTargetScript;
+            WeaponTemplate weapon = context.Weapon;
+            if (shooter == null || primary == null || weapon == null) return;
+
+            float radius = blastX * InchesToUnits;
+
+            List<BaseOperativeClass> everyone = new List<BaseOperativeClass>();
+            everyone.AddRange(context.AllPlayerUnits);
+            everyone.AddRange(context.AllNpoUnits);
+            
+            foreach (BaseOperativeClass op in everyone)
+            {
+                //Anyone in range counts, friend or foe. The shooter is left out (remove "op == shooter" to let them be hit too)
+                if (op == null || op == primary || op.dead || !op.gameObject.activeInHierarchy) continue;
+                if (!IsWithinBlast(primary, op, radius) || !IsVisibleFrom(primary, op)) continue;
+
+                ResolveSecondaryAttack(context, shooter, op, weapon);
+            }
         }
+        
+        private void ResolveSecondaryAttack(InformationPackage context, BaseOperativeClass shooter, BaseOperativeClass victim, WeaponTemplate weapon)
+    {
+        //Read the weapon rules that change how the dice work
+        int hitNeeded = weapon.hit + (shooter.injured ? 1 : 0);
+        int critNeeded = 6;
+        int piercing = 0;
+        int piercingCrit = 0;
+        bool saturate = false;
+
+        foreach (IWeaponRule rule in weapon.rules)
+        {
+            switch (rule)
+            {
+                case Lethal lethal: critNeeded = Mathf.Min(critNeeded, lethal.lethalX); break;
+                case Piercing p: piercing += p.piercingX; break;
+                case PiercingCrit pc: piercingCrit += pc.pCritX; break;
+                case Saturate _: saturate = true; break;
+            }
+        }
+
+        //Attack dice
+        int crits = 0;
+        int normals = 0;
+        for (int i = 0; i < weapon.atk; i++)
+        {
+            int roll = Random.Range(1, 7);
+            if (roll < hitNeeded) continue;
+            if (roll == 6 || roll >= critNeeded) crits++;
+            else normals++;
+        }
+
+        //Defence dice
+        int save = victim.operativeData.save;
+        int defenseDice = BaseDefenseDice - piercing;
+        if (crits > 0) defenseDice -= piercingCrit;
+        defenseDice = Mathf.Max(0, defenseDice);
+
+        int critSaves = 0;
+        int normalSaves = 0;
+
+        //Cover save: one guaranteed save if the victim is concealed in cover with blocked targeting lines, unless Saturate
+        bool coverSave = victim.currentOrder == OrderState.Conceal && victim.closeToCover
+                         && !shooter.CheckTargetingLines(shooter, victim, false) && !saturate;
+        if (coverSave)
+        {
+            defenseDice = Mathf.Max(0, defenseDice - 1);
+            if (save == 6) critSaves++;
+            else normalSaves++;
+        }
+
+        for (int i = 0; i < defenseDice; i++)
+        {
+            int roll = Random.Range(1, 7);
+            if (roll < save) continue;
+            if (roll == 6) critSaves++;
+            else normalSaves++;
+        }
+
+        SaveResolver.Resolve(crits, normals, critSaves, normalSaves, weapon.dmgNorm, weapon.dmgCrit, out int critsLeft, out int normalsLeft);
+        int damage = critsLeft * weapon.dmgCrit + normalsLeft * weapon.dmgNorm;
+
+        //Show it: unit UI is forced on (ShootCombatState turns it off on exit) so the damage number and health bar are visible
+        victim.ForceUIOn(true);
+        context.BlastTargetsHit.Add(victim);
+        victim.TakeDamage(damage);
+        Debug.LogWarning($"Blast hit {DisplayName(victim)} for {damage} dmg");
+    }
+
+    private static Vector3 BasePosition(BaseOperativeClass op)
+    {
+        Vector3 pos = op.unitBase != null ? op.unitBase.transform.position : op.transform.position;
+        pos.y = 0f;
+        return pos;
+    }
+    
+    //Base edge to base edge, measured on the ground
+    private static bool IsWithinBlast(BaseOperativeClass centre, BaseOperativeClass other, float radius)
+    {
+        float edgeToEdge = Vector3.Distance(BasePosition(centre), BasePosition(other)) - BaseRadius * 2f;
+        return edgeToEdge <= radius;
+    }
+    
+    //Visible to the primary target. Only terrain blocks it, same as the LOS checks elsewhere
+    private static bool IsVisibleFrom(BaseOperativeClass from, BaseOperativeClass to)
+    {
+        Vector3 start = from.losStart != null ? from.losStart.position : from.transform.position;
+        Vector3 end = to.losStart != null ? to.losStart.position : to.transform.position;
+        return from.CheckLineObstruction(start, end); //True when nothing is in the way
+    }
+    
+    private static string DisplayName(BaseOperativeClass op)
+    {
+        return op.nameText != null ? op.nameText.text : op.name;
+    }
         
         public override string ToString() => $"Blast: {blastX}";
     }
