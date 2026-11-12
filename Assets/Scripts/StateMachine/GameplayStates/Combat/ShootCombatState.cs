@@ -190,23 +190,10 @@ public class ShootCombatState : BaseState
             }
         }
 
-        if (Context.RetainedCritDefense >= Context.RetainedCrits)
-        {
-            Context.RetainedCritDefense -= Context.RetainedCrits;
-            Context.RetainedCrits = 0;
-        } else if (Context.RetainedCritDefense < Context.RetainedCrits)
-        {
-            Context.RetainedCrits -= Context.RetainedCritDefense;
-            Context.RetainedCritDefense = 0;
-        }
+        SaveResolver.Resolve(Context.RetainedCrits, Context.RetainedNormals, Context.RetainedCritDefense, Context.RetainedNormalDefense, Context.Weapon.dmgNorm, Context.Weapon.dmgCrit, out int critsLeft, out int normalsLeft);
         
-        Context.RetainedNormals -= Context.RetainedCritDefense;
-        Context.RetainedNormals -= Context.RetainedNormalDefense;
-
-        if (Context.RetainedNormals <= 0)
-        {
-            Context.RetainedNormals = 0;
-        }
+        Context.RetainedCrits = critsLeft;
+        Context.RetainedNormals = normalsLeft;
 
         SoundManager.PlaySound(11,0.7f,true);
         Context.CurrentlySelectedOperativeScript.GetComponent<SmokeTrails>().SpawnSmoke(Context.RetainedNormals,Context.CurrentlySelectedOperative.transform, Context.CurrentlySelectedTarget.transform);

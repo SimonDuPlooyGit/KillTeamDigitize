@@ -650,10 +650,12 @@ private IEnumerator BrawlerMoveRoutine(float maxDistance, string verb)
         int norm = 0;
         int critDef = 0;
         int normDef = 0;
-
+        
+        int hitNeeded = context.Weapon.hit + (injured ? 1 : 0);
+        
         foreach (int roll in context.AttackRolls)
         {
-            if (roll >= context.Weapon.hit)
+            if (roll >= hitNeeded)
             {
                 if (roll == 6) crit++;
                 else norm++;
@@ -668,24 +670,8 @@ private IEnumerator BrawlerMoveRoutine(float maxDistance, string verb)
                 else normDef++;
             }
         }
-
-        if (critDef >= crit)
-        {
-            critDef -= crit;
-            crit = 0;
-        }
-        else
-        {
-            crit -= critDef;
-            critDef = 0;
-        }
-
-        norm -= critDef;
-        norm -= normDef;
-        if (norm < 0)
-        {
-            norm = 0;
-        }
+        
+        SaveResolver.Resolve(crit, norm, critDef, normDef, context.Weapon.dmgNorm, context.Weapon.dmgCrit, out crit, out norm);
 
         Animator animator = gameObject.GetComponent<Animator>();
         animator.SetTrigger("Shoot");
