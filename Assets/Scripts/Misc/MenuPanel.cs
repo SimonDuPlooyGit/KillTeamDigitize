@@ -26,6 +26,7 @@ public class MenuPanel : MonoBehaviour
     public GameObject heavyPopup;
     public GameObject tooClose;
     public GameObject inRange;
+    public GameObject cantParry;
     [SerializeField]
     private GameObject weaponTooltipHolder;
     //Tutflags

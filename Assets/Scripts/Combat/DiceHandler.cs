@@ -1002,6 +1002,8 @@ public class DiceHandler : MonoBehaviour
         if (!isValidParry)
         {
             Debug.Log("[DiceHandler] Invalid parry: Normal die cannot block a Crit die.");
+            menu.PopUp(menu.cantParry);
+            SoundManager.PlaySound(7);
             CancelParryMode();
             return;
         }
