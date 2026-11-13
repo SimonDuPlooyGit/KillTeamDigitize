@@ -5,6 +5,7 @@ public class ShootMenu : MonoBehaviour
 {
     [SerializeField] public GameObject weapHolder;
     [SerializeField] public GameObject weapPanel;
+    [SerializeField] public GameObject meleePanel;
     [SerializeField] public GameObject shootFooter;
     public void ClearWeapons()
     {
@@ -18,9 +19,9 @@ public class ShootMenu : MonoBehaviour
         }
     }
 
-    public void AddWeaponPanel(WeaponTemplate weapon, Action<WeaponTemplate> onWeaponSelected)
+    public void AddWeaponPanel(WeaponTemplate weapon, Action<WeaponTemplate> onWeaponSelected, bool isMelee = false)
     {
-        GameObject panelObj = Instantiate(weapPanel, weapHolder.transform);
+        GameObject panelObj = isMelee? Instantiate(meleePanel, weapHolder.transform):Instantiate(weapPanel, weapHolder.transform);
         WeaponPanel panel = panelObj.GetComponent<WeaponPanel>();
         
         panel.Setup(weapon, onWeaponSelected);

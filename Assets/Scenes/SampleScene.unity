@@ -25699,6 +25699,7 @@ MonoBehaviour:
   logPrefab: {fileID: 6848960150895498723, guid: 23d4e4a62fb309a4ba6c12821847a839, type: 3}
   scrollRect: {fileID: 1598433696}
   lerpTime: 0.1
+  autoCloseDelay: 3
 --- !u!114 &1512563461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26047,6 +26048,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   weapHolder: {fileID: 1573381766}
   weapPanel: {fileID: 1916494783393936001, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
+  meleePanel: {fileID: 9042723152105229787, guid: bcf7b2ff90712ca4d8dae6e660a1f37a, type: 3}
   shootFooter: {fileID: 6533309250812781015, guid: 8305ab061e8aefe4e9a06267a1abf8cf, type: 3}
 --- !u!1 &1529274283
 GameObject:

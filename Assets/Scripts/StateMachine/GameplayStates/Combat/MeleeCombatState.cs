@@ -84,6 +84,8 @@ public class MeleeCombatState : BaseState
         {
             TutEvents.AdvanceTutorial();
         }
+
+        _menu.CloseMenu(_menu.meleeMenu);
     }
 
     //Find the melee weapon for the person defend fighting

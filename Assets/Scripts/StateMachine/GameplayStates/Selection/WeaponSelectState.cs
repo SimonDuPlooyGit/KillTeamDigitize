@@ -60,7 +60,7 @@ public class WeaponSelectState : BaseState
                     //Debug.Log("Only populating melee weapons");
                     if (weapon.rules.OfType<WeaponRules.Melee>().Any())
                     {
-                        _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked);
+                        _menu.shootMenuActualScript.AddWeaponPanel(weapon, OnWeaponClicked,true);
                     }
                 }
                 else
