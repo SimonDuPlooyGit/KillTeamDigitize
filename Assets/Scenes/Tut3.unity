@@ -10307,7 +10307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   weapHolder: {fileID: 1070048772}
   weapPanel: {fileID: 1916494783393936001, guid: ccc6a371fea6e004cae10c36b074e0f8, type: 3}
-  meleePanel: {fileID: 0}
+  meleePanel: {fileID: 9042723152105229787, guid: bcf7b2ff90712ca4d8dae6e660a1f37a, type: 3}
   shootFooter: {fileID: 6533309250812781015, guid: 8305ab061e8aefe4e9a06267a1abf8cf, type: 3}
 --- !u!114 &502336261
 MonoBehaviour:

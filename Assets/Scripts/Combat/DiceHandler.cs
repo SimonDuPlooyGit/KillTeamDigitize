@@ -235,14 +235,14 @@ public class DiceHandler : MonoBehaviour
 
         if (context.CurrentlySelectedOperativeScript.injured)
         {
-            xToHit.text = $"{context.Weapon.hit + 1} to hit (+1 from Injured)";
+            xToHit.text = $"{context.Weapon.hit + 1}  or greater to hit (+1 from Injured)";
         }
         else
         {
-            xToHit.text = $"{context.Weapon.hit} to hit";
+            xToHit.text = $"{context.Weapon.hit} or greater to hit";
         }
         
-        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save} to save";
+        xToSave.text = $"{context.CurrentlySelectedTargetScript.operativeData.save}  or greater to save";
         //Stops the sequence here if in melee state
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
