@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public OrbitCamera mainCamera;
     [SerializeField] private NPOManager npoManager;
     [SerializeField] public GameSetup setup;
+    [SerializeField] public GameObject playerTurnPanel;
+    [SerializeField] public GameObject oppTurnPanel;
     private PlayerOperative _currentHoveredOperative;
     private NonPlayerOperative _currentHoveredNPO;
 
@@ -452,6 +454,7 @@ public class GameManager : MonoBehaviour
             SharedContext.CurrentlySelectedOperativeScript.acted = true;
             SharedContext.CurrentlySelectedOperativeScript.selected = false;
             SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
+            oppTurnPanel.SetActive(true);
         }
 
         SharedContext.FullReset();
@@ -541,10 +544,13 @@ public class GameManager : MonoBehaviour
         if (playerWin)
         {
             Debug.LogWarning("Player Wins!");
+            menu.OpenMenu(menu.winScreen);
+            
         }
         else
         {
             Debug.LogWarning("Player Losses!");
+            menu.OpenMenu(menu.loseScreen);
         }
     }
 

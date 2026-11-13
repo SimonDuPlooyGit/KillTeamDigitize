@@ -217,6 +217,7 @@ public class NPOBehaviour : MonoBehaviour
         itsOwnNpoScript.selected = false;
 
         Debug.Log($"{itsOwnNpoScript.name} turn ended. Reason: {reason}");
+        gameManagerReference.playerTurnPanel.SetActive(true);
 
         if (gameManagerReference != null && gameManagerReference.SharedContext != null)
         {
