@@ -5,6 +5,8 @@ public class PauseScreen : MonoBehaviour
 {
     [SerializeField]
     private MenuPanel menu;
+    public GameManager _gameManager;
+    
     void Start()
     {
         
@@ -15,6 +17,7 @@ public class PauseScreen : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
+            _gameManager.SharedContext.Pause();
             TogglePauseScreen();
         }
     }

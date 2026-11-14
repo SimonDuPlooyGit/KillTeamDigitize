@@ -25,6 +25,7 @@ public class OrbitCamera : MonoBehaviour
     private float mouseX = 0f;
     private float mouseY = 0f;
     public bool switchOffForMenu = false;
+    public bool paused = false;
 
     private Rigidbody rb;
 
@@ -38,17 +39,17 @@ public class OrbitCamera : MonoBehaviour
     private void Update()
     {
         // Toggle between Orbit and Freecam when the toggle key is pressed
-        if (Input.GetKeyDown(toggleKey))
+        if (Input.GetKeyDown(toggleKey) && !paused)
         {
             SetFreecam(!isFreecam);
         }
 
         // Execute behavior based on current mode
-        if (isFreecam)
+        if (isFreecam && !paused)
         {
             HandleFreecamMovement();
         }
-        else
+        else if (!isFreecam && !paused)
         {
             HandleOrbitMovement();
         }

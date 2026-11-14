@@ -134,8 +134,8 @@ public class ActionSelectionState : BaseState
         if (fightButton != null)
         {
             //Debug.Log($"hasFoughtThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            fightButton.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0 && playerOp.hasChargedThisActivation);
-            fightCost.SetActive(!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0 && playerOp.hasChargedThisActivation);
+            fightButton.SetActive((!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0 && playerOp.hasChargedThisActivation) || (playerOp.EnemyInControlRange && !playerOp.hasFoughtThisActivation));
+            fightCost.SetActive((!playerOp.hasFoughtThisActivation && playerOp.currentApl > 0 && playerOp.hasChargedThisActivation) || (playerOp.EnemyInControlRange && !playerOp.hasFoughtThisActivation));
         }
 
         if (fallBackButton != null)

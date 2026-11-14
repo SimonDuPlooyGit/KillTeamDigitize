@@ -47,6 +47,7 @@ public class InformationPackage
     public bool ValidTargetShoot;
     public bool IsFightingRequested;
     public bool ValidTargetFight;
+    public bool IsPaused = false;
     
     //Player movement types
     public PlayerMovementType SelectedMovement = PlayerMovementType.None;
@@ -67,6 +68,20 @@ public class InformationPackage
     public List<int> RetaliatorRemainingDice = new(); //How many attack dice the retaliator has left to parry or strike
     public bool FightSequenceOver = false;
 
+    public void Pause()
+    {
+        if (!IsPaused)
+        {
+            IsPaused = true;
+            MainCameraScript.paused = true;
+        }
+        else
+        {
+            IsPaused = false;
+            MainCameraScript.paused = false;
+        }
+    }
+    
     //-----Three overloaded methods to be able to set selected operative data no matter which component of it is passed as the argument-----
     public void SetSelectedOperativesData(GameObject selectedOperative)
     {
