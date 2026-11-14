@@ -113,8 +113,8 @@ public class ActionSelectionState : BaseState
         if (shootButton != null)
         {
             //Debug.Log($"hasShotThisActivation: {playerOp.hasRepositionedThisActivation} && currentApl{playerOp.currentApl}");
-            shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
-            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation);
+            shootButton.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation && !playerOp.EnemyInControlRange);
+            shootCost.SetActive(!playerOp.hasShotThisActivation && playerOp.currentApl > 0 && !playerOp.hasChargedThisActivation && !playerOp.EnemyInControlRange);
         }
 
         if (dashButton != null)
