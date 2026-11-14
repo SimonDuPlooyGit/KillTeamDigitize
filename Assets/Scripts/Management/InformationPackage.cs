@@ -47,6 +47,7 @@ public class InformationPackage
     public bool ValidTargetShoot;
     public bool IsFightingRequested;
     public bool ValidTargetFight;
+    public bool IsPaused = false;
     
     //Player movement types
     public PlayerMovementType SelectedMovement = PlayerMovementType.None;
