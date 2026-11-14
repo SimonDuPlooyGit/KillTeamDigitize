@@ -216,18 +216,17 @@ public class NPOBehaviour : MonoBehaviour
         itsOwnNpoScript.RemoveGlow();
         itsOwnNpoScript.selected = false;
 
-        Debug.Log($"{itsOwnNpoScript.name} turn ended. Reason: {reason}");
-        gameManagerReference.playerTurnPanel.SetActive(true);
-
-        if (gameManagerReference != null && gameManagerReference.SharedContext != null)
-        {
-            gameManagerReference.SharedContext.PlayerTurn = true;
-        }
-        
+        Debug.Log($"{itsOwnNpoScript.name} turn ended. Reason: {reason}");     
         itsOwnNpoScript.currentApl = 0;
         itsOwnNpoScript.UpdateApl(itsOwnNpoScript.currentApl);
         itsOwnNpoScript._mainCamera.transform.position = new Vector3(-5f, 1.7f, 0.5f);
         itsOwnNpoScript._mainCamera.transform.eulerAngles = new Vector3(27.4f, 90f, 0f);
         //itsOwnNpoScript.CheckTurnEnd();
+        if (gameManagerReference != null && gameManagerReference.SharedContext != null)
+        {
+            gameManagerReference.SharedContext.PlayerTurn = true;
+            gameManagerReference.CheckTurningPointEnd();
+            gameManagerReference.ShowTurnBanner();
+        }
     }
 }

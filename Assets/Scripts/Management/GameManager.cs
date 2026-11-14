@@ -454,15 +454,32 @@ public class GameManager : MonoBehaviour
             SharedContext.CurrentlySelectedOperativeScript.acted = true;
             SharedContext.CurrentlySelectedOperativeScript.selected = false;
             SharedContext.CurrentlySelectedOperativeScript.TurnFinished();
-            oppTurnPanel.SetActive(true);
+            
         }
 
         SharedContext.FullReset();
         SharedContext.PlayerTurn = false;
         CheckTurningPointEnd();
+        ShowTurnBanner();
     }
 
-    public void CheckTurningPointEnd()
+    public void ShowTurnBanner()
+    {
+        if (isGameOver) return;
+
+        if (SharedContext.PlayerTurn)
+        {
+            //oppTurnPanel.SetActive(false);
+            playerTurnPanel.SetActive(true);
+        }
+        else
+        {
+            //playerTurnPanel.SetActive(false);
+            oppTurnPanel.SetActive(true);
+        }
+    }
+
+        public void CheckTurningPointEnd()
     {
         if (isGameOver) return;
 
