@@ -6633,6 +6633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseScreen
   menu: {fileID: 1638552265}
+  _gameManager: {fileID: 1901610878}
 --- !u!1 &419340775
 GameObject:
   m_ObjectHideFlags: 0
@@ -13917,6 +13918,7 @@ MonoBehaviour:
   camText: {fileID: 1042702572}
   isFreecam: 0
   switchOffForMenu: 0
+  paused: 0
 --- !u!54 &971711314
 Rigidbody:
   m_ObjectHideFlags: 0
