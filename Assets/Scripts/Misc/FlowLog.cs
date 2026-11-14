@@ -42,7 +42,7 @@ public class FlowLog : MonoBehaviour
 
     private void HandleLog(string logString, string stackTrace, LogType type) //You can call a Debug.LogException and then it will pop up in the gameplay flow UI
     {
-        if (type == LogType.Warning && !stackTrace.Contains("IsPointerOverGameObject"))
+        if (type == LogType.Warning && !logString.Contains("Calling IsPointerOverGameObject() from within event processing (such as from InputAction callbacks) will not work as expected; it will query UI state from the last frame"))
         {
             GameObject newLog = Instantiate(logPrefab, flowLogContent.transform);
             newLog.GetComponent<TextMeshProUGUI>().text = logString;
