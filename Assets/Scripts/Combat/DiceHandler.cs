@@ -412,13 +412,6 @@ public class DiceHandler : MonoBehaviour
         SpawnDice(activePhysAttackDice, true, isAlly);
     
         //Display whether the dice hit or not by updating the sprite
-        foreach (CombatRoll dieSprite in activeAttackDice)
-        {
-            if (dieSprite.GetValue() >= context.Weapon.hit && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
-            {
-                dieSprite.ToggleHit();
-            }
-        }
         
         SpawnDice(activePhysDefenseDice, false, !isAlly);
         
@@ -434,15 +427,12 @@ public class DiceHandler : MonoBehaviour
             }
             FilterDiceList(context, false, context.opponentWeapon.hit);
         }
+        else
+        {
+            ApplyRangedHitAndBlockIndicators(context);
+        }
 
         //Display whether the dice blocked or not by updating the sprite
-        foreach (CombatRoll dieSprite in activeDefenseDice)
-        {
-            if (dieSprite.GetValue() >= context.CurrentlySelectedTargetScript.operativeData.save && gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
-            {
-                dieSprite.ToggleBlock();
-            }
-        }
 
         if (gameManager._stateMachine.CurrentState != gameManager.meleeCombatState)
         {
@@ -591,29 +581,31 @@ public class DiceHandler : MonoBehaviour
         }
         bool isUIAlly = isAttackMode ? isAlly : !isAlly;
         SpawnDice(activePhysList, isAttackMode, isUIAlly);
+
         if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState)
         {
-            if (_context.CurrentlySelectedOperativeScript.injured)
-            {
-                FilterDiceList(_context, true, _context.Weapon.hit + 1);
-            }
-            else
-            {
-                FilterDiceList(_context, true, _context.Weapon.hit);
-            }
+            int hitThreshold = _context.CurrentlySelectedOperativeScript.injured
+                ? _context.Weapon.hit + 1
+                : _context.Weapon.hit;
+            FilterDiceList(_context, true, hitThreshold);
         }
-        foreach (CombatRoll dieSprite in activeAttackDice)
+        else if (activeDefenseDice.Count > 0)
         {
-            if (_context.CurrentlySelectedOperativeScript.injured)
+            // Defense dice are already on screen: respawn them to reset old block toggles,
+            // then recalculate both attack hits and defense blocks together.
+            SpawnDice(activePhysDefenseDice, false, !isAlly);
+            ApplyRangedHitAndBlockIndicators(_context);
+        }
+        else
+        {
+            // Only attack dice are on screen (pre-defense step): just mark hits.
+            int hitThreshold = _context.CurrentlySelectedOperativeScript.injured
+                ? _context.Weapon.hit + 1
+                : _context.Weapon.hit;
+
+            foreach (CombatRoll dieSprite in activeAttackDice)
             {
-                if (dieSprite.GetValue() >= _context.Weapon.hit + 1)
-                {
-                    dieSprite.ToggleHit();
-                }
-            }
-            else
-            {
-                if (dieSprite.GetValue() >= _context.Weapon.hit)
+                if (dieSprite.GetValue() >= hitThreshold)
                 {
                     dieSprite.ToggleHit();
                 }
@@ -1109,5 +1101,92 @@ public class DiceHandler : MonoBehaviour
         ClearAllSelections();
         UpdateRerollButtonVisibility();
         StartCoroutine(UpdateGuideText("Click one of your dice to select it"));
+    }
+
+    private void ApplyRangedHitAndBlockIndicators(InformationPackage context)
+    {
+        if (gameManager._stateMachine.CurrentState == gameManager.meleeCombatState) return;
+
+        int hitThreshold = context.CurrentlySelectedOperativeScript.injured
+            ? context.Weapon.hit + 1
+            : context.Weapon.hit;
+        int saveThreshold = context.CurrentlySelectedTargetScript.operativeData.save;
+
+        // 1. Toggle Attack Hits & count Crits vs Normals
+        int unblockedCrits = 0;
+        int unblockedNormals = 0;
+
+        foreach (CombatRoll die in activeAttackDice)
+        {
+            int val = die.GetValue();
+            if (val >= hitThreshold)
+            {
+                die.ToggleHit();
+                if (val == 6) unblockedCrits++;
+                else unblockedNormals++;
+            }
+        }
+
+        // 2. Gather successful Defense dice separated into Crits and Normals
+        List<CombatRoll> critSaves = new List<CombatRoll>();
+        List<CombatRoll> normalSaves = new List<CombatRoll>();
+
+        foreach (CombatRoll die in activeDefenseDice)
+        {
+            int val = die.GetValue();
+            if (val >= saveThreshold)
+            {
+                if (val == 6) critSaves.Add(die);
+                else normalSaves.Add(die);
+            }
+        }
+
+        // 3. Allocate Crit Saves first (1 Crit Save -> 1 Attack Crit, else 1 Attack Normal)
+        foreach (CombatRoll critSaveDie in critSaves)
+        {
+            if (unblockedCrits > 0)
+            {
+                unblockedCrits--;
+                critSaveDie.ToggleBlock();
+            }
+            else if (unblockedNormals > 0)
+            {
+                unblockedNormals--;
+                critSaveDie.ToggleBlock();
+            }
+        }
+
+        // 4. Allocate Normal Saves (prioritize 2-for-1 on Crits if dmgCrit >= 2 * dmgNorm, otherwise 1-for-1 on Normals first)
+        int normalIdx = 0;
+        bool preferBlockingCrits = context.Weapon.dmgCrit >= (context.Weapon.dmgNorm * 2);
+
+        if (preferBlockingCrits)
+        {
+            // Spend pairs of 2 normal saves on crits first
+            while (unblockedCrits > 0 && (normalSaves.Count - normalIdx) >= 2)
+            {
+                unblockedCrits--;
+                normalSaves[normalIdx].ToggleBlock();
+                normalSaves[normalIdx + 1].ToggleBlock();
+                normalIdx += 2;
+            }
+        }
+
+        // Spend 1 normal save per normal hit
+        while (unblockedNormals > 0 && normalIdx < normalSaves.Count)
+        {
+            unblockedNormals--;
+            normalSaves[normalIdx].ToggleBlock();
+            normalIdx++;
+        }
+
+        // Spend any remaining pairs of 2 normal saves on remaining crits
+        while (unblockedCrits > 0 && (normalSaves.Count - normalIdx) >= 2)
+        {
+            unblockedCrits--;
+            normalSaves[normalIdx].ToggleBlock();
+            normalSaves[normalIdx + 1].ToggleBlock();
+            normalIdx += 2;
+        }
     }
 }
