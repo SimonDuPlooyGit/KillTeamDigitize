@@ -33379,7 +33379,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: By default rolling a 6 counts as a crit. A crit can only be blocked by
-    rolling a 6 on a defense die.
+    rolling a 6 on a defense die or 2 normal successes.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}
   m_sharedMaterial: {fileID: 3261361728455733759, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}

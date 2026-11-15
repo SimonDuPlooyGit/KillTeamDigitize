@@ -33114,7 +33114,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hover over any operarive to view its current state. This includes its current
+  m_text: Hover over any operative to view its current state. This includes its current
     health, APL and active statuses.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9571d4d27c733b1449fd88633bb7553a, type: 2}

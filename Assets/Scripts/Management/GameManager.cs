@@ -226,7 +226,7 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && SceneManager.GetActiveScene().name != "SampleScene" && SceneManager.GetActiveScene().name != "Main Menu")
         {
             Scene currentScene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(currentScene.buildIndex);
