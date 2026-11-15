@@ -422,6 +422,7 @@ public class GameManager : MonoBehaviour
     {
         SoundManager.PlaySound(3, 1, true);
         SharedContext.IsFightingRequested = true;
+        SharedContext.CurrentlySelectedOperativeScript.currentOrder = OrderState.Engage;
     }
     
     private void OnEnable()
