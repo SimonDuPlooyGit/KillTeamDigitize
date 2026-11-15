@@ -6,7 +6,9 @@ public class PauseScreen : MonoBehaviour
     [SerializeField]
     private MenuPanel menu;
     public GameManager _gameManager;
-    
+    [SerializeField] 
+    private OrbitCamera orbitCamera;
+
     void Start()
     {
         
@@ -45,5 +47,10 @@ public class PauseScreen : MonoBehaviour
     public void GoToScene(string name)
     {
         SceneManager.LoadScene(name);
+    }
+
+    public void Resume()
+    {
+        _gameManager.SharedContext.Pause();
     }
 }

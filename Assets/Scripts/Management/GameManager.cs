@@ -562,13 +562,17 @@ public class GameManager : MonoBehaviour
         if (playerWin)
         {
             Debug.LogWarning("Player Wins!");
-            menu.OpenMenu(menu.winScreen);
-            
+            if(SceneManager.GetActiveScene().name != "Tut3")
+            {
+                menu.OpenMenu(menu.winScreen);
+            }
+            SharedContext.Pause();
         }
         else
         {
             Debug.LogWarning("Player Losses!");
             menu.OpenMenu(menu.loseScreen);
+            SharedContext.Pause();
         }
     }
 
