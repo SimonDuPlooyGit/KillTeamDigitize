@@ -29953,7 +29953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToolTipPanel
   tooltips:
-  - {fileID: 7004752477392127754, guid: 12885b73b2375e8418edf090945fc6e4, type: 3}
+  - {fileID: 4810904675602729628, guid: 4e3b1b8a6fedcdb4b987dcc5688655cf, type: 3}
   panelContainer: {fileID: 652041722}
   weaponRuleText: {fileID: 0}
   ruleDatabase: []
