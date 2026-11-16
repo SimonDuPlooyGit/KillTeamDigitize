@@ -176,4 +176,9 @@ public class OrbitCamera : MonoBehaviour
         lookAtTarget = target;
         SetFreecam(false);
     }
+
+    public void unPauseCam()
+    {
+        paused = !paused;
+    }
 }
