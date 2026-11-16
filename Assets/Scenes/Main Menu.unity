@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'In the grimdark of the 40K universe war is never ending.
+  m_text: 'In the grimdark of the 40K universe, war is never ending.
 
 
     In this
@@ -2858,7 +2858,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -4.9}
+  m_AnchoredPosition: {x: 0, y: -0.6}
   m_SizeDelta: {x: 162.85, y: 30.96}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712495347
@@ -2882,9 +2882,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Kill Team logo skull: \nWarhammer 40,000: Kill Team (2021) Logo\nCopyright
-    \xA9 Games Workshop Limited.\nSourced via Warhammer 40k Lexicanum\n\n\n\nKill
-    Team rule book cover:\nWarhammer 40,000: Kill Team Core Book (2021) \u2013 Cover
-    Art\nCopyright \xA9 Games Workshop Limited"
+    \xA9 Games Workshop Limited.\nSourced via Warhammer 40k Lexicanum\n\nKill Team
+    rule book cover:\nWarhammer 40,000: Kill Team Core Book (2021) \u2013 Cover Art\nCopyright
+    \xA9 Games Workshop Limited\n\nPack Gesta Furniture #1:\nCreated by Gesta.\nSourced
+    via the Unity Asset Store (assetstore.unity.com)\n\nMusic:\n\"Boss Theme\"\nComposed
+    by Remaxim.\nLicensed under CC-BY-SA 3.0/GPL 3.0 \nvia OpenGameArt\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 95e1bcf947c3b5d47a184d34515938b5, type: 2}
   m_sharedMaterial: {fileID: -7741333241529128328, guid: 95e1bcf947c3b5d47a184d34515938b5, type: 2}
@@ -2911,8 +2913,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9.37
-  m_fontSizeBase: 9.37
+  m_fontSize: 7.05
+  m_fontSizeBase: 7.05
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3080,7 +3082,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &776515831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6410,7 +6412,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2044351500
 MonoBehaviour:
   m_ObjectHideFlags: 0
